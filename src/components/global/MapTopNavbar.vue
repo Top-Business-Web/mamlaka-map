@@ -3,7 +3,7 @@ import { ref, computed, watch, onMounted } from "vue";
 import { useMapStore, type MapStatisticsFilterKeys } from "@/stores/MapStore";
 import dayjs from "dayjs";
 
-import selaIconLogo from "@/assets/imgs/royal_comm.png";
+// import selaIconLogo from "@/assets/imgs/royal_comm.png";
 
 const mapStore = useMapStore();
 const isMenuOpen = ref<boolean>(false);
@@ -20,15 +20,15 @@ const handleFilter = (key: MapStatisticsFilterKeys, value: string) => {
 
 watch(formattedDate, (date: string) => handleFilter("start_date", date));
 
-const getFilterLabel = (Key: MapStatisticsFilterKeys) => {
-  const filterLabels = {
-    company: "الشركة",
-    shift: "الوردية",
-    start_date: "اليوم"
-  };
+// const getFilterLabel = (Key: MapStatisticsFilterKeys) => {
+//   const filterLabels = {
+//     company: "الشركة",
+//     shift: "الوردية",
+//     start_date: "اليوم"
+//   };
 
-  return filterLabels[Key];
-};
+//   return filterLabels[Key];
+// };
 </script>
 
 <template>
@@ -98,9 +98,11 @@ const getFilterLabel = (Key: MapStatisticsFilterKeys) => {
                   class="position-relative d-inline-block"
                 >
                   <!-- clearable -->
+                   <!-- 
+                  :placeholder="getFilterLabel(filter.key)" -->
                   <v-autocomplete
                     class="map-select-input"
-                    :placeholder="getFilterLabel(filter.key)"
+                    
                     :items="filter.values"
                     item-title="name"
                     item-value="value"
