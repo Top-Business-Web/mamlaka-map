@@ -282,7 +282,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
                     </div>
                   </v-btn>
                   <v-btn v-else @click="maximaizePanel" icon variant="text">
-                    <img :src="maximizeIcon" style="height: 25px" />
+                    <img :src="maximizeIcon" style="height: 25px;" />
                   </v-btn>
                 </div>
               </transition>
@@ -389,11 +389,14 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
               <v-row
                 class="top-panel-grid mx-0"
                 :class="{ 'top-panel-grid--fullscreen': mapStore.isMapStatisticsFullscreen }"
+                :style="[mapStore.isMapStatisticsFullscreen ? 'background-color: #303030; margin-top: 20px;' : '']"
               >
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
                   <v-card
                     class="w-100"
                     :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
+                    style=" background-color: transparent;"
+                    :style="[mapStore.isMapStatisticsFullscreen ? 'border-left: 1px solid #494A4A; border-radius: 0;' : '']"
                   >
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold">
@@ -420,6 +423,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
                   <v-card
                     class="w-100"
                     :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
+                    style=" background-color: transparent;"
                   >
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold" style="color: white">
@@ -449,6 +453,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
                   <v-card
                     class="w-100"
                     :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
+                    style=" background-color: transparent;"
                   >
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold">
@@ -473,6 +478,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
                   <v-card
                     class="w-100"
                     :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
+                    style=" background-color: transparent;"
                   >
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold" style="color: white">
