@@ -212,8 +212,8 @@ onMounted(() => {
 
 import brandMark from "@/assets/imgs/Brandmark.png";
 import refreshIcon from "@/assets/imgs/refresh.png";
-import maximizeIcon from '@/assets/imgs/maximize.png';
-import minimizeIcon from '@/assets/imgs/minimize.png';
+import maximizeIcon from "@/assets/imgs/maximize.png";
+import minimizeIcon from "@/assets/imgs/minimize.png";
 </script>
 
 <template>
@@ -235,7 +235,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
                 class="text-h6 font-weight-bold"
                 @click="(e) => e.stopPropagation()"
               >
-                <img :src="brandMark" style="height: 50px;" />
+                <img :src="brandMark" style="height: 50px" />
                 <v-menu v-model="isActiveStageMenu" width="500px">
                   <template v-slot:activator="{ props }">
                     <v-btn
@@ -265,7 +265,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
                 </v-menu>
                 <!-- @update:modelValue="handleFilter(filter.key, $event)" -->
               </h2>
-              
+
               <transition name="list" mode="out-in">
                 <div v-if="expanded" class="d-flex align-center ga-2 pe-4">
                   <v-btn @click="refreshData" icon variant="text">
@@ -282,14 +282,15 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
                     </div>
                   </v-btn>
                   <v-btn v-else @click="maximaizePanel" icon variant="text">
-                    <img :src="maximizeIcon" style="height: 25px;" />
+                    <img :src="maximizeIcon" style="height: 25px" />
                   </v-btn>
                 </div>
               </transition>
             </div>
           </template>
         </v-expansion-panel-title>
-        <hr>
+        <hr />
+        
         <v-expansion-panel-text v-if="mapStore.isLoadingMapStatistics" class="h-100">
           <div class="h-100 d-flex flex-column pt-8">
             <div class="w-100 pb-8 px-4">
@@ -389,14 +390,22 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
               <v-row
                 class="top-panel-grid mx-0"
                 :class="{ 'top-panel-grid--fullscreen': mapStore.isMapStatisticsFullscreen }"
-                :style="[mapStore.isMapStatisticsFullscreen ? 'background-color: #303030; margin-top: 20px;' : '']"
+                :style="[
+                  mapStore.isMapStatisticsFullscreen
+                    ? 'background-color: #303030; margin-top: 20px;'
+                    : ''
+                ]"
               >
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
                   <v-card
                     class="w-100"
                     :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                    style=" background-color: transparent;"
-                    :style="[mapStore.isMapStatisticsFullscreen ? 'border-left: 1px solid #494A4A; border-radius: 0;' : '']"
+                    style="background-color: transparent"
+                    :style="[
+                      mapStore.isMapStatisticsFullscreen
+                        ? 'border-left: 1px solid #494A4A; border-radius: 0;'
+                        : ''
+                    ]"
                   >
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold">
@@ -423,7 +432,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
                   <v-card
                     class="w-100"
                     :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                    style=" background-color: transparent;"
+                    style="background-color: transparent"
                   >
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold" style="color: white">
@@ -453,7 +462,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
                   <v-card
                     class="w-100"
                     :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                    style=" background-color: transparent;"
+                    style="background-color: transparent"
                   >
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold">
@@ -478,7 +487,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
                   <v-card
                     class="w-100"
                     :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                    style=" background-color: transparent;"
+                    style="background-color: transparent"
                   >
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold" style="color: white">
@@ -499,79 +508,188 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
                     </div>
                   </v-card>
                 </v-col>
-                <!-- <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 'auto' : 6}`">
-                  <v-row class="ma-0" :class="{ 'h-100': mapStore.isMapStatisticsFullscreen }">
-                    <v-col
-                      :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`"
-                      class="h-100 py-0"
-                      :class="[mapStore.isMapStatisticsFullscreen ? 'h-100 ps-0' : 'mb-3 px-0']"
-                    >
-                      <v-card
-                        class="w-100"
-                        :class="[mapStore.isMapStatisticsFullscreen ? 'h-100 pa-10' : 'pa-0']"
-                      >
-                        <div
-                          class="d-flex align-center justify-space-between ga-2"
-                          :class="{ 'mt-3': mapStore.isMapStatisticsFullscreen }"
-                        >
-                          <span class="whitespace-nowrap" style="font-size: 0.9rem">
-                            نسبة التزام العاملين
-                          </span>
-                          <h2 class="text-h6">
-                            <span class="font-weight-bold">
-                              {{ parseValueToActialNumber(workersApperanceTweened.number, 0) }}
-                            </span>
-                            <span class="font-weight-bold">%</span>
-                          </h2>
-                        </div>
-                        <v-progress-linear
-                          :model-value="parseValueToActialNumber(workersApperanceTweened.number, 0)"
-                          height="10"
-                          bg-color="#fff"
-                          color="primary"
-                          bg-opacity="1"
-                          rounded
-                        ></v-progress-linear>
-                      </v-card>
-                    </v-col>
-                    <v-col
-                      :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`"
-                      class="py-0"
-                      :class="[mapStore.isMapStatisticsFullscreen ? 'h-100 pe-0' : 'px-0']"
-                    >
-                      <v-card
-                        class="w-100"
-                        :class="[mapStore.isMapStatisticsFullscreen ? 'h-100 pa-10' : 'pa-0']"
-                      >
-                        <div
-                          class="d-flex align-center justify-space-between ga-2"
-                          :class="{ 'mt-3': mapStore.isMapStatisticsFullscreen }"
-                        >
-                          <span class="whitespace-nowrap" style="font-size: 0.9rem">
-                            نسبة الغياب
-                          </span>
-                          <h2 class="text-h6">
-                            <span class="font-weight-bold">
-                              {{ parseValueToActialNumber(workersAbsentTweened.number, 0) }}
-                            </span>
-                            <span class="font-weight-bold">%</span>
-                          </h2>
-                        </div>
-                        <v-progress-linear
-                          :model-value="parseValueToActialNumber(workersAbsentTweened.number, 0)"
-                          height="10"
-                          bg-color="#fff"
-                          color="primary"
-                          bg-opacity="1"
-                          rounded
-                        ></v-progress-linear>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </v-col> -->
               </v-row>
+              <div :class="`${mapStore.isMapStatisticsFullscreen ? 'shape' : 'd-none'}`"></div>
             </div>
-            <hr />
+            <hr/>
+
+            <div style="margin: 20px">
+              <div
+                class="card-border mt-2"
+                style="background-color: #303030; padding: 16px; border-radius: 8px"
+              >
+                <div
+                  class="card-border"
+                  style="background-color: #383838; padding: 16px; border-radius: 8px"
+                >
+                  <div class="row">
+                    <div class="col-lg-6 col-12" style="border-left: 1px solid #e6ebee">
+                      <div class="d-flex justify-content-between mb-2 text-white">
+                        <p style="font-size: 14px">نسبة التزام العاملين</p>
+                        <p style="font-size: 14px">40%</p>
+                      </div>
+                      <div class="progress primary">
+                        <div
+                          class="progress-bar"
+                          role="progressbar"
+                          style="width: 50%"
+                          aria-valuenow="50"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        ></div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-12">
+                      <div class="d-flex justify-content-between mb-2 text-white">
+                        <p style="font-size: 14px">نسبة الغياب</p>
+                        <p style="font-size: 14px">40%</p>
+                      </div>
+                      <div class="progress second">
+                        <div
+                          class="progress-bar"
+                          role="progressbar"
+                          style="width: 50%"
+                          aria-valuenow="50"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div :class="`${mapStore.isMapStatisticsFullscreen ? 'col-lg-4 col-md-6 col-12' : 'col-12'}`">
+                  <div class="card-border mt-2" style="background-color: #303030">
+                    <p style="font-size: 14px; color: white; margin-bottom: 10px">
+                      هل تشعر بالأمان أثناء أداء تقارير يوميةك الميدانية؟
+                    </p>
+                    <div class="card-border" style="background-color: #383838">
+                      <div class="row">
+                        <div class="col-lg-6 col-12" style="border-left: 1px solid #e6ebee">
+                          <div class="d-flex justify-content-between mb-2 text-white">
+                            <p style="font-size: 14px">نعم</p>
+                            <p style="font-size: 14px">40%</p>
+                          </div>
+                          <div class="progress primary">
+                            <div
+                              class="progress-bar"
+                              role="progressbar"
+                              style="width: 50%"
+                              aria-valuenow="50"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-12">
+                          <div class="d-flex justify-content-between mb-2 text-white">
+                            <p style="font-size: 14px">لا</p>
+                            <p style="font-size: 14px">40%</p>
+                          </div>
+                          <div class="progress second">
+                            <div
+                              class="progress-bar"
+                              role="progressbar"
+                              style="width: 50%"
+                              aria-valuenow="50"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div :class="`${mapStore.isMapStatisticsFullscreen ? 'col-lg-4 col-md-6 col-12' : 'col-12'}`">
+                  <div class="card-border mt-2" style="background-color: #303030">
+                    <p style="font-size: 14px; color: white; margin-bottom: 10px">
+                      هل تشعر بالأمان أثناء أداء تقارير يوميةك الميدانية؟
+                    </p>
+                    <div class="card-border" style="background-color: #383838">
+                      <div class="row">
+                        <div class="col-lg-6 col-12" style="border-left: 1px solid #e6ebee">
+                          <div class="d-flex justify-content-between mb-2 text-white">
+                            <p style="font-size: 14px">نعم</p>
+                            <p style="font-size: 14px">40%</p>
+                          </div>
+                          <div class="progress primary">
+                            <div
+                              class="progress-bar"
+                              role="progressbar"
+                              style="width: 50%"
+                              aria-valuenow="50"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-12">
+                          <div class="d-flex justify-content-between mb-2 text-white">
+                            <p style="font-size: 14px">لا</p>
+                            <p style="font-size: 14px">40%</p>
+                          </div>
+                          <div class="progress second">
+                            <div
+                              class="progress-bar"
+                              role="progressbar"
+                              style="width: 50%"
+                              aria-valuenow="50"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div :class="`${mapStore.isMapStatisticsFullscreen ? 'col-lg-4 col-md-6 col-12' : 'col-12'}`">
+                  <div class="card-border mt-2" style="background-color: #303030">
+                    <p style="font-size: 14px; color: white; margin-bottom: 10px">
+                      هل تشعر بالأمان أثناء أداء تقارير يوميةك الميدانية؟
+                    </p>
+                    <div class="card-border" style="background-color: #383838">
+                      <div class="row">
+                        <div class="col-lg-6 col-12" style="border-left: 1px solid #e6ebee">
+                          <div class="d-flex justify-content-between mb-2 text-white">
+                            <p style="font-size: 14px">نعم</p>
+                            <p style="font-size: 14px">40%</p>
+                          </div>
+                          <div class="progress primary">
+                            <div
+                              class="progress-bar"
+                              role="progressbar"
+                              style="width: 50%"
+                              aria-valuenow="50"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-12">
+                          <div class="d-flex justify-content-between mb-2 text-white">
+                            <p style="font-size: 14px">لا</p>
+                            <p style="font-size: 14px">40%</p>
+                          </div>
+                          <div class="progress second">
+                            <div
+                              class="progress-bar"
+                              role="progressbar"
+                              style="width: 50%"
+                              aria-valuenow="50"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <!-- :style="`height: calc(100vh - ${restPanelHeight}px)`" -->
             <div
               :style="`height: calc(100vh - ${restPanelHeight}px)`"
@@ -680,6 +798,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
 
 <style lang="scss">
 @import "vue3-perfect-scrollbar/style.css";
+
 .v-btn-icon {
   transition: transform 300ms ease-in-out;
 }
@@ -775,6 +894,10 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
     padding: 8px 0px 16px;
   }
 
+  .v-expansion-panel-text {
+    overflow-y: scroll;
+  }
+
   .status-true {
     background-color: #ebf0ef;
     color: #35685f;
@@ -784,6 +907,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
     padding: 4px 10px;
     display: flex;
   }
+
   .status-true img {
     margin: 3px 0 0 3px;
   }
@@ -797,6 +921,7 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
     padding: 4px 10px;
     display: flex;
   }
+
   .status-false img {
     margin: 3px 0 0 3px;
   }
@@ -810,8 +935,39 @@ import minimizeIcon from '@/assets/imgs/minimize.png';
     padding: 4px 10px;
     display: flex;
   }
+
   .status-normal img {
     margin: 3px 0 0 3px;
   }
+}
+
+.progress {
+  height: 8px;
+}
+
+.primary .progress-bar {
+  background-color: #b6ad98 !important;
+}
+
+.second .progress-bar {
+  background-color: #c05e5e !important;
+}
+
+.card-border {
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.shape{
+  background-color: #303030;
+  background-image: url("@/assets/imgs/shape.png");
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 65px;
+  border-radius: 0 0 10px 10px;
+}
+p{
+  margin-bottom: 0;
 }
 </style>

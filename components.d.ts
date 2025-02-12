@@ -25,6 +25,7 @@ declare module 'vue' {
     MapTicketTypesDialog: typeof import('./src/components/maps/dialogs/MapTicketTypesDialog.vue')['default']
     MapTopNavbar: typeof import('./src/components/global/MapTopNavbar.vue')['default']
     PieChart: typeof import('./src/components/eChart/PieChart.vue')['default']
+    ProfileModal: typeof import('./src/components/global/ProfileModal.vue')['default']
     RadialBarChart: typeof import('./src/components/charts/RadialBarChart.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
