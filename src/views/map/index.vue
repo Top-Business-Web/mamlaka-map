@@ -1,4 +1,4 @@
 <template>
- <InteractiveMap />
+<!-- <InteractiveMap />-->
    <InteractiveMapMapbox />
 </template>
