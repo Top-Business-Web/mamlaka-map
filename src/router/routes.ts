@@ -1,14 +1,11 @@
 const routes = [
   {
     path: '',
-    component: () => import('@/layouts/app.vue'),
-    meta: {
-      requireAuth: true
-    },
+    component: () => import('@/layouts/map.vue'),
     children: [
       {
         path: '',
-        component: () => import('@/views/index.vue'),
+        component: () => import('@/views/map/index.vue'),
         name: 'dashboard',
         children: []
       },
@@ -19,29 +16,20 @@ const routes = [
     meta: {
       guest: true
     },
-    children: [
-      // {
-      //   path: 'login',
-      //   component: () => import('@/pages/auth/Login.vue'),
-      //   name: 'auth.login'
-      // }
-    ]
+    children: []
   },
-  {
-    path: '/map',
-    component: () => import('@/layouts/map.vue'),
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/map/index.vue'),
-        name: 'dashboard.map',
-        meta: {
-          requireAuth: true
-        },
-        children: [],
-      }
-    ]
-  }
+  // {
+  //   path: '/map',
+  //   component: () => import('@/layouts/map.vue'),
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/map/index.vue'),
+  //       name: 'dashboard.map',
+  //       children: [],
+  //     }
+  //   ]
+  // }
 ];
 
 export default routes;

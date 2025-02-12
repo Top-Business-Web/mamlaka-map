@@ -14,6 +14,7 @@
 
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&display=swap");
+@import url("https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css");
 // src: url(@/assets/fonts/Montserrat-Arabic-Regular.ttf);
 // @font-face {
 //   font-family: 'Montserrat Arabic';

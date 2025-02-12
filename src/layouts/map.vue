@@ -9,7 +9,7 @@ const isActiveSidebar = ref<boolean>(false);
     <v-app>
       <v-container fluid class="h-100 pa-0">
         <v-layout class="h-100">
-          <!-- <MapTopNavbar /> -->
+          <MapTopNavbar />
 
           <v-main class="h-100">
             <router-view v-slot="{ Component }">

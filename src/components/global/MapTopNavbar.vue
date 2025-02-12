@@ -2,9 +2,8 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { useMapStore, type MapStatisticsFilterKeys } from "@/stores/MapStore";
 import dayjs from "dayjs";
-
-// import selaIconLogo from "@/assets/imgs/royal_comm.png";
-
+import avataImg from "@/assets/imgs/image1.png";
+import ProfileModal from '@/components/global/ProfileModal.vue';
 const mapStore = useMapStore();
 const isMenuOpen = ref<boolean>(false);
 const selectedDate = ref<Date>();
@@ -29,6 +28,16 @@ watch(formattedDate, (date: string) => handleFilter("start_date", date));
 
 //   return filterLabels[Key];
 // };
+
+const profileDialog = ref(false);
+
+const openProfileModal = () => {
+  profileDialog.value = true;  // فتح modal
+};
+
+const closeProfileModal = () => {
+  profileDialog.value = false;  // إغلاق modal
+};
 </script>
 
 <template>
@@ -162,42 +171,54 @@ watch(formattedDate, (date: string) => handleFilter("start_date", date));
       </div>
     </template>
 
-    <template v-slot:append>
-      <div>
+    <!-- <template v-slot:append> -->
+      <div style="width: 70%; display: flex; justify-content: space-between;">
+        <div class="d-flex">
+        <input class="form-control ms-2" style="border-radius: 8px; background-color: #303030; font-size:12px; color: white; border: none;" type="search" placeholder="البحث عن تقرير يومي..." aria-label="Search">
+        <Select class="form-select" aria-label="Default select example">
+            <option selected>إدارة المواقع الجغرافية</option>
+            <option value="1">موقع 1</option>
+            <option value="2">موقع 2</option>
+            <option value="3">موقع 3</option>
+        </Select>
+        <Select class="form-select" aria-label="Default select example">
+            <option selected>الفترة الزمنية</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </Select>
+        <Select class="form-select" aria-label="Default select example">
+            <option selected> الكل</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </Select>
+        </div>
+     
         <v-menu>
           <template v-slot:activator="{ props }">
-            <v-btn icon variant="outlined" class="" v-bind="props">
-              <svg
-                width="1rem"
-                height="1.1rem"
-                viewBox="0 0 14 18"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M13.1484 18C12.7601 18 12.4453 17.6852 12.4453 17.2969C12.4453 14.5442 10.2058 12.3047 7.45312 12.3047H6.39844C3.64574 12.3047 1.40625 14.5442 1.40625 17.2969C1.40625 17.6852 1.09146 18 0.703125 18C0.314789 18 0 17.6852 0 17.2969C0 13.7688 2.87033 10.8984 6.39844 10.8984H7.45312C10.9812 10.8984 13.8516 13.7688 13.8516 17.2969C13.8516 17.6852 13.5368 18 13.1484 18Z"
-                  fill="currentColor"
-                />
-                <path
-                  d="M6.85547 9.49219C4.23847 9.49219 2.10938 7.36309 2.10938 4.74609C2.10938 2.1291 4.23847 0 6.85547 0C9.47247 0 11.6016 2.1291 11.6016 4.74609C11.6016 7.36309 9.47247 9.49219 6.85547 9.49219ZM6.85547 1.40625C5.01388 1.40625 3.51562 2.9045 3.51562 4.74609C3.51562 6.58768 5.01388 8.08594 6.85547 8.08594C8.69706 8.08594 10.1953 6.58768 10.1953 4.74609C10.1953 2.9045 8.69706 1.40625 6.85547 1.40625Z"
-                  fill="currentColor"
-                />
-              </svg>
+            <v-btn icon variant="outlined" class="border-0" v-bind="props">
+            <img width="32px" :src="avataImg" />
             </v-btn>
           </template>
 
-          <v-list width="200">
-            <v-list-item href="#">
-              <v-list-item-title> الملف الشخصي </v-list-item-title>
-            </v-list-item>
-            <v-list-item href="#">
-              <v-list-item-title> تسجيل الخروج </v-list-item-title>
-            </v-list-item>
-          </v-list>
+                <v-list width="200">
+          <v-list-item @click="openProfileModal">
+            <v-list-item-title>الملف الشخصي</v-list-item-title>
+          </v-list-item>
+          <v-list-item href="#">
+            <v-list-item-title>تسجيل الخروج</v-list-item-title>
+          </v-list-item>
+        </v-list>
         </v-menu>
+
+          <!-- نافذة منبثقة Modal لعرض الملف الشخصي -->
+          <v-dialog v-model="profileDialog"  min-width="90%" min-height="90%">
+            <ProfileModal @close="closeProfileModal" />
+          </v-dialog>
       </div>
-    </template>
-  </v-app-bar>
+      <!-- </template> -->
+</v-app-bar>
 </template>
 
 <style lang="scss">
@@ -205,4 +226,37 @@ watch(formattedDate, (date: string) => handleFilter("start_date", date));
   border-radius: 15px;
   background-color: #383838; // #383838
 }
+
+.select2, .select2-container--default .select2-selection--single{
+        background-color: #383838 !important;
+        margin-left: 10px;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered{
+        color: white !important;
+    }
+    .hr-card{
+        color: #494A4A;
+        height: 1px;
+        opacity: 1;
+    }
+    .btn-profile{
+        color: #F7F7F8;
+        border: none;
+        border-radius: 8px;
+        padding: 8px;
+        background-color: #383838;
+    }
+    input::placeholder {
+      color: white !important;
+    }
+    .form-select {
+      background-color: #383838;
+      border: none;
+      color: white;
+      margin-left: 10px;
+      --bs-form-select-bg-img: url('@/assets/imgs/vector.svg');
+      background-position: left .75rem center;
+      padding: 0.375rem .75rem .375rem 2.25rem;
+      width: max-content;
+    }
 </style>
