@@ -217,46 +217,26 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
 </script>
 
 <template>
-  <div
-    :style="`width: ${mapStore.isMapStatisticsFullscreen ? 'calc(100% - 60px)' : '33rem'}`"
-    class="map-custom-panel"
-  >
+  <div :style="`width: ${mapStore.isMapStatisticsFullscreen ? 'calc(100% - 60px)' : '33rem'}`" class="map-custom-panel">
     <v-expansion-panels variant="popout" v-model="opendPanel" bg-color="transparent">
       <v-expansion-panel value="panel" bg-color="#383838" @group:selected="togglePanel">
-        <v-expansion-panel-title
-          :readonly="mapStore.isMapStatisticsFullscreen"
-          :hide-actions="mapStore.isMapStatisticsFullscreen"
-          :class="{ 'pe-0': mapStore.isMapStatisticsFullscreen }"
-        >
+        <v-expansion-panel-title :readonly="mapStore.isMapStatisticsFullscreen"
+          :hide-actions="mapStore.isMapStatisticsFullscreen" :class="{ 'pe-0': mapStore.isMapStatisticsFullscreen }">
           <template v-slot:default="{ expanded }">
             <div ref="panelTitle" class="w-100 d-flex align-center justify-space-between">
-              <h2
-                style="min-width: 10rem"
-                class="text-h6 font-weight-bold"
-                @click="(e) => e.stopPropagation()"
-              >
+              <h2 style="min-width: 10rem" class="text-h6 font-weight-bold" @click="(e) => e.stopPropagation()">
                 <img :src="brandMark" style="height: 50px" />
                 <v-menu v-model="isActiveStageMenu" width="500px">
                   <template v-slot:activator="{ props }">
-                    <v-btn
-                      variant="text"
-                      v-bind="props"
-                      height="auto"
-                      rounded="md"
-                      class="px-2"
-                      style="font-size: 1rem"
-                    >
+                    <v-btn variant="text" v-bind="props" height="auto" rounded="md" class="px-2"
+                      style="font-size: 1rem">
                     </v-btn>
                   </template>
 
                   <v-list width="300">
-                    <v-list-item
-                      @click="handleStageFilter(filterValue)"
-                      href="#"
-                      v-for="(filterValue, index) in mapStore.locationMapTypes"
-                      :key="index"
-                      :active="filterValue.isCurrent"
-                    >
+                    <v-list-item @click="handleStageFilter(filterValue)" href="#"
+                      v-for="(filterValue, index) in mapStore.locationMapTypes" :key="index"
+                      :active="filterValue.isCurrent">
                       <v-list-item-title>
                         {{ filterValue.name }}
                       </v-list-item-title>
@@ -271,11 +251,7 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                   <v-btn @click="refreshData" icon variant="text">
                     <img :src="refreshIcon" style="height: 25px" />
                   </v-btn>
-                  <v-btn
-                    v-if="mapStore.isMapStatisticsFullscreen"
-                    @click="minimaizePanel"
-                    variant="text"
-                  >
+                  <v-btn v-if="mapStore.isMapStatisticsFullscreen" @click="minimaizePanel" variant="text">
                     <div class="w-100 d-flex align-center ga-2">
                       <span>تقليص الشاشة</span>
                       <img :src="minimizeIcon" style="height: 25px" />
@@ -290,34 +266,20 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
           </template>
         </v-expansion-panel-title>
         <hr />
-        
+
         <v-expansion-panel-text v-if="mapStore.isLoadingMapStatistics" class="h-100">
           <div class="h-100 d-flex flex-column pt-8">
             <div class="w-100 pb-8 px-4">
               <v-row class="mx-0" :class="[mapStore.isMapStatisticsFullscreen ? 'py-6' : '']">
-                <v-col
-                  v-for="item in 4"
-                  :key="item"
-                  :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 6}`"
-                  class="d-flex flex-column align-center mb-4"
-                >
+                <v-col v-for="item in 4" :key="item" :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 6}`"
+                  class="d-flex flex-column align-center mb-4">
                   <div class="mb-4">
-                    <v-skeleton-loader
-                      type="button"
-                      height="1.5rem"
-                      width="10rem"
-                      max-width="100%"
-                      max-height="100%"
-                    ></v-skeleton-loader>
+                    <v-skeleton-loader type="button" height="1.5rem" width="10rem" max-width="100%"
+                      max-height="100%"></v-skeleton-loader>
                   </div>
                   <div>
-                    <v-skeleton-loader
-                      type="button"
-                      height="1rem"
-                      width="8rem"
-                      max-width="100%"
-                      max-height="100%"
-                    ></v-skeleton-loader>
+                    <v-skeleton-loader type="button" height="1rem" width="8rem" max-width="100%"
+                      max-height="100%"></v-skeleton-loader>
                   </div>
                 </v-col>
               </v-row>
@@ -326,29 +288,15 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
             <div class="panel-charts-wrapper panel-charts-wrapper__scrollbar overflow-y-auto">
               <div class="px-3">
                 <v-row class="mx-0 pt-12">
-                  <v-col
-                    v-for="item in 6"
-                    :key="item"
-                    :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 6}`"
-                    class="d-flex flex-column align-center mb-4"
-                  >
+                  <v-col v-for="item in 6" :key="item" :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 6}`"
+                    class="d-flex flex-column align-center mb-4">
                     <div class="mb-4">
-                      <v-skeleton-loader
-                        type="button"
-                        height="1rem"
-                        width="8rem"
-                        max-width="100%"
-                        max-height="100%"
-                      ></v-skeleton-loader>
+                      <v-skeleton-loader type="button" height="1rem" width="8rem" max-width="100%"
+                        max-height="100%"></v-skeleton-loader>
                     </div>
                     <div>
-                      <v-skeleton-loader
-                        type="button"
-                        height="4rem"
-                        width="10rem"
-                        max-width="100%"
-                        max-height="100%"
-                      ></v-skeleton-loader>
+                      <v-skeleton-loader type="button" height="4rem" width="10rem" max-width="100%"
+                        max-height="100%"></v-skeleton-loader>
                     </div>
                   </v-col>
                 </v-row>
@@ -356,12 +304,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
             </div>
           </div>
         </v-expansion-panel-text>
-        <v-expansion-panel-text
-          disabled
-          v-else
-          class="h-100"
-          :class="[mapStore.isMapStatisticsError ? 'justify-center align-center' : '']"
-        >
+        <v-expansion-panel-text disabled v-else class="h-100"
+          :class="[mapStore.isMapStatisticsError ? 'justify-center align-center' : '']">
           <!-- <div
             v-if="mapStore.isMapStatisticsError"
             class="d-flex flex-column justify-center align-center ga-2 mt-n16 text-red-accent-1"
@@ -382,31 +326,20 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
             <p>عذرا، حدث خطأ غير متوقع اثناء جلب الاحصائيات</p>
           </div> -->
           <div class="h-100 d-flex flex-column">
-            <div
-              ref="topPanel"
-              class="w-100 pb-8"
-              :class="[mapStore.isMapStatisticsFullscreen ? 'px-2' : 'px-4']"
-            >
-              <v-row
-                class="top-panel-grid mx-0"
-                :class="{ 'top-panel-grid--fullscreen': mapStore.isMapStatisticsFullscreen }"
-                :style="[
+            <div ref="topPanel" class="w-100 pb-8" :class="[mapStore.isMapStatisticsFullscreen ? 'px-2' : 'px-4']">
+              <v-row class="top-panel-grid mx-0"
+                :class="{ 'top-panel-grid--fullscreen': mapStore.isMapStatisticsFullscreen }" :style="[
                   mapStore.isMapStatisticsFullscreen
                     ? 'background-color: #303030; margin-top: 20px;'
                     : ''
-                ]"
-              >
+                ]">
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                  <v-card
-                    class="w-100"
-                    :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                    style="background-color: transparent"
-                    :style="[
+                  <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
+                    style="background-color: transparent" :style="[
                       mapStore.isMapStatisticsFullscreen
                         ? 'border-left: 1px solid #494A4A; border-radius: 0;'
                         : ''
-                    ]"
-                  >
+                    ]">
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold">
                         {{
@@ -429,11 +362,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                 </v-col>
 
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                  <v-card
-                    class="w-100"
-                    :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                    style="background-color: transparent"
-                  >
+                  <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
+                    style="background-color: transparent">
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold" style="color: white">
                         {{
@@ -446,12 +376,7 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                       <div class="d-flex" style="justify-content: space-between">
                         <p style="font-size: 0.9rem">عدد الزيارت الميدانيه</p>
                         <div class="status-false">
-                          <img
-                            style="width: 16px"
-                            class="h-16"
-                            :src="arrowDownRight"
-                            alt="no-icon"
-                          />
+                          <img style="width: 16px" class="h-16" :src="arrowDownRight" alt="no-icon" />
                           <p>4.1%</p>
                         </div>
                       </div>
@@ -459,11 +384,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                   </v-card>
                 </v-col>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                  <v-card
-                    class="w-100"
-                    :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                    style="background-color: transparent"
-                  >
+                  <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
+                    style="background-color: transparent">
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold">
                         {{
@@ -484,11 +406,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                   </v-card>
                 </v-col>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                  <v-card
-                    class="w-100"
-                    :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                    style="background-color: transparent"
-                  >
+                  <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
+                    style="background-color: transparent">
                     <div class="w-100 h-100 d-flex flex-column ga-2">
                       <h2 class="text-h4 font-weight-bold" style="color: white">
                         {{
@@ -511,17 +430,11 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
               </v-row>
               <div :class="`${mapStore.isMapStatisticsFullscreen ? 'shape' : 'd-none'}`"></div>
             </div>
-            <hr/>
+            <hr />
 
             <div style="margin: 20px">
-              <div
-                class="card-border mt-2"
-                style="background-color: #303030; padding: 16px; border-radius: 8px"
-              >
-                <div
-                  class="card-border"
-                  style="background-color: #383838; padding: 16px; border-radius: 8px"
-                >
+              <div class="card-border mt-2" style="background-color: #303030; padding: 16px; border-radius: 8px">
+                <div class="card-border" style="background-color: #383838; padding: 16px; border-radius: 8px">
                   <div class="row">
                     <div class="col-lg-6 col-12" style="border-left: 1px solid #e6ebee">
                       <div class="d-flex justify-content-between mb-2 text-white">
@@ -529,14 +442,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                         <p style="font-size: 14px">40%</p>
                       </div>
                       <div class="progress primary">
-                        <div
-                          class="progress-bar"
-                          role="progressbar"
-                          style="width: 50%"
-                          aria-valuenow="50"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
+                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
+                          aria-valuemin="0" aria-valuemax="100"></div>
                       </div>
                     </div>
                     <div class="col-lg-6 col-12">
@@ -545,14 +452,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                         <p style="font-size: 14px">40%</p>
                       </div>
                       <div class="progress second">
-                        <div
-                          class="progress-bar"
-                          role="progressbar"
-                          style="width: 50%"
-                          aria-valuenow="50"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
+                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
+                          aria-valuemin="0" aria-valuemax="100"></div>
                       </div>
                     </div>
                   </div>
@@ -572,14 +473,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                             <p style="font-size: 14px">40%</p>
                           </div>
                           <div class="progress primary">
-                            <div
-                              class="progress-bar"
-                              role="progressbar"
-                              style="width: 50%"
-                              aria-valuenow="50"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
+                            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
+                              aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
                         <div class="col-lg-6 col-12">
@@ -588,14 +483,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                             <p style="font-size: 14px">40%</p>
                           </div>
                           <div class="progress second">
-                            <div
-                              class="progress-bar"
-                              role="progressbar"
-                              style="width: 50%"
-                              aria-valuenow="50"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
+                            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
+                              aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
                       </div>
@@ -615,14 +504,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                             <p style="font-size: 14px">40%</p>
                           </div>
                           <div class="progress primary">
-                            <div
-                              class="progress-bar"
-                              role="progressbar"
-                              style="width: 50%"
-                              aria-valuenow="50"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
+                            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
+                              aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
                         <div class="col-lg-6 col-12">
@@ -631,14 +514,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                             <p style="font-size: 14px">40%</p>
                           </div>
                           <div class="progress second">
-                            <div
-                              class="progress-bar"
-                              role="progressbar"
-                              style="width: 50%"
-                              aria-valuenow="50"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
+                            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
+                              aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
                       </div>
@@ -658,14 +535,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                             <p style="font-size: 14px">40%</p>
                           </div>
                           <div class="progress primary">
-                            <div
-                              class="progress-bar"
-                              role="progressbar"
-                              style="width: 50%"
-                              aria-valuenow="50"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
+                            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
+                              aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
                         <div class="col-lg-6 col-12">
@@ -674,14 +545,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                             <p style="font-size: 14px">40%</p>
                           </div>
                           <div class="progress second">
-                            <div
-                              class="progress-bar"
-                              role="progressbar"
-                              style="width: 50%"
-                              aria-valuenow="50"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
+                            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
+                              aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
                       </div>
@@ -691,10 +556,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
               </div>
             </div>
             <!-- :style="`height: calc(100vh - ${restPanelHeight}px)`" -->
-            <div
-              :style="`height: calc(100vh - ${restPanelHeight}px)`"
-              class="panel-charts-wrapper panel-charts-wrapper__scrollbar w-100 overflow-y-auto"
-            >
+            <div :style="`height: calc(100vh - ${restPanelHeight}px)`"
+              class="panel-charts-wrapper panel-charts-wrapper__scrollbar w-100 overflow-y-auto">
               <!-- <PerfectScrollbar
                 :options="{
                   swipeEasing: true
@@ -702,56 +565,31 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
               > -->
               <!-- </PerfectScrollbar> -->
               <div :class="{ 'px-3': !mapStore.isMapStatisticsFullscreen }">
-                <v-row
-                  class="panel-bottom ma-0 pb-4"
-                  :class="[mapStore.isMapStatisticsFullscreen ? 'panel-bottom--fullscreen' : '']"
-                >
-                  <v-col
-                    v-for="(task, index) in mapStore.mapStatisticsTasks"
-                    :key="index"
+                <v-row class="panel-bottom ma-0 pb-4"
+                  :class="[mapStore.isMapStatisticsFullscreen ? 'panel-bottom--fullscreen' : '']">
+                  <v-col v-for="(task, index) in mapStore.mapStatisticsTasks" :key="index"
                     :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 6}`"
-                    :class="{ 'pb-0': mapStore.isMapStatisticsFullscreen }"
-                  >
-                    <v-card
-                      @click="showTaskDialog(task)"
-                      class="w-100 h-100"
-                      :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10 pa-xl-16' : 'pa-0']"
-                    >
-                      <div
-                        class="h-100 w-100 d-flex flex-column justify-space-between align-center py-2"
-                      >
-                        <h2
-                          class="mb-4 px-2 text-center"
-                          :style="`opacity: 0.9; font-size: ${
-                            mapStore.isMapStatisticsFullscreen ? '1rem' : '0.8rem'
-                          };`"
-                        >
+                    :class="{ 'pb-0': mapStore.isMapStatisticsFullscreen }">
+                    <v-card @click="showTaskDialog(task)" class="w-100 h-100"
+                      :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10 pa-xl-16' : 'pa-0']">
+                      <div class="h-100 w-100 d-flex flex-column justify-space-between align-center py-2">
+                        <h2 class="mb-4 px-2 text-center" :style="`opacity: 0.9; font-size: ${mapStore.isMapStatisticsFullscreen ? '1rem' : '0.8rem'
+                          };`">
                           {{ task.name }}
                         </h2>
                         <h2 v-if="task.is_count" class="text-h4 pt-6 font-weight-bold">
                           {{ task.count }}
                         </h2>
                         <div v-else class="d-flex align-center ga-4">
-                          <DonutChart
-                            v-show="mapStore.isMapStatisticsFullscreen"
-                            :colors="['#B49164', '#fff']"
-                            :width="125"
-                            :data="[task.yes, task.no]"
-                          />
-                          <DonutChart
-                            v-show="!mapStore.isMapStatisticsFullscreen"
-                            :colors="['#B49164', '#fff']"
-                            :width="85"
-                            :data="[task.yes, task.no]"
-                          />
+                          <DonutChart v-show="mapStore.isMapStatisticsFullscreen" :colors="['#B49164', '#fff']"
+                            :width="125" :data="[task.yes, task.no]" />
+                          <DonutChart v-show="!mapStore.isMapStatisticsFullscreen" :colors="['#B49164', '#fff']"
+                            :width="85" :data="[task.yes, task.no]" />
                           <div class="d-flex align-center ga-8">
                             <div class="d-flex flex-column align-center ga-2">
                               <div class="d-flex align-center ga-2">
                                 <v-badge dot color="primary"></v-badge>
-                                <span
-                                  class="mt-1 font-weight-bold"
-                                  style="font-size: 0.8rem; opacity: 0.9"
-                                >
+                                <span class="mt-1 font-weight-bold" style="font-size: 0.8rem; opacity: 0.9">
                                   نعم
                                 </span>
                               </div>
@@ -762,10 +600,7 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
                             <div class="d-flex flex-column align-center ga-2">
                               <div class="d-flex align-center ga-2">
                                 <v-badge dot color="white"></v-badge>
-                                <span
-                                  class="mt-1 font-weight-bold"
-                                  style="font-size: 0.8rem; opacity: 0.9"
-                                >
+                                <span class="mt-1 font-weight-bold" style="font-size: 0.8rem; opacity: 0.9">
                                   لا
                                 </span>
                               </div>
@@ -786,11 +621,7 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <MapTicketTypesDialog
-      v-if="isTicketsDialog"
-      v-model="isTicketsDialog"
-      :ticket-type="ticketDialogType"
-    />
+    <MapTicketTypesDialog v-if="isTicketsDialog" v-model="isTicketsDialog" :ticket-type="ticketDialogType" />
 
     <MapTaskDetailsDialog v-if="isTaskDialog" v-model="isTaskDialog" :task="taskDialogDetails" />
   </div>
@@ -809,11 +640,11 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
 
 .top-panel-grid {
   &--fullscreen {
-    & > .v-col:not(:last-child) {
+    &>.v-col:not(:last-child) {
       width: calc(100% / 5);
     }
 
-    & > .v-col:last-child {
+    &>.v-col:last-child {
       width: calc((100% / 5) * 2);
     }
   }
@@ -958,7 +789,7 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
   border-radius: 8px;
 }
 
-.shape{
+.shape {
   background-color: #303030;
   background-image: url("@/assets/imgs/shape.png");
   background-position: bottom;
@@ -967,7 +798,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
   height: 65px;
   border-radius: 0 0 10px 10px;
 }
-p{
+
+p {
   margin-bottom: 0;
 }
 </style>
