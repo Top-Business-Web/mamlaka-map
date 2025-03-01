@@ -134,12 +134,24 @@ const displayLoactionDialog = (loc: MapLocation) => {
               width="35rem"
               style="margin-top: 8px"
             /> -->
-            <svg class="marker-icon-filter" width="2.2rem" height="2.3rem" viewBox="0 0 14 19" fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M6.5625 0C2.93181 0 0 2.92533 0 6.548C0 7.81111 0.404387 9.0172 0.967013 10.0083L5.24385 17.394C5.51197 17.8764 6.05262 18.1176 6.5625 18.1176C7.07242 18.1176 7.58665 17.8764 7.88115 17.394L12.158 10.0127C12.725 9.0215 13.125 7.83733 13.125 6.5523C13.125 2.92971 10.1932 0 6.5625 0ZM6.5625 8.48213C5.24385 8.48213 4.16695 7.40761 4.16695 6.09187C4.16695 4.77613 5.24385 3.70161 6.5625 3.70161C7.88115 3.70161 8.95805 4.77613 8.95805 6.09187C8.95805 7.412 7.88115 8.48213 6.5625 8.48213Z"
-                fill="#B49164" />
+            <svg width="80" height="80" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="15" fill="#857854" />
+              <circle cx="20" cy="20" r="17.5" stroke="#B49164" stroke-opacity="0.25" stroke-width="5" />
+              <g clip-path="url(#clip0_1_35095)">
+                <path
+                  d="M19.5 13C17.6099 13 16.0723 14.5377 16.0723 16.4277C16.0723 18.3178 17.6099 19.8555 19.5 19.8555C21.3901 19.8555 22.9277 18.3178 22.9277 16.4277C22.9277 14.5377 21.3901 13 19.5 13Z"
+                  fill="white" />
+                <path
+                  d="M23.7648 22.0948C22.8263 21.1419 21.5823 20.6172 20.2617 20.6172H18.7383C17.4178 20.6172 16.1737 21.1419 15.2352 22.0948C14.3014 23.043 13.7871 24.2946 13.7871 25.6191C13.7871 25.8295 13.9576 26 14.168 26H24.832C25.0424 26 25.2129 25.8295 25.2129 25.6191C25.2129 24.2946 24.6986 23.043 23.7648 22.0948Z"
+                  fill="white" />
+              </g>
+              <defs>
+                <clipPath id="clip0_1_35095">
+                  <rect width="13" height="13" fill="white" transform="translate(13 13)" />
+                </clipPath>
+              </defs>
             </svg>
+
           </span>
           <span v-else class="marker-icon-filter d-flex justify-center align-center"
             :style="`width: 1.8rem;height: 1.8rem;display:flex;justify-content:center;align-items:center;border-radius:50%;font-weight:bold;font-size:1rem; animation: pulse-${location.user_type} 1.5s infinite;background-color: ${getMarkerBgColor(location.user_type)}`">
