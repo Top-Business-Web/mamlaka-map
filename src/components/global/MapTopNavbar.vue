@@ -6,18 +6,14 @@ import avataImg from "@/assets/imgs/image1.png";
 import ProfileModal from '@/components/global/ProfileModal.vue';
 const mapStore = useMapStore();
 const isMenuOpen = ref<boolean>(false);
-const selectedDate = ref<Date>();
-
-const formattedDate = computed((): string =>
-  selectedDate.value ? dayjs(selectedDate.value).format("YYYY-MM-DD") : "اليوم"
-);
+const selectedType = ref<String>("main-axes-management");
 
 const handleFilter = (key: MapStatisticsFilterKeys, value: string) => {
   mapStore.updateMapStatisticsFilter(key, value);
   mapStore.getMapStatistics();
 };
 
-watch(formattedDate, (date: string) => handleFilter("start_date", date));
+watch(selectedType, () => { handleFilter("type", selectedType.value) });
 
 // const getFilterLabel = (Key: MapStatisticsFilterKeys) => {
 //   const filterLabels = {
@@ -41,13 +37,7 @@ const closeProfileModal = () => {
 </script>
 
 <template>
-  <v-app-bar
-    flat
-    tile
-    elevation="0"
-    class="bg-transparent px-4 pt-4 pb-0 px-xl-10"
-    style="z-index: 9999"
-  >
+  <v-app-bar flat tile elevation="0" class="bg-transparent px-4 pt-4 pb-0 px-xl-10" style="z-index: 9999">
     <template v-slot:prepend>
       <div class="d-flex align-center ga-16">
         <div class="d-flex align-center ga-4">
@@ -59,31 +49,16 @@ const closeProfileModal = () => {
 
         <v-locale-provider rtl locale="ar">
           <transition name="scale" mode="out-in">
-            <div
-              v-if="mapStore.mapStatisticsFiltersResponse.length && !mapStore.isMapStatisticsError"
-              class="d-flex align-center ga-4"
-            >
+            <div v-if="mapStore.mapStatisticsFiltersResponse.length && !mapStore.isMapStatisticsError"
+              class="d-flex align-center ga-4">
               <v-menu v-model="isMenuOpen">
                 <template v-slot:activator="{ props }">
-                  <v-btn
-                    variant="outlined"
-                    v-bind="props"
-                    height="auto"
-                    rounded="md"
-                    style="min-width: 10rem"
-                    class="day-filter-btn px-0"
-                  >
+                  <v-btn variant="outlined" v-bind="props" height="auto" rounded="md" style="min-width: 10rem"
+                    class="day-filter-btn px-0">
                     <div class="w-100 d-flex justify-start align-center ga-2 py-2 px-2">
-                      <svg
-                        width="1.6rem"
-                        height="1.6rem"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M15,19.88C15.04,20.18 14.94,20.5 14.71,20.71C14.32,21.1 13.69,21.1 13.3,20.71L9.29,16.7C9.06,16.47 8.96,16.16 9,15.87V10.75L4.21,4.62C3.87,4.19 3.95,3.56 4.38,3.22C4.57,3.08 4.78,3 5,3V3H19V3C19.22,3 19.43,3.08 19.62,3.22C20.05,3.56 20.13,4.19 19.79,4.62L15,10.75V19.88M7.04,5L11,10.06V15.58L13,17.58V10.05L16.96,5H7.04Z"
-                        />
+                      <svg width="1.6rem" height="1.6rem" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                          d="M15,19.88C15.04,20.18 14.94,20.5 14.71,20.71C14.32,21.1 13.69,21.1 13.3,20.71L9.29,16.7C9.06,16.47 8.96,16.16 9,15.87V10.75L4.21,4.62C3.87,4.19 3.95,3.56 4.38,3.22C4.57,3.08 4.78,3 5,3V3H19V3C19.22,3 19.43,3.08 19.62,3.22C20.05,3.56 20.13,4.19 19.79,4.62L15,10.75V19.88M7.04,5L11,10.06V15.58L13,17.58V10.05L16.96,5H7.04Z" />
                       </svg>
                       <span class="font-weight-bold">
                         {{ formattedDate }}
@@ -92,35 +67,19 @@ const closeProfileModal = () => {
                   </v-btn>
                 </template>
                 <!-- hide-actions -->
-                <v-date-picker
-                  v-model="selectedDate"
-                  header="اختر التاريخ"
-                  rounded="xl"
-                  color="#383838"
-                />
+                <v-date-picker v-model="selectedDate" header="اختر التاريخ" rounded="xl" color="#383838" />
               </v-menu>
 
               <div class="d-flex align-center ga-4">
-                <div
-                  v-for="(filter, index) in mapStore.mapStatisticsFiltersResponse"
-                  :key="index"
-                  class="position-relative d-inline-block"
-                >
+                <div v-for="(filter, index) in mapStore.mapStatisticsFiltersResponse" :key="index"
+                  class="position-relative d-inline-block">
                   <!-- clearable -->
-                   <!-- 
+                  <!-- 
                   :placeholder="getFilterLabel(filter.key)" -->
-                  <v-autocomplete
-                    class="map-select-input"
-                    
-                    :items="filter.values"
-                    item-title="name"
-                    item-value="value"
-                    variant="outlined"
-                    rounded="md"
-                    no-data-text="لا توجد بيانات"
+                  <v-autocomplete class="map-select-input" :items="filter.values" item-title="name" item-value="value"
+                    variant="outlined" rounded="md" no-data-text="لا توجد بيانات"
                     prepend-inner-icon="mdi-filter-outline"
-                    @update:modelValue="handleFilter(filter.key, $event)"
-                  ></v-autocomplete>
+                    @update:modelValue="handleFilter(filter.key, $event)"></v-autocomplete>
                   <!-- <v-menu width="500px">
                     <template v-slot:activator="{ props }">
                       <v-btn
@@ -172,37 +131,42 @@ const closeProfileModal = () => {
     </template>
 
     <!-- <template v-slot:append> -->
-      <div style="width: 70%; display: flex; justify-content: space-between;">
-        <div class="d-flex">
-        <input class="form-control ms-2" style="border-radius: 8px; background-color: #303030; font-size:12px; color: white; border: none;" type="search" placeholder="البحث عن تقرير يومي..." aria-label="Search">
-        <Select class="form-select" aria-label="Default select example">
-            <option selected>إدارة المواقع الجغرافية</option>
-            <option value="1">موقع 1</option>
-            <option value="2">موقع 2</option>
-            <option value="3">موقع 3</option>
-        </Select>
-        <Select class="form-select" aria-label="Default select example">
-            <option selected>الفترة الزمنية</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-        </Select>
-        <Select class="form-select" aria-label="Default select example">
-            <option selected> الكل</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-        </Select>
-        </div>
-     
-        <v-menu>
-          <template v-slot:activator="{ props }">
-            <v-btn icon variant="outlined" class="border-0" v-bind="props">
-            <img width="32px" :src="avataImg" />
-            </v-btn>
-          </template>
+    <div style="width: 70%; display: flex; justify-content: space-between;">
+      <div class="d-flex">
+        <input class="form-control ms-2"
+          style="border-radius: 8px; background-color: #303030; font-size:12px; color: white; border: none;"
+          type="search" placeholder="البحث عن تقرير يومي..." aria-label="Search">
+        <select class="form-select" aria-label="Default select example" v-model="selectedType">
+          <option value="main-axes-management" selected>إدارة المحاور الرئيسية</option>
+          <option value="locations-management">إدارة المواقع الجغرافية</option>
+          <option value="daily-reports-management">إدارة التقارير اليومية</option>
+          <option value="preparation-management">إدارة التحضير</option>
+          <option value="field-teams-management">إدارة الفرق الميدانية</option>
+          <option value="complaints-management">إدارة البلاغات</option>
+          <option value="supervisors-reports-management">إدارة تقارير المشرفين</option>
+        </select>
+        <select class="form-select" aria-label="Default select example">
+          <option selected>الفترة الزمنية</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+        <select class="form-select" aria-label="Default select example">
+          <option selected> الكل</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
 
-                <v-list width="200">
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn icon variant="outlined" class="border-0" v-bind="props">
+            <img width="32px" :src="avataImg" />
+          </v-btn>
+        </template>
+
+        <v-list width="200">
           <v-list-item @click="openProfileModal">
             <v-list-item-title>الملف الشخصي</v-list-item-title>
           </v-list-item>
@@ -210,53 +174,59 @@ const closeProfileModal = () => {
             <v-list-item-title>تسجيل الخروج</v-list-item-title>
           </v-list-item>
         </v-list>
-        </v-menu>
+      </v-menu>
 
-          <!-- نافذة منبثقة Modal لعرض الملف الشخصي -->
-          <v-dialog v-model="profileDialog"  min-width="90%" min-height="90%">
-            <ProfileModal @close="closeProfileModal" />
-          </v-dialog>
-      </div>
-      <!-- </template> -->
-</v-app-bar>
+      <!-- نافذة منبثقة Modal لعرض الملف الشخصي -->
+      <v-dialog v-model="profileDialog" min-width="90%" min-height="90%">
+        <ProfileModal @close="closeProfileModal" />
+      </v-dialog>
+    </div>
+    <!-- </template> -->
+  </v-app-bar>
 </template>
 
 <style lang="scss">
-.v-menu > .v-overlay__content > .v-list {
+.v-menu>.v-overlay__content>.v-list {
   border-radius: 15px;
   background-color: #383838; // #383838
 }
 
-.select2, .select2-container--default .select2-selection--single{
-        background-color: #383838 !important;
-        margin-left: 10px;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__rendered{
-        color: white !important;
-    }
-    .hr-card{
-        color: #494A4A;
-        height: 1px;
-        opacity: 1;
-    }
-    .btn-profile{
-        color: #F7F7F8;
-        border: none;
-        border-radius: 8px;
-        padding: 8px;
-        background-color: #383838;
-    }
-    input::placeholder {
-      color: white !important;
-    }
-    .form-select {
-      background-color: #383838;
-      border: none;
-      color: white;
-      margin-left: 10px;
-      --bs-form-select-bg-img: url('@/assets/imgs/vector.svg');
-      background-position: left .75rem center;
-      padding: 0.375rem .75rem .375rem 2.25rem;
-      width: max-content;
-    }
+.select2,
+.select2-container--default .select2-selection--single {
+  background-color: #383838 !important;
+  margin-left: 10px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: white !important;
+}
+
+.hr-card {
+  color: #494A4A;
+  height: 1px;
+  opacity: 1;
+}
+
+.btn-profile {
+  color: #F7F7F8;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  background-color: #383838;
+}
+
+input::placeholder {
+  color: white !important;
+}
+
+.form-select {
+  background-color: #383838;
+  border: none;
+  color: white;
+  margin-left: 10px;
+  --bs-form-select-bg-img: url('@/assets/imgs/vector.svg');
+  background-position: left .75rem center;
+  padding: 0.375rem .75rem .375rem 2.25rem;
+  width: max-content;
+}
 </style>

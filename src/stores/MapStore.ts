@@ -136,7 +136,7 @@ export const useMapStore = defineStore("MapStore", {
     isMapStatisticsError: false,
     isMapStatisticsFullscreen: false,
     isLoadingMapEntites: false,
-    unsubscribeRealtime: () => {},
+    unsubscribeRealtime: () => { },
     visibleCoordinates: {
       minLat: 0,
       maxLat: 0,
@@ -161,7 +161,7 @@ export const useMapStore = defineStore("MapStore", {
       start_date: null,
       shift: null,
       company: null,
-      type: "mina_tafweej_readiness"
+      type: "main-axes-management"
     },
     locationMapTypes: [],
     mapStageReports: {
