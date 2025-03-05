@@ -1,0 +1,37 @@
+name: Build and Zip Vue Project
+
+on:
+  pull_request:
+    types: 
+      - closed  # Trigger when the PR is closed
+    branches:
+      - main  # Target branch is 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  # Change to your preferred Node version
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Vue Project
+      run: npm run build
+
+    - name: Zip Build Directory
+      run: |
+        zip -r build.zip dist/
+
+    - name: Upload Build Zip as Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-zip
+        path: build.zip
