@@ -29,7 +29,7 @@ jobs:
         zip -r build.zip dist/
 
     - name: Upload Build Zip as Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-zip
         path: build.zip
