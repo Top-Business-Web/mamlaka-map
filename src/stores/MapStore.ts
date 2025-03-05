@@ -18,6 +18,7 @@ import { useNProgress } from "@vueuse/integrations/useNProgress";
 import "../../node_modules/nprogress/nprogress.css";
 import { ref, onValue, query, limitToLast } from "firebase/database";
 import { firestoreDB } from "@/plugins/firebase";
+import axios from "axios";
 
 const { isLoading } = useNProgress(null, {
   minimum: 0.5,
@@ -48,12 +49,26 @@ type VisibleCoordinates = {
   maxLng: number;
 };
 
-export type MapStatisticsFilterKeys = "start_date" | "shift" | "company" | "type";
+// export type MapStatisticsFilterKeys = "start_date" | "shift" | "company" | "type";
+
+// export interface MapStatisticsFilters {
+//   start_date: string | null;
+//   shift: string | null;
+//   company: string | null;
+//   type: string | null;
+// }
+
+// export interface MapStatisticsFilterResponse {
+//   key: MapStatisticsFilterKeys;
+//   values: { name: string; value: string }[];
+// }
+
+export type MapStatisticsFilterKeys = "search" | "parent" | "period" | "type";
 
 export interface MapStatisticsFilters {
-  start_date: string | null;
-  shift: string | null;
-  company: string | null;
+  search: string | null;
+  parent: string | null;
+  period: string | null;
   type: string | null;
 }
 
@@ -124,7 +139,7 @@ interface MapStoreState {
 export const useMapStore = defineStore("MapStore", {
   state: (): MapStoreState => ({
     mapInstance: null,
-    mapCenter: { lat: 21.4230661, lng: 39.8237069 }, //{ lat: 21.4151879, lng: 39.906732 }, // { lat: 21.4230661, lng: 39.8237069 }, // 21.4151879,39.906732
+    mapCenter: { lat: 21.4330661, lng: 39.8837069 }, //{ lat: 21.4151879, lng: 39.906732 }, // { lat: 21.4230661, lng: 39.8237069 }, // 21.4151879,39.906732
     isMapDataLoading: true,
     locations: [],
     entites: [],
@@ -158,10 +173,10 @@ export const useMapStore = defineStore("MapStore", {
     mapStatisticsFiltersResponse: [],
     mapStatisticsTasks: [],
     mapStatisticsFilters: {
-      start_date: null,
-      shift: null,
-      company: null,
-      type: "main-axes-management"
+      search: null,
+      parent: "0",
+      period: null,
+      type: null
     },
     locationMapTypes: [],
     mapStageReports: {
@@ -201,39 +216,37 @@ export const useMapStore = defineStore("MapStore", {
       const entitesData: MapLocation[] = [];
 
       try {
-        this.isMapDataLoading = true;
-        isLoading.value = true;
+        // this.isMapDataLoading = true;
+        // isLoading.value = true;
+        // onValue(
+        //   locationsRef,
+        //   async (snapshot) => {
+        //     snapshot.forEach((childSnapshot) => {
+        //       const childData = childSnapshot.val();
 
-        onValue(
-          locationsRef,
-          async (snapshot) => {
-            snapshot.forEach((childSnapshot) => {
-              const childData = childSnapshot.val();
+        //       if (childData && childData.id) {
+        //         if (childData.type === "observer" && this.displayObservers) {
+        //           locationsData.push({
+        //             id: childData.id,
+        //             lat: childData.lat,
+        //             lng: childData.lng,
+        //             user_type: childData.type
+        //           });
+        //         } else if (childData.type === "operator" && this.displayOperators) {
+        //           locationsData.push({
+        //             id: childData.id,
+        //             lat: childData.lat,
+        //             lng: childData.lng,
+        //             user_type: childData.type
+        //           });
+        //         }
+        //       }
+        //     });
 
-              if (childData && childData.id) {
-                if (childData.type === "observer" && this.displayObservers) {
-                  locationsData.push({
-                    id: childData.id,
-                    lat: childData.lat,
-                    lng: childData.lng,
-                    user_type: childData.type
-                  });
-                } else if (childData.type === "operator" && this.displayOperators) {
-                  locationsData.push({
-                    id: childData.id,
-                    lat: childData.lat,
-                    lng: childData.lng,
-                    user_type: childData.type
-                  });
-                }
-              }
-            });
-
-            this.locations = locationsData;
-          },
-          { onlyOnce: true }
-        );
-
+        //     this.locations = locationsData;
+        //   },
+        //   { onlyOnce: true }
+        // );
         // const { minLat, maxLat, minLng, maxLng } = this.visibleCoordinates;
         // const q = query(
         //   collection(db, "locations"),
@@ -257,6 +270,8 @@ export const useMapStore = defineStore("MapStore", {
 
         //   this.locations = locationsData;
         // });
+        const res = await axios.get(`api/v1/map/getAreasWithoutAxis`);
+        this.locations = res.data.data
       } catch (err) {
         console.error("Error fetching data from reltime firebase DB:", err);
         // toast.error(`<p>حدث خطأ غير متوقع اثناء جلب الإحداثيات على الخريطة</p>`);
@@ -273,18 +288,17 @@ export const useMapStore = defineStore("MapStore", {
 
           const { minLat, maxLat, minLng, maxLng } = this.visibleCoordinates;
           const q = firestoreQuery(
-            collection(firestoreDB, "locations"),
+            collection(firestoreDB, "users"),
             and(
               // where("user_type", "in", this.getUserTypeParams()),
               where("lat", ">=", minLat),
               where("lat", "<=", maxLat),
-              where("lng", ">=", minLng),
-              where("lng", "<=", maxLng)
+              where("long", ">=", minLng),
+              where("long", "<=", maxLng)
             ),
             orderBy("lat"),
             limit(500)
           );
-
           const querySnapshot = await getDocs(q);
           querySnapshot.forEach((doc) => {
             entitesData.push(doc.data());
@@ -404,12 +418,20 @@ export const useMapStore = defineStore("MapStore", {
         this.isLoadingMapEntites = false;
       }
     },
+    // resetStatisticsFilters() {
+    //   this.mapStatisticsFilters = {
+    //     start_date: null,
+    //     shift: null,
+    //     company: null,
+    //     type: "mina_tafweej_readiness"
+    //   };
+    // },
     resetStatisticsFilters() {
       this.mapStatisticsFilters = {
-        start_date: null,
-        shift: null,
-        company: null,
-        type: "mina_tafweej_readiness"
+        search: null,
+        parent: "0",
+        period: null,
+        type: null
       };
     },
     resetMapStatisticsAttendance() {

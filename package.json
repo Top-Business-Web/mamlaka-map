@@ -28,6 +28,7 @@
         "dayjs": "^1.11.11",
         "firebase": "^10.12.1",
         "gsap": "^3.12.5",
+        "lodash.debounce": "^4.0.8",
         "mapbox-gl": "^3.3.0",
         "nprogress": "^0.2.0",
         "pinia": "^2.1.7",
