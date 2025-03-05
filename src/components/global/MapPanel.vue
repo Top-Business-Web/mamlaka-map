@@ -11,7 +11,6 @@ import ComplaintsPanel from "./panels/ComplaintsPanel.vue";
 import DailyReportsPanel from "./panels/DailyReportsPanel.vue";
 import FieldTeamsPanel from "./panels/FieldTeamsPanel.vue";
 import LocationsPanel from "./panels/LocationsPanel.vue";
-import PreperationPanel from "./panels/PreperationPanel.vue";
 import SupervisorsPanel from "./panels/SupervisorsPanel.vue";
 import { useMapStore } from "@/stores/MapStore";
 
@@ -212,7 +211,7 @@ onMounted(() => {
   mapStore.getMapStatistics();
 });
 
-import brandMark from "@/assets/imgs/Brandmark.png";
+import brandMark from "@/assets/imgs/logo.png";
 import refreshIcon from "@/assets/imgs/refresh.png";
 import maximizeIcon from "@/assets/imgs/maximize.png";
 import minimizeIcon from "@/assets/imgs/minimize.png";
@@ -226,7 +225,7 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
           :hide-actions="mapStore.isMapStatisticsFullscreen" :class="{ 'pe-0': mapStore.isMapStatisticsFullscreen }">
           <template v-slot:default="{ expanded }">
             <div ref="panelTitle" class="w-100 d-flex align-center justify-space-between">
-              <h2 style="min-width: 10rem" class="text-h6 font-weight-bold" @click="(e) => e.stopPropagation()">
+              <h2 style="min-width: 10rem" class="text-h6 font-weight-bold m-0" @click="(e) => e.stopPropagation()">
                 <img :src="brandMark" style="height: 50px" />
               </h2>
               <transition name="list" mode="out-in">
@@ -287,13 +286,12 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
         </v-expansion-panel-text>
         <v-expansion-panel-text v-else :class="[mapStore.isMapStatisticsError ? 'justify-center align-center' : '']"
           :style="`height: calc(100% - ${restPanelHeight})`">
-          <MainAxesPanel v-if="mapStore.mapStatisticsFilters.type == 'main-axes-management'" />
-          <ComplaintsPanel v-if="mapStore.mapStatisticsFilters.type == 'complaints-management'" />
-          <DailyReportsPanel v-if="mapStore.mapStatisticsFilters.type == 'daily-reports-management'" />
-          <FieldTeamsPanel v-if="mapStore.mapStatisticsFilters.type == 'field-teams-management'" />
-          <LocationsPanel v-if="mapStore.mapStatisticsFilters.type == 'locations-management'" />
-          <PreperationPanel v-if="mapStore.mapStatisticsFilters.type == 'preparation-management'" />
-          <SupervisorsPanel v-if="mapStore.mapStatisticsFilters.type == 'supervisors-reports-management'" />
+          <MainAxesPanel v-if="mapStore.mapStatisticsFilters.parent == '0'" />
+          <LocationsPanel v-if="mapStore.mapStatisticsFilters.parent == '1'" />
+          <DailyReportsPanel v-if="mapStore.mapStatisticsFilters.parent == '2'" />
+          <FieldTeamsPanel v-if="mapStore.mapStatisticsFilters.parent == '3'" />
+          <ComplaintsPanel v-if="mapStore.mapStatisticsFilters.parent == '4'" />
+          <SupervisorsPanel v-if="mapStore.mapStatisticsFilters.parent == '5'" />
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>

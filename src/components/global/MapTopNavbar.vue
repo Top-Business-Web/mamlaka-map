@@ -6,13 +6,19 @@ import avataImg from "@/assets/imgs/image1.png";
 import ProfileModal from '@/components/global/ProfileModal.vue';
 const mapStore = useMapStore();
 const isMenuOpen = ref<boolean>(false);
-const selectedType = ref<String>("main-axes-management");
+const searchText = ref<string>("");
+const selectedParent = ref<string>("0");
+const selectedPeriod = ref<string>("");
+const selectedType = ref<string>("");
 
 const handleFilter = (key: MapStatisticsFilterKeys, value: string) => {
   mapStore.updateMapStatisticsFilter(key, value);
   mapStore.getMapStatistics();
 };
 
+watch(searchText, () => { handleFilter("search", searchText.value) });
+watch(selectedParent, () => { handleFilter("parent", selectedParent.value) });
+watch(selectedPeriod, () => { handleFilter("period", selectedPeriod.value) });
 watch(selectedType, () => { handleFilter("type", selectedType.value) });
 
 // const getFilterLabel = (Key: MapStatisticsFilterKeys) => {
@@ -134,28 +140,30 @@ const closeProfileModal = () => {
     <div style="width: 70%; display: flex; justify-content: space-between;">
       <div class="d-flex">
         <input class="form-control ms-2"
-          style="border-radius: 8px; background-color: #303030; font-size:12px; color: white; border: none;"
-          type="search" placeholder="البحث عن تقرير يومي..." aria-label="Search">
+          style="max-width: 300px; border-radius: 8px; background-color: #303030; color: white; border: none;"
+          type="search" placeholder="البحث عن تقرير يومي..." aria-label="Search" v-model="searchText">
+        <select class="form-select" aria-label="Default select example" v-model="selectedParent">
+          <option value="0" selected>إدارة المحاور الرئيسية</option>
+          <option value="1">إدارة المواقع الجغرافية</option>
+          <option value="2">إدارة التقارير اليومية</option>
+          <option value="3">إدارة الفرق الميدانية</option>
+          <option value="4">إدارة البلاغات</option>
+          <option value="5">إدارة تقارير المشرفين</option>
+        </select>
+        <select class="form-select" aria-label="Default select example" v-model="selectedPeriod">
+          <option value="" selected>الفترة الزمنية</option>
+          <option value="0">منذ يوم</option>
+          <option value="1">منذ أسبوع</option>
+          <option value="2">منذ شهر</option>
+          <option value="3">منذ سنة</option>
+        </select>
         <select class="form-select" aria-label="Default select example" v-model="selectedType">
-          <option value="main-axes-management" selected>إدارة المحاور الرئيسية</option>
-          <option value="locations-management">إدارة المواقع الجغرافية</option>
-          <option value="daily-reports-management">إدارة التقارير اليومية</option>
-          <option value="preparation-management">إدارة التحضير</option>
-          <option value="field-teams-management">إدارة الفرق الميدانية</option>
-          <option value="complaints-management">إدارة البلاغات</option>
-          <option value="supervisors-reports-management">إدارة تقارير المشرفين</option>
-        </select>
-        <select class="form-select" aria-label="Default select example">
-          <option selected>الفترة الزمنية</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-        </select>
-        <select class="form-select" aria-label="Default select example">
-          <option selected> الكل</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
+          <option value="" selected> الكل</option>
+          <option value="0">موقف</option>
+          <option value="1">باص</option>
+          <option value="2">سكة حديدية</option>
+          <option value="3">طريق</option>
+          <option value="4">محطة</option>
         </select>
       </div>
 
