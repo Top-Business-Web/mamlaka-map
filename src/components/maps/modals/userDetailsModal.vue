@@ -36,6 +36,8 @@ async function getUserDetails() {
         const res = await http.get(`v1/map/getUserDetails/${userId.value}`)
         userDetails.value = res.data.data
         reports.value = userDetails.value.daily_reports
+        console.log(reports.value);
+
     } catch (error) {
         console.log(error);
     } finally {
@@ -53,8 +55,10 @@ onMounted(getUserDetails)
             <v-card class="modal_card">
                 <v-card-title class="d-flex align-center justify-space-between text-h6 py-3">
                     <h2 class="text-h6 m-0 font-weight-bold">معلومات الموظف</h2>
-                    <v-btn color="#666666" icon variant="text" @click="isActive.value = false">
-                        <v-icon icon="mdi-close"></v-icon>
+                    <v-btn color="#303030" @click="isActive.value = false">
+                        <div class="d-flex align-items-center ga-1">
+                            <v-icon color="white" icon="mdi-close"></v-icon> إغلاق
+                        </div>
                     </v-btn>
                 </v-card-title>
                 <hr class="mt-0">

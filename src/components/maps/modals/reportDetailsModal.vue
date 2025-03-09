@@ -14,10 +14,6 @@ const props = defineProps({
     userId: null,
 })
 
-console.log(props.markerId);
-console.log(props.userId);
-
-
 const searchInput = ref("")
 const isLoading = ref(false)
 const reportId = ref(props.markerId)
@@ -36,7 +32,6 @@ async function getReportDetails() {
         isLoading.value = false
     }
 }
-
 onMounted(getReportDetails)
 
 </script>
@@ -52,8 +47,10 @@ onMounted(getReportDetails)
                             تقرير يومي {{ reportDetails.date }}
                         </h2>
                     </div>
-                    <v-btn color="#666666" icon variant="text" @click="isActive.value = false">
-                        <v-icon icon="mdi-close"></v-icon>
+                    <v-btn color="#303030" @click="isActive.value = false">
+                        <div class="d-flex align-items-center ga-1">
+                            <v-icon color="white" icon="mdi-close"></v-icon> إغلاق
+                        </div>
                     </v-btn>
                 </v-card-title>
                 <hr class="mt-0">
@@ -81,8 +78,21 @@ onMounted(getReportDetails)
                             </div>
                             <hr>
                             <div class="details_wrapper">
-                                <v-skeleton-loader v-if="isLoading" width="100%" height="1.2rem"></v-skeleton-loader>
-                                <p v-else> لا توجد أسئلة</p>
+                                <div v-if="isLoading" class="w-100">
+                                    <v-skeleton-loader v-for="i in 6" width="100%" height="3rem"
+                                        style="margin: 15px 0;"></v-skeleton-loader>
+                                </div>
+                                <v-expansion-panels variant="accordion" v-else>
+                                    <v-expansion-panel v-for="report in reportDetails.questions"
+                                        :title="report.question" bg-color="#303030" selected-class="expandedQuestion">
+                                        <v-expansion-panel-text bg-color="#383838">
+                                            <div class="answers_wrapper">
+                                                <h1 v-if="report.answer_type == 0">مقالي</h1>
+                                                <h1 v-else v-for="answer in report.answers">{{ answer.answer }}</h1>
+                                            </div>
+                                        </v-expansion-panel-text>
+                                    </v-expansion-panel>
+                                </v-expansion-panels>
                             </div>
                         </div>
                     </div>
@@ -95,6 +105,10 @@ onMounted(getReportDetails)
 <style scoped>
 * {
     font-size: 14px;
+}
+
+.expandedQuestion {
+    background-color: red;
 }
 
 .modal_card {
@@ -173,5 +187,18 @@ onMounted(getReportDetails)
     color: #9EA3A5;
     font-weight: 500;
     margin-top: 2px;
+}
+
+.box .details_wrapper .answers_wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.box .details_wrapper .answers_wrapper>* {
+    flex: 1;
+    background-color: #383838;
+    padding: 15px;
+    border-radius: 5px;
 }
 </style>

@@ -40,6 +40,7 @@ watch(searchQuery, getAxes);
 
 async function getAreas() {
     selectedArea.value = '';
+    fetchedAreas.value = null;
     const axisId = selectedAxis.value.id;
     try {
         const res = await http.get(`v1/map/getAreas/${axisId}`);

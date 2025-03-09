@@ -22,83 +22,6 @@ const detailsSearchQuery = reactive({
 });
 const isLoading = ref(false)
 
-const complaintsStatusData = {
-    datasets: [
-        {
-            label: 'نسبة الالتزام بالإجابة بلا لسؤال معين',
-            data: [70],
-            borderWidth: 0,
-            radius: "80%",
-            cutout: 0,
-            circumference: 360 * 70 / 100,
-            backgroundColor: '#35685F',
-        },
-        {
-            label: 'نسبة الالتزام بالإجابة بنعم لسؤال معين',
-            data: [30],
-            borderWidth: 0,
-            radius: "80%",
-            backgroundColor: '#C05E5E',
-            circumference: 360 * 30 / 100,
-            rotation: -360 * 30 / 100,
-        }
-    ],
-}
-const complaintsPeriorityData = {
-    datasets: [
-        {
-            label: 'نسبة الالتزام بالإجابة بلا لسؤال معين',
-            data: [60],
-            borderWidth: 0,
-            radius: "80%",
-            cutout: 0,
-            circumference: 360 * 60 / 100,
-            backgroundColor: '#C05E5E',
-        },
-        {
-            label: 'نسبة الالتزام بالإجابة بنعم لسؤال معين',
-            data: [30],
-            borderWidth: 0,
-            radius: "80%",
-            circumference: 360 * 30 / 100,
-            rotation: -360 * 40 / 100,
-            backgroundColor: '#857854',
-        },
-        {
-            label: 'نسبة الالتزام بالإجابة بنعم لسؤال معين',
-            data: [10],
-            borderWidth: 0,
-            cutout: "64%",
-            radius: "80%",
-            circumference: 360 * 10 / 100,
-            rotation: -360 * 10 / 100,
-            backgroundColor: '#35685F',
-            weight: 0.8
-        }
-    ],
-}
-
-function generateConfig(data) {
-    const config = {
-        type: 'doughnut',
-        data: data,
-        options: {
-            plugins: {
-                legend: {
-                    display: true,
-                    position: "bottom",
-                    labels: {
-                        padding: 30,
-                        usePointStyle: true,
-                        color: '#c1c1c1'
-                    }
-                }
-            }
-        }
-    }
-    return config
-}
-
 async function getReports() {
     try {
         const params = Object.fromEntries(
@@ -122,6 +45,9 @@ async function getDetails() {
         );
         const res = await http.get(`v1/map/getDetailsForParent4`, { params });
         fetchedDetails.value = res.data.data
+        console.log(fetchedDetails.value);
+
+        generateCharts();
         isLoading.value = false
     } catch (error) {
         console.log("fetch failed", error);
@@ -129,11 +55,96 @@ async function getDetails() {
 }
 watch(selectedReport, getDetails, { deep: true });
 
-onMounted(async () => {
-    await getReports();
-    // new Chart(complaintsStatus, generateConfig(complaintsStatusData));
-    // new Chart(complaintsPeriority, generateConfig(complaintsPeriorityData));
-})
+function generateCharts() {
+    const complaintsStatusData = {
+        datasets: [
+            {
+                label: 'بلاغات مفتوحة',
+                data: [fetchedDetails.value.openNoticesCount / fetchedDetails.value.notice * 100],
+                borderWidth: 0,
+                radius: "80%",
+                cutout: 0,
+                circumference: 360 * (fetchedDetails.value.openNoticesCount / fetchedDetails.value.notice * 100) / 100,
+                backgroundColor: '#35685F',
+            },
+            {
+                label: 'بلاغات مقفولة',
+                data: [fetchedDetails.value.closedNoticesCount / fetchedDetails.value.notice * 100],
+                borderWidth: 0,
+                radius: "80%",
+                backgroundColor: '#C05E5E',
+                circumference: 360 * (fetchedDetails.value.closedNoticesCount / fetchedDetails.value.notice * 100) / 100,
+                rotation: -360 * (fetchedDetails.value.closedNoticesCount / fetchedDetails.value.notice * 100) / 100,
+            }
+        ],
+    }
+    const complaintsPeriorityData = {
+        datasets: [
+            {
+                label: 'عالية الأهمية',
+                data: [fetchedDetails.value.highNoticesCount / fetchedDetails.value.notice * 100],
+                borderWidth: 0,
+                radius: "80%",
+                cutout: 0,
+                circumference: 360 * (fetchedDetails.value.highNoticesCount / fetchedDetails.value.notice * 100) / 100,
+                backgroundColor: '#C05E5E',
+            },
+            {
+                label: 'متوسطة الأهمية',
+                data: [fetchedDetails.value.midNoticesCount / fetchedDetails.value.notice * 100],
+                borderWidth: 0,
+                radius: "80%",
+                circumference: 360 * (fetchedDetails.value.midNoticesCount / fetchedDetails.value.notice * 100) / 100,
+                rotation: -360 * ((fetchedDetails.value.midNoticesCount / fetchedDetails.value.notice * 100) + (fetchedDetails.value.lowNoticesCount / fetchedDetails.value.notice * 100)) / 100,
+                backgroundColor: '#857854',
+            },
+            {
+                label: 'منخفضة الأهمية',
+                data: [fetchedDetails.value.lowNoticesCount / fetchedDetails.value.notice * 100],
+                borderWidth: 0,
+                cutout: "64%",
+                radius: "80%",
+                circumference: 360 * (fetchedDetails.value.lowNoticesCount / fetchedDetails.value.notice * 100) / 100,
+                rotation: -360 * (fetchedDetails.value.lowNoticesCount / fetchedDetails.value.notice * 100) / 100,
+                backgroundColor: '#35685F',
+                weight: 0.8
+            }
+        ],
+    }
+    function generateConfig(data) {
+        const config = {
+            type: 'doughnut',
+            data: data,
+            options: {
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: "bottom",
+                        labels: {
+                            padding: 30,
+                            usePointStyle: true,
+                            color: '#c1c1c1'
+                        }
+                    }
+                }
+            }
+        }
+        return config
+    }
+
+
+    if (complaintsStatusChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(complaintsStatusChart).destroy();
+    }
+    new Chart(complaintsStatusChart, generateConfig(complaintsStatusData));
+
+    if (complaintsPeriorityChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(complaintsPeriorityChart).destroy();
+    }
+    new Chart(complaintsPeriorityChart, generateConfig(complaintsPeriorityData));
+}
+
+onMounted(getReports)
 
 </script>
 <template>
@@ -156,10 +167,9 @@ onMounted(async () => {
                         ? 'background-color: #303030; margin-top: 20px;'
                         : ''
                 ]">
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
+                <v-col cols="12">
                     <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                        style="background-color: transparent"
-                        :style="[mapStore.isMapStatisticsFullscreen ? 'border-left: 1px solid #494A4A; border-radius: 0;' : '']">
+                        style="background-color: transparent">
                         <div class="w-100 h-100 d-flex flex-column">
                             <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
                                 max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
@@ -182,138 +192,9 @@ onMounted(async () => {
                         </div>
                     </v-card>
                 </v-col>
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                    <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                        style="background-color: transparent"
-                        :style="[mapStore.isMapStatisticsFullscreen ? 'border-left: 1px solid #494A4A; border-radius: 0;' : '']">
-                        <div class="w-100 h-100 d-flex flex-column">
-                            <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
-                                max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                            <h3 v-else class="font-weight-bold" style="color: #857854;">
-                                {{ fetchedDetails.openNoticesCount }}
-                                <!-- {{
-                                    convertNumberWithSeperator(
-                                        parseValueToActialNumber(14456, 0),
-                                        "٬"
-                                    )
-                                }} -->
-                            </h3>
-                            <div class="d-flex" style="justify-content: space-between">
-                                <span style="font-size: 0.9rem">البلاغات المفتوحة</span>
-                                <!-- <div class="status-normal d-flex justify-content-center">
-                                    <img style="width: 16px" class="h-16" :src="arrowRight" alt="no-icon" />
-                                    <p>0.0%</p>
-                                </div> -->
-                            </div>
-                        </div>
-                    </v-card>
-                </v-col>
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                    <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                        style="background-color: transparent"
-                        :style="[mapStore.isMapStatisticsFullscreen ? 'border-left: 1px solid #494A4A; border-radius: 0;' : '']">
-                        <div class="w-100 h-100 d-flex flex-column">
-                            <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
-                                max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                            <h3 v-else class="font-weight-bold" style="color: #857854;">
-                                {{ fetchedDetails.closedNoticesCount }}
-                                <!-- {{
-                                    convertNumberWithSeperator(
-                                        parseValueToActialNumber(14456, 0),
-                                        "٬"
-                                    )
-                                }} -->
-                            </h3>
-                            <div class="d-flex" style="justify-content: space-between">
-                                <span style="font-size: 0.9rem">البلاغات المقفولة</span>
-                                <!-- <div class="status-normal d-flex justify-content-center">
-                                    <img style="width: 16px" class="h-16" :src="arrowRight" alt="no-icon" />
-                                    <p>0.0%</p>
-                                </div> -->
-                            </div>
-                        </div>
-                    </v-card>
-                </v-col>
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                    <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                        style="background-color: transparent"
-                        :style="[mapStore.isMapStatisticsFullscreen ? 'border-left: 1px solid #494A4A; border-radius: 0;' : '']">
-                        <div class="w-100 h-100 d-flex flex-column">
-                            <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
-                                max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                            <h3 v-else class="font-weight-bold" style="color: #857854;">
-                                {{ fetchedDetails.highNoticesCount }}
-                                <!-- {{
-                                    convertNumberWithSeperator(
-                                        parseValueToActialNumber(14456, 0),
-                                        "٬"
-                                    )
-                                }} -->
-                            </h3>
-                            <div class="d-flex" style="justify-content: space-between">
-                                <span style="font-size: 0.9rem">بلاغات عالية الأهمية</span>
-                                <!-- <div class="status-normal d-flex justify-content-center">
-                                    <img style="width: 16px" class="h-16" :src="arrowRight" alt="no-icon" />
-                                    <p>0.0%</p>
-                                </div> -->
-                            </div>
-                        </div>
-                    </v-card>
-                </v-col>
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                    <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                        style="background-color: transparent"
-                        :style="[mapStore.isMapStatisticsFullscreen ? 'border-left: 1px solid #494A4A; border-radius: 0;' : '']">
-                        <div class="w-100 h-100 d-flex flex-column">
-                            <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
-                                max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                            <h3 v-else class="font-weight-bold" style="color: #857854;">
-                                {{ fetchedDetails.lowNoticesCount }}
-                                <!-- {{
-                                    convertNumberWithSeperator(
-                                        parseValueToActialNumber(14456, 0),
-                                        "٬"
-                                    )
-                                }} -->
-                            </h3>
-                            <div class="d-flex" style="justify-content: space-between">
-                                <span style="font-size: 0.9rem">بلاغات منخفضة الأهمية</span>
-                                <!-- <div class="status-normal d-flex justify-content-center">
-                                    <img style="width: 16px" class="h-16" :src="arrowRight" alt="no-icon" />
-                                    <p>0.0%</p>
-                                </div> -->
-                            </div>
-                        </div>
-                    </v-card>
-                </v-col>
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                    <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                        style="background-color: transparent">
-                        <div class="w-100 h-100 d-flex flex-column">
-                            <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
-                                max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                            <h3 v-else class="font-weight-bold" style="color: #857854;">
-                                {{ fetchedDetails.midNoticesCount }}
-                                <!-- {{
-                                    convertNumberWithSeperator(
-                                        parseValueToActialNumber(14456, 0),
-                                        "٬"
-                                    )
-                                }} -->
-                            </h3>
-                            <div class="d-flex" style="justify-content: space-between">
-                                <span style="font-size: 0.9rem">بلاغات متوسطة الأهمية</span>
-                                <!-- <div class="status-normal d-flex justify-content-center">
-                                    <img style="width: 16px" class="h-16" :src="arrowRight" alt="no-icon" />
-                                    <p>0.0%</p>
-                                </div> -->
-                            </div>
-                        </div>
-                    </v-card>
-                </v-col>
             </v-row>
-            <!-- <hr>
             <v-row>
+                <canvas id="blank" style="display: none;" aria-label="Hello ARIA World" role="img"></canvas>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100 h-100" style="background-color: #303030; padding: 15px;">
                         <div class="w-100">
@@ -323,17 +204,18 @@ onMounted(async () => {
                         <div class="chart_wrapper position-relative"
                             :class="`${mapStore.isMapStatisticsFullscreen ? 'w-50' : ''}`">
                             <h3 class="position-absolute">
-                                {{
+                                {{ fetchedDetails.notice }}
+                                <!-- {{
                                     convertNumberWithSeperator(
                                         parseValueToActialNumber(14456, 0),
                                         "٬"
                                     )
-                                }}
+                                }} -->
                             </h3>
                             <div class="chart_legend_closed" style="--c: #C05E5E">
                                 <p>بلاغات مقفولة</p>
                             </div>
-                            <canvas id="complaintsStatus" aria-label="Hello ARIA World" role="img"></canvas>
+                            <canvas id="complaintsStatusChart" aria-label="Hello ARIA World" role="img"></canvas>
                             <div class="chart_legend_opened" style="--c: #35685F">
                                 <p>بلاغات مفتوحة</p>
                             </div>
@@ -349,27 +231,30 @@ onMounted(async () => {
                         <div class="chart_wrapper position-relative"
                             :class="`${mapStore.isMapStatisticsFullscreen ? 'w-50' : ''}`">
                             <h3 class="position-absolute">
-                                {{
+                                {{ fetchedDetails.notice }}
+                                <!-- {{
                                     convertNumberWithSeperator(
                                         parseValueToActialNumber(14456, 0),
                                         "٬"
                                     )
-                                }}
+                                }} -->
                             </h3>
-                            <div class="chart_legend_low" style="--c: #35685F">
-                                <p>منخفضة الأهمية</p>
-                            </div>
-                            <canvas id="complaintsPeriority" aria-label="Hello ARIA World" role="img"></canvas>
+                            <canvas id="complaintsPeriorityChart" aria-label="Hello ARIA World" role="img"></canvas>
+                        </div>
+                        <div class="legend_wrapper">
                             <div class="chart_legend_high" style="--c: #C05E5E">
-                                <p>عالية الأهمية</p>
+                                <p>عالية الأهمية: <b>{{ fetchedDetails.highNoticesCount }}</b></p>
                             </div>
                             <div class="chart_legend_medium" style="--c: #857854">
-                                <p>متوسطة الأهمية</p>
+                                <p>متوسطة الأهمية: <b>{{ fetchedDetails.midNoticesCount }}</b></p>
+                            </div>
+                            <div class="chart_legend_low" style="--c: #35685F">
+                                <p>منخفضة الأهمية: <b>{{ fetchedDetails.lowNoticesCount }}</b></p>
                             </div>
                         </div>
                     </v-card>
                 </v-col>
-            </v-row> -->
+            </v-row>
             <v-row>
                 <v-col v-if="isLoading" :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`"
                     v-for="question in fetchedDetails.axisQuestions">
@@ -460,25 +345,19 @@ onMounted(async () => {
     display: grid;
     place-items: center;
     margin: auto;
-    min-height: 500px;
+    min-height: 400px;
 }
 
-[class*="chart_legend_"] {
+.chart_legend_closed {
     position: absolute;
-    width: 150px;
     text-align: center;
-}
-
-.chart_legend_closed,
-.chart_legend_low {
     top: 30px;
     left: 10px;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--c);
 }
 
-.chart_legend_closed::before,
-.chart_legend_low::before {
+.chart_legend_closed::before {
     content: "";
     position: absolute;
     bottom: -1px;
@@ -486,20 +365,20 @@ onMounted(async () => {
     height: 1px;
     width: 100px;
     background-color: var(--c);
-    transform: translateX(100%) rotate(30deg);
+    transform: translateX(100%) rotate(45deg);
     transform-origin: 0;
 }
 
-.chart_legend_opened,
-.chart_legend_high {
+.chart_legend_opened {
+    position: absolute;
+    text-align: center;
     bottom: 30px;
     right: 0;
     padding-top: 10px;
     border-top: 2px solid var(--c);
 }
 
-.chart_legend_opened::before,
-.chart_legend_high::before {
+.chart_legend_opened::before {
     content: "";
     position: absolute;
     top: -2px;
@@ -511,22 +390,26 @@ onMounted(async () => {
     transform-origin: 100%;
 }
 
-.chart_legend_medium {
-    bottom: 150px;
-    left: -20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--c);
+.legend_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-top: -30px;
+    margin-bottom: 15px;
 }
 
-.chart_legend_medium::before {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    right: 1px;
-    height: 1px;
-    width: 50px;
-    background-color: var(--c);
-    transform: translateX(100%) rotate(-30deg);
-    transform-origin: 0;
+.legend_wrapper [class*="chart_legend"] {
+    padding-right: 10px;
+    border-right: 5px solid var(--c);
+    padding-inline: 10px;
+}
+
+.legend_wrapper [class*="chart_legend"] p {
+    color: #ffffff90;
+}
+
+.legend_wrapper [class*="chart_legend"] b {
+    color: #ffffff;
 }
 </style>
