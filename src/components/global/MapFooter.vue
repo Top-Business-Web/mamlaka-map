@@ -8,29 +8,29 @@ import { useMapStore } from "@/stores/MapStore";
 // import homesData from "@/data/homes-data.json";
 
 import selaLogo from "@/assets/imgs/full_royal_comm.png";
-import companyLogo from "@/assets/imgs/Brandmark.png";
+import companyLogo from "@/assets/imgs/logo.png";
 
 const mapStore = useMapStore();
 
 // const adding = ref(false);
-const displyOperators = ref(true);
-const displyObservers = ref(true);
-const displayEntities = ref(true);
+// const displyOperators = ref(true);
+// const displyObservers = ref(true);
+// const displayEntities = ref(true);
 
-watch(displyOperators, (status) => {
-  mapStore.toggleLocationTypeVisibility("Operators", status);
-  mapStore.updateMapLocations();
-});
+// watch(displyOperators, (status) => {
+//   mapStore.toggleLocationTypeVisibility("Operators", status);
+//   mapStore.updateMapLocations();
+// });
 
-watch(displyObservers, (status) => {
-  mapStore.toggleLocationTypeVisibility("Observers", status);
-  mapStore.updateMapLocations();
-});
+// watch(displyObservers, (status) => {
+//   mapStore.toggleLocationTypeVisibility("Observers", status);
+//   mapStore.updateMapLocations();
+// });
 
-watch(displayEntities, (status) => {
-  mapStore.toggleLocationTypeVisibility("Entities", status);
-  mapStore.updateMapLocations();
-});
+// watch(displayEntities, (status) => {
+//   mapStore.toggleLocationTypeVisibility("Entities", status);
+//   mapStore.updateMapLocations();
+// });
 
 // const addData = async () => {
 //   try {
@@ -60,29 +60,16 @@ watch(displayEntities, (status) => {
         <v-img :src="companyLogo" width="110"></v-img>
       </div>
 
-      <transition name="scale" mode="out-in">
+      <transition name="scale">
         <div v-if="!mapStore.isMapStatisticsFullscreen" class="d-flex align-center ga-4">
-          <!-- <v-btn @click="addData" color="primary" :loading="adding" :disabled="adding">ADD DATA</v-btn> -->
-          <v-switch v-model="displayEntities" label="عرض المساكن" hide-details inset
-            class="custom-switch custom-switch--primary"></v-switch>
-          <!-- color="#A788FF" -->
-          <v-switch v-model="displyOperators" label="عرض المشرفين" hide-details inset
-            class="custom-switch custom-switch--move"></v-switch>
-          <!-- custom-switch--purple -->
-          <v-switch v-model="displyObservers" label="عرض المراقبين" hide-details inset
-            class="custom-switch custom-switch--primary"></v-switch>
+          <v-switch :model-value="true" label="عرض الموظفين" hide-details inset class="custom-switch" color="#857854"
+            @click="$emit('showMarkers', $event.target)"></v-switch>
+          <v-switch :model-value="true" label="عرض المشرفين" hide-details inset class="custom-switch" color="#35685F"
+            @click="$emit('showMarkers', $event.target)"></v-switch>
+          <v-switch :model-value="true" label="عرض المواقع" hide-details inset class="custom-switch" color="#5FA6A6"
+            @click="$emit('showMarkers', $event.target)"></v-switch>
         </div>
       </transition>
     </div>
   </v-footer>
 </template>
-
-<style lang="scss">
-.v-menu>.v-overlay__content>.v-list.time-between-list {
-  border-radius: 15px;
-  background-color: #383838;
-}
-
-// .v-switch.custom-switch--primary input:not(:checked) + .v-switch__thumb {
-//   background-color: #fff;
-// }</style>

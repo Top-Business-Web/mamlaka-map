@@ -9,8 +9,6 @@ const isActiveSidebar = ref<boolean>(false);
     <v-app>
       <v-container fluid class="h-100 pa-0">
         <v-layout class="h-100">
-          <MapTopNavbar />
-
           <v-main class="h-100">
             <router-view v-slot="{ Component }">
               <transition name="scale" mode="out-in">
@@ -18,8 +16,6 @@ const isActiveSidebar = ref<boolean>(false);
               </transition>
             </router-view>
           </v-main>
-
-          <MapFooter />
         </v-layout>
       </v-container>
     </v-app>
@@ -30,5 +26,5 @@ const isActiveSidebar = ref<boolean>(false);
 body .v-main {
   --v-layout-top: 0 !important;
 }
-//dddd
-</style>
+
+//dddd</style>

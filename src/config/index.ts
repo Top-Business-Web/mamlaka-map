@@ -1,4 +1,4 @@
-export const apiBaseUrl = "https://zimam-nsk-app.zimam.sa/api/";
+export const apiBaseUrl = "https://admin-rcmc.zimamapps.com/api/";
 
 export const httpToken =
   "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE2Nzc2MzAxLCJleHAiOjIxODMzMzYzMDEsIm5iZiI6MTcxNjc3NjMwMSwianRpIjoid0ZmdzhSZlE1VHFTNHJLQSIsInN1YiI6MjIzMzUsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.3RKMf1UlQSvm67KWakfBaNk5Bazl2FMUyCPFouOfvcM";

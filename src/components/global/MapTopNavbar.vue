@@ -19,7 +19,6 @@ const handleFilter = (key: MapStatisticsFilterKeys, value: string) => {
 watch(searchText, () => { handleFilter("search", searchText.value) });
 watch(selectedParent, () => { handleFilter("parent", selectedParent.value) });
 watch(selectedPeriod, () => { handleFilter("period", selectedPeriod.value) });
-watch(selectedType, () => { handleFilter("type", selectedType.value) });
 
 // const getFilterLabel = (Key: MapStatisticsFilterKeys) => {
 //   const filterLabels = {
@@ -157,7 +156,8 @@ const closeProfileModal = () => {
           <option value="2">منذ شهر</option>
           <option value="3">منذ سنة</option>
         </select>
-        <select class="form-select" aria-label="Default select example" v-model="selectedType">
+        <select class="form-select" aria-label="Default select example"
+          @click="$emit('changeTypeHandler', $event.target.value)">
           <option value="" selected> الكل</option>
           <option value="0">موقف</option>
           <option value="1">باص</option>

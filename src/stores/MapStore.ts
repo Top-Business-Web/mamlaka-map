@@ -33,6 +33,7 @@ export interface MapLocation {
   lat: number;
   lng: number;
   user_type: LocationType;
+  role: string;
 }
 
 export interface MapInstance {
@@ -116,7 +117,8 @@ interface MapStoreState {
   mapCenter: LocationPosition;
   isMapDataLoading: boolean;
   locations: MapLocation[];
-  entites: MapLocation[];
+  supervisors: MapLocation[];
+  users: MapLocation[];
   displayOperators: boolean;
   displayObservers: boolean;
   displayEntities: boolean;
@@ -142,7 +144,8 @@ export const useMapStore = defineStore("MapStore", {
     mapCenter: { lat: 21.4330661, lng: 39.8837069 }, //{ lat: 21.4151879, lng: 39.906732 }, // { lat: 21.4230661, lng: 39.8237069 }, // 21.4151879,39.906732
     isMapDataLoading: true,
     locations: [],
-    entites: [],
+    supervisors: [],
+    users: [],
     displayOperators: true,
     displayObservers: true,
     displayEntities: true,
@@ -209,79 +212,8 @@ export const useMapStore = defineStore("MapStore", {
 
       return queryUserTypeParams;
     },
-    async getMapLocations(refreshData: boolean = false) {
-      // if (!this.visibleCoordinates?.minLat || !this.visibleCoordinates?.minLng) return;
-      const locationsRef = query(ref(db, "tracking")); // limitToLast(800)
-      const locationsData: MapLocation[] = [];
-      const entitesData: MapLocation[] = [];
-
-      try {
-        // this.isMapDataLoading = true;
-        // isLoading.value = true;
-        // onValue(
-        //   locationsRef,
-        //   async (snapshot) => {
-        //     snapshot.forEach((childSnapshot) => {
-        //       const childData = childSnapshot.val();
-
-        //       if (childData && childData.id) {
-        //         if (childData.type === "observer" && this.displayObservers) {
-        //           locationsData.push({
-        //             id: childData.id,
-        //             lat: childData.lat,
-        //             lng: childData.lng,
-        //             user_type: childData.type
-        //           });
-        //         } else if (childData.type === "operator" && this.displayOperators) {
-        //           locationsData.push({
-        //             id: childData.id,
-        //             lat: childData.lat,
-        //             lng: childData.lng,
-        //             user_type: childData.type
-        //           });
-        //         }
-        //       }
-        //     });
-
-        //     this.locations = locationsData;
-        //   },
-        //   { onlyOnce: true }
-        // );
-        // const { minLat, maxLat, minLng, maxLng } = this.visibleCoordinates;
-        // const q = query(
-        //   collection(db, "locations"),
-        //   and(
-        //     where("user_type", "in", this.getUserTypeParams()),
-        //     where("lat", ">=", minLat),
-        //     where("lat", "<=", maxLat),
-        //     where("lng", ">=", minLng),
-        //     where("lng", "<=", maxLng)
-        //   ),
-        //   orderBy("lat"),
-        //   limit(500)
-        // );
-
-        // this.unsubscribeRealtime = onSnapshot(q, (querySnapshot) => {
-        //   const locationsData: MapLocation[] = [];
-
-        //   querySnapshot.forEach((doc) => {
-        //     locationsData.push(doc.data() as MapLocation);
-        //   });
-
-        //   this.locations = locationsData;
-        // });
-        const res = await axios.get(`api/v1/map/getAreasWithoutAxis`);
-        this.locations = res.data.data
-      } catch (err) {
-        console.error("Error fetching data from reltime firebase DB:", err);
-        // toast.error(`<p>حدث خطأ غير متوقع اثناء جلب الإحداثيات على الخريطة</p>`);
-      } finally {
-        this.isMapDataLoading = false;
-        setTimeout(() => {
-          isLoading.value = false;
-        }, 1000);
-      }
-
+    async getMapUsers(refreshData: boolean = false) {
+      const usersData: MapLocation[] = [];
       try {
         if (this.displayEntities && !refreshData) {
           // this.getMapEntites();
@@ -301,20 +233,25 @@ export const useMapStore = defineStore("MapStore", {
           );
           const querySnapshot = await getDocs(q);
           querySnapshot.forEach((doc) => {
-            entitesData.push(doc.data());
+            usersData.push(doc.data());
           });
 
-          this.entites = entitesData;
+          this.supervisors = usersData.filter(supervisor => (supervisor.role == "مشرف"));
+          this.users = usersData.filter(user => (user.role !== "مشرف"));
         } else {
-          this.entites = [];
+          this.supervisors = [];
+          this.users = [];
         }
       } catch (err) {
         console.error("Error fetching data from Firestore:", err);
+      } finally {
+        this.isMapDataLoading = false;
+        isLoading.value = false
       }
     },
     async updateMapLocations() {
       // this.unsubscribeRealtime();
-      this.getMapLocations();
+      this.getMapUsers();
     },
     async getMapStatistics(needLoading: boolean = true) {
       this.isMapStatisticsError = false;
@@ -324,7 +261,7 @@ export const useMapStore = defineStore("MapStore", {
       }
 
       try {
-        const res = await http.get("mobility/dashboard/auditing", {
+        const res = await axios.get("https://zimam-nsk-app.zimam.sa/api/mobility/dashboard/auditing", {
           params: this.mapStatisticsFilters
         });
         const mapSats = res.data;

@@ -3,12 +3,12 @@ import { convertNumberWithSeperator, parseValueToActialNumber } from '@/helpers/
 import { useMapStore } from '@/stores/MapStore';
 import Chart from "chart.js/auto";
 import { onMounted, reactive } from 'vue';
+import http from '@/plugins/axios';
 
 import arrowUpRight from "@/assets/imgs/arrow-up-right.png";
 import arrowDownRight from "@/assets/imgs/arrow-down-right.png";
 import arrowRight from "@/assets/imgs/arrow-right.png";
 import emptyBox from "@/assets/imgs/empty-box.svg";
-import axios from 'axios';
 
 const mapStore = useMapStore();
 const searchQuery = ref(mapStore.mapStatisticsFilters);
@@ -18,126 +18,16 @@ const fetchedDetails = ref({})
 const detailsSearchQuery = reactive({
     axis_id: "",
     area_id: "",
-    period: searchQuery.value.period ?? "3"
+    period: searchQuery.value.period
 });
 const isLoading = ref(false);
-
-// const attendanecChartData = {
-//     labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-//     datasets: [{
-//         label: 'الالتزام بالحضور',
-//         data: [69, 20, 37, 18, 63, 16, 50],
-//         pointBackgroundColor: "#35685F",
-//         pointBorderColor: "#fff",
-//         borderColor: "#35685F",
-//         fill: true,
-//         backgroundColor: "#35685F20"
-//     }, {
-//         label: 'نسبة الغياب',
-//         data: [58, 36, 48, 39, 69, 38, 30],
-//         pointBackgroundColor: "#C05E5E",
-//         pointBorderColor: "#fff",
-//         borderColor: "#C05E5E",
-//         fill: true,
-//         backgroundColor: "#C05E5E20"
-//     }]
-// }
-
-// const dailyReportsChartData = {
-//     labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-//     datasets: [{
-//         label: 'نسبة التقارير اليومية المنجزة',
-//         data: [58, 63, 78, 79, 69, 38, 30],
-//         pointBackgroundColor: "#35685F",
-//         pointBorderColor: "#fff",
-//         borderColor: "#35685F",
-//         fill: true,
-//         backgroundColor: "#35685F20"
-//     }, {
-//         label: 'نسبة التقارير اليومية الغير منجزة',
-//         data: [39, 80, 17, 18, 63, 16, 80],
-//         pointBackgroundColor: "#C05E5E",
-//         pointBorderColor: "#fff",
-//         borderColor: "#C05E5E",
-//         fill: true,
-//         backgroundColor: "#C05E5E20"
-//     }]
-// }
-
-// function generateConfig(data) {
-//     const config = {
-//         type: 'line',
-//         data: data,
-//         options: {
-//             aspectRatio: 2 / 1,
-//             layout: {
-//                 padding: 0
-//             },
-//             elements: {
-//                 point: {
-//                     radius: 6,
-//                     hoverRadius: 7,
-//                     borderWidth: 2,
-//                     hoverBorderWidth: 2,
-//                 }
-//             },
-//             tension: 0.4,
-//             scales: {
-//                 y: {
-//                     position: "right",
-//                     min: 0,
-//                     max: 100,
-//                     ticks: {
-//                         color: '#c1c1c1',
-//                         stepSize: 20,
-//                     },
-//                     grid: {
-//                         color: "#646464",
-//                     },
-//                     border: {
-//                         dash: [3, 3],
-//                     },
-//                 },
-//                 x: {
-//                     reverse: true,
-//                     ticks: {
-//                         color: '#c1c1c1',
-//                         align: "start",
-//                     },
-//                     offset: true,
-//                     grid: {
-//                         color: "#646464",
-//                     },
-//                     border: {
-//                         dash: [3, 3],
-//                     },
-//                 },
-//             },
-//             plugins: {
-//                 legend: {
-//                     display: true,
-//                     rtl: true,
-//                     position: 'bottom',
-//                     labels: {
-//                         padding: 30,
-//                         usePointStyle: true,
-//                         color: '#c1c1c1'
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     return config
-// }
-// new Chart(attendanecChart, generateConfig(attendanecChartData));
-// new Chart(dailyReportsChart, generateConfig(dailyReportsChartData));
 
 async function getAreas() {
     try {
         const params = Object.fromEntries(
             Object.entries(searchQuery.value).filter(([_, v]) => v)
         );
-        const res = await axios.get(`api/v1/map/getFilterObjects`, { params });
+        const res = await http.get(`v1/map/getFilterObjects`, { params });
         fetchedAreas.value = res.data.data.areas
     } catch (error) {
         console.log("fetch failed", error);
@@ -147,20 +37,142 @@ watch(searchQuery, getAreas, { deep: true });
 
 async function getdetails() {
     isLoading.value = true
-    detailsSearchQuery.axis_id = await selectedArea.value.axis_id
-    detailsSearchQuery.area_id = await selectedArea.value.id
+    detailsSearchQuery.axis_id = selectedArea.value.axis_id
+    detailsSearchQuery.area_id = selectedArea.value.id
     try {
         const params = Object.fromEntries(
             Object.entries(detailsSearchQuery).filter(([_, v]) => v)
         );
-        const res = await axios.get(`api/v1/map/getDetailsForParent1`, { params });
-        fetchedDetails.value = res.data.data
+        const res = await http.get(`v1/map/getDetailsForParent1`, { params });
+        fetchedDetails.value = res.data.data;
+        generateCharts();
         isLoading.value = false
     } catch (error) {
         console.log("fetch failed", error);
     }
 }
 watch(selectedArea, getdetails, { deep: true });
+
+function generateCharts() {
+    const attendaneChartData = {
+        labels: Object.keys(fetchedDetails.value.attendance_percentages),
+        datasets: [{
+            label: 'الالتزام بالحضور',
+            data: Object.values(fetchedDetails.value.attendance_percentages),
+            pointBackgroundColor: "#35685F",
+            pointBorderColor: "#fff",
+            borderColor: "#35685F",
+            fill: true,
+            backgroundColor: "#35685F20"
+        }, {
+            label: 'نسبة الغياب',
+            data: Object.values(fetchedDetails.value.absence_percentages),
+            pointBackgroundColor: "#C05E5E",
+            pointBorderColor: "#fff",
+            borderColor: "#C05E5E",
+            fill: true,
+            backgroundColor: "#C05E5E20"
+        }]
+    };
+    const dailyReportsChartData = {
+        labels: Object.keys(fetchedDetails.value.percentageOfDoneAxisToDailyReports),
+        datasets: [{
+            label: 'نسبة التقارير اليومية المنجزة',
+            data: Object.values(fetchedDetails.value.percentageOfDoneAxisToDailyReports),
+            pointBackgroundColor: "#35685F",
+            pointBorderColor: "#fff",
+            borderColor: "#35685F",
+            fill: true,
+            backgroundColor: "#35685F20"
+        }, {
+            label: 'نسبة التقارير اليومية الغير منجزة',
+            data: Object.values(fetchedDetails.value.percentageOfNotDoneAxisToDailyReports),
+            pointBackgroundColor: "#C05E5E",
+            pointBorderColor: "#fff",
+            borderColor: "#C05E5E",
+            fill: true,
+            backgroundColor: "#C05E5E20"
+        }]
+    }
+    function generateConfig(data = []) {
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                aspectRatio: 2 / 1,
+                layout: {
+                    padding: 0
+                },
+                elements: {
+                    point: {
+                        radius: 6,
+                        hoverRadius: 7,
+                        borderWidth: 2,
+                        hoverBorderWidth: 2,
+                    }
+                },
+                tension: 0.4,
+                scales: {
+                    y: {
+                        position: "right",
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            color: '#c1c1c1',
+                            stepSize: 20,
+                        },
+                        grid: {
+                            color: "#646464",
+                        },
+                        border: {
+                            dash: [3, 3],
+                        },
+                    },
+                    x: {
+                        reverse: true,
+                        ticks: {
+                            color: '#c1c1c1',
+                            align: "start",
+                        },
+                        offset: true,
+                        grid: {
+                            color: "#646464",
+                        },
+                        border: {
+                            dash: [3, 3],
+                        },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        rtl: true,
+                        position: 'bottom',
+                        labels: {
+                            padding: 30,
+                            usePointStyle: true,
+                            color: '#c1c1c1'
+                        }
+                    }
+                }
+            }
+        }
+        return config
+    }
+    if (attendaneChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(attendaneChart).update();
+        return
+    } else {
+        new Chart(attendaneChart, generateConfig(attendaneChartData));
+    }
+
+    if (dailyReportsChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(dailyReportsChart).update();
+        return
+    } else {
+        new Chart(dailyReportsChart, generateConfig(dailyReportsChartData));
+    }
+}
 
 onMounted(getAreas)
 
@@ -171,6 +183,7 @@ onMounted(getAreas)
             <v-col cols="12">
                 <select id="area_select" class="form-select w-100" aria-label="Default select example"
                     style="background-color: #303030;" v-model="selectedArea">
+                    <option value="" disabled selected>اختر الموقع</option>
                     <option v-for="(location, index) in fetchedAreas" :value="location" :selected="index == 0">
                         {{ location.name }}
                     </option>
@@ -241,26 +254,27 @@ onMounted(getAreas)
                 </v-col>
             </v-row>
             <hr>
-            <!-- <v-row>
-                    <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
-                        <v-card class="w-100" style="background-color: #303030; padding: 15px;">
-                            <div class="w-100">
-                                <p style="font-size: 0.9rem">الالتزام بالحضور في الموقع</p>
-                            </div>
-                            <hr>
-                            <canvas id="attendanecChart" aria-label="Hello ARIA World" role="img"></canvas>
-                        </v-card>
-                    </v-col>
-                    <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
-                        <v-card class="w-100" style="background-color: #303030; padding: 15px;">
-                            <div class="w-100">
-                                <p style="font-size: 0.9rem">التقارير اليومية</p>
-                            </div>
-                            <hr>
-                            <canvas id="dailyReportsChart" aria-label="Hello ARIA World" role="img"></canvas>
-                        </v-card>
-                    </v-col>
-                </v-row> -->
+            <v-row>
+                <canvas id="blank" class="d-none" aria-label="Hello ARIA World" role="img"></canvas>
+                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
+                    <v-card class="w-100" style="background-color: #303030; padding: 15px;">
+                        <div class="w-100">
+                            <p style="font-size: 0.9rem">الالتزام بالحضور في الموقع</p>
+                        </div>
+                        <hr>
+                        <canvas id="attendaneChart" aria-label="Hello ARIA World" role="img"></canvas>
+                    </v-card>
+                </v-col>
+                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
+                    <v-card class="w-100" style="background-color: #303030; padding: 15px;">
+                        <div class="w-100">
+                            <p style="font-size: 0.9rem">التقارير اليومية</p>
+                        </div>
+                        <hr>
+                        <canvas id="dailyReportsChart" aria-label="Hello ARIA World" role="img"></canvas>
+                    </v-card>
+                </v-col>
+            </v-row>
             <v-row>
                 <v-col v-if="isLoading" :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`"
                     v-for="question in fetchedDetails.axisQuestions">
@@ -341,7 +355,7 @@ onMounted(getAreas)
         ">
             <img :src=emptyBox width="150" alt="Empty box">
             <h1>لا توجد معلومات</h1>
-            <p style="color: #ffffff90">برجاء اختيار المنطقة.</p>
+            <p style="color: #ffffff90">برجاء اختيار الموقع.</p>
         </div>
     </div>
 </template>
