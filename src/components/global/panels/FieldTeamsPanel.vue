@@ -3,7 +3,7 @@ import { convertNumberWithSeperator, parseValueToActialNumber } from '@/helpers/
 import { useMapStore } from '@/stores/MapStore';
 import Chart, { plugins } from "chart.js/auto";
 import { onMounted } from 'vue';
-import axios from 'axios';
+import http from '@/plugins/axios';
 
 import arrowUpRight from "@/assets/imgs/arrow-up-right.png";
 import arrowDownRight from "@/assets/imgs/arrow-down-right.png";
@@ -141,7 +141,7 @@ async function getReports() {
         const params = Object.fromEntries(
             Object.entries(searchQuery.value).filter(([_, v]) => v)
         );
-        const res = await axios.get(`api/v1/map/getFilterObjects`, { params });
+        const res = await http.get(`v1/map/getFilterObjects`, { params });
         fetchedReports.value = res.data.data.daily_reports
     } catch (error) {
         console.log("fetch failed", error);
@@ -157,7 +157,7 @@ async function getDetails() {
         const params = Object.fromEntries(
             Object.entries(detailsSearchQuery).filter(([_, v]) => v)
         );
-        const res = await axios.get(`api/v1/map/getDetailsForParent3`, { params });
+        const res = await http.get(`v1/map/getDetailsForParent3`, { params });
         fetchedDetails.value = res.data.data
         isLoading.value = false
 
@@ -176,6 +176,7 @@ onMounted(getReports)
             <v-col cols="12">
                 <select class="form-select w-100 mt-2" aria-label="Default select example"
                     style="background-color: #303030;" v-model="selectedReport">
+                    <option value="" disabled selected>اختر الموقع</option>
                     <option v-for="(report, index) in fetchedReports" :value="report" :selected="index == 0">
                         {{ report.title }}
                     </option>
@@ -412,7 +413,7 @@ onMounted(getReports)
         ">
             <img :src=emptyBox width="150" alt="Empty box">
             <h1>لا توجد معلومات</h1>
-            <p style="color: #ffffff90">برجاء اختيار المحور والمنطقة.</p>
+            <p style="color: #ffffff90">برجاء اختيار الموقع.</p>
         </div>
     </div>
 </template>

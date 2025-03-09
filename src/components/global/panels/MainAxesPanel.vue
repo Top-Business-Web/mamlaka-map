@@ -2,8 +2,8 @@
 import { convertNumberWithSeperator, parseValueToActialNumber } from '@/helpers/helperFunctions';
 import { useMapStore } from '@/stores/MapStore';
 import Chart from "chart.js/auto";
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { ref, onMounted, computed } from 'vue';
+import http from '@/plugins/axios';
 
 import arrowUpRight from "@/assets/imgs/arrow-up-right.png";
 import arrowDownRight from "@/assets/imgs/arrow-down-right.png";
@@ -21,159 +21,169 @@ const fetchedDetails = ref({})
 const detailsSearchQuery = reactive({
     axis_id: "",
     area_id: "",
-    period: searchQuery.value.period ?? "3"
+    period: searchQuery.value.period
 });
 const isLoading = ref(false);
-
-// const attendanecChartData = {
-//     labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-//     datasets: [{
-//         label: 'الالتزام بالحضور',
-//         data: [58, 63, 78, 79, 69, 38, 30],
-//         pointBackgroundColor: "#35685F",
-//         pointBorderColor: "#fff",
-//         borderColor: "#35685F",
-//         fill: true,
-//         backgroundColor: "#35685F20"
-//     }, {
-//         label: 'نسبة الغياب',
-//         data: [39, 80, 17, 18, 63, 16, 80],
-//         pointBackgroundColor: "#C05E5E",
-//         pointBorderColor: "#fff",
-//         borderColor: "#C05E5E",
-//         fill: true,
-//         backgroundColor: "#C05E5E20"
-//     }]
-// }
-
-// const dailyReportsChartData = {
-//     labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-//     datasets: [{
-//         label: 'نسبة التقارير اليومية المنجزة',
-//         data: [69, 20, 37, 18, 63, 16, 50],
-//         pointBackgroundColor: "#35685F",
-//         pointBorderColor: "#fff",
-//         borderColor: "#35685F",
-//         fill: true,
-//         backgroundColor: "#35685F20"
-//     }, {
-//         label: 'نسبة التقارير اليومية الغير منجزة',
-//         data: [58, 36, 48, 39, 69, 38, 30],
-//         pointBackgroundColor: "#C05E5E",
-//         pointBorderColor: "#fff",
-//         borderColor: "#C05E5E",
-//         fill: true,
-//         backgroundColor: "#C05E5E20"
-//     }]
-// }
-
-// function generateConfig(data) {
-//     const config = {
-//         type: 'line',
-//         data: data,
-//         options: {
-//             aspectRatio: 2 / 1,
-//             layout: {
-//                 padding: 0
-//             },
-//             elements: {
-//                 point: {
-//                     radius: 6,
-//                     hoverRadius: 7,
-//                     borderWidth: 2,
-//                     hoverBorderWidth: 2,
-//                 }
-//             },
-//             tension: 0.4,
-//             scales: {
-//                 y: {
-//                     position: "right",
-//                     min: 0,
-//                     max: 100,
-//                     ticks: {
-//                         color: '#c1c1c1',
-//                         stepSize: 20,
-//                     },
-//                     grid: {
-//                         color: "#646464",
-//                     },
-//                     border: {
-//                         dash: [3, 3],
-//                     },
-//                 },
-//                 x: {
-//                     reverse: true,
-//                     ticks: {
-//                         color: '#c1c1c1',
-//                         align: "start",
-//                     },
-//                     offset: true,
-//                     grid: {
-//                         color: "#646464",
-//                     },
-//                     border: {
-//                         dash: [3, 3],
-//                     },
-//                 },
-//             },
-//             plugins: {
-//                 legend: {
-//                     display: true,
-//                     rtl: true,
-//                     position: 'bottom',
-//                     labels: {
-//                         padding: 30,
-//                         usePointStyle: true,
-//                         color: '#c1c1c1'
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     return config
-// }
 
 async function getAxes() {
     try {
         const params = Object.fromEntries(
             Object.entries(searchQuery.value).filter(([_, v]) => v)
         );
-        const res = await axios.get(`api/v1/map/getFilterObjects`, { params });
+        const res = await http.get(`v1/map/getFilterObjects`, { params });
         fetchedAxes.value = res.data.data.axes
     } catch (error) {
         console.log("fetch failed", error);
     }
 }
-watch(searchQuery, getAxes, { deep: true });
+watch(searchQuery, getAxes);
 
 async function getAreas() {
-    selectedArea.value = null;
+    selectedArea.value = '';
     const axisId = selectedAxis.value.id;
     try {
-        const res = await axios.get(`api/v1/map/getAreas/${axisId}`);
+        const res = await http.get(`v1/map/getAreas/${axisId}`);
         fetchedAreas.value = res.data.data
     } catch (error) {
         console.log("fetch failed", error);
     }
 }
-watch(selectedAxis, getAreas, { deep: true });
+watch(selectedAxis, getAreas);
 
 async function getLocationStats() {
-    detailsSearchQuery.axis_id = await selectedAxis.value.id
-    detailsSearchQuery.area_id = await selectedArea.value.id
+    detailsSearchQuery.axis_id = selectedAxis.value.id;
+    detailsSearchQuery.area_id = selectedArea.value.id;
     isLoading.value = true
     try {
         const params = Object.fromEntries(
             Object.entries(detailsSearchQuery).filter(([_, v]) => v)
         );
-        const res = await axios.get(`api/v1/map/getDetailsForParent0`, { params });
+        const res = await http.get(`v1/map/getDetailsForParent0`, { params });
         fetchedDetails.value = res.data.data
+        generateCharts();
         isLoading.value = false
     } catch (error) {
         console.log("fetch failed", error);
     }
 }
-watch(selectedArea, getLocationStats, { deep: true });
+watch(selectedArea, getLocationStats);
+
+function generateCharts() {
+    const attendaneChartData = {
+        labels: Object.keys(fetchedDetails.value.attendance_percentages),
+        datasets: [{
+            label: 'الالتزام بالحضور',
+            data: Object.values(fetchedDetails.value.attendance_percentages),
+            pointBackgroundColor: "#35685F",
+            pointBorderColor: "#fff",
+            borderColor: "#35685F",
+            fill: true,
+            backgroundColor: "#35685F20"
+        }, {
+            label: 'نسبة الغياب',
+            data: Object.values(fetchedDetails.value.absence_percentages),
+            pointBackgroundColor: "#C05E5E",
+            pointBorderColor: "#fff",
+            borderColor: "#C05E5E",
+            fill: true,
+            backgroundColor: "#C05E5E20"
+        }]
+    };
+    const dailyReportsChartData = {
+        labels: Object.keys(fetchedDetails.value.attendance_percentages),
+        datasets: [{
+            label: 'نسبة التقارير اليومية المنجزة',
+            data: Object.values(fetchedDetails.value.percentageOfDoneAxisToDailyReports),
+            pointBackgroundColor: "#35685F",
+            pointBorderColor: "#fff",
+            borderColor: "#35685F",
+            fill: true,
+            backgroundColor: "#35685F20"
+        }, {
+            label: 'نسبة التقارير اليومية الغير منجزة',
+            data: Object.values(fetchedDetails.value.percentageOfNotDoneAxisToDailyReports),
+            pointBackgroundColor: "#C05E5E",
+            pointBorderColor: "#fff",
+            borderColor: "#C05E5E",
+            fill: true,
+            backgroundColor: "#C05E5E20"
+        }]
+    }
+    function generateConfig(data = []) {
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                aspectRatio: 2 / 1,
+                layout: {
+                    padding: 0
+                },
+                elements: {
+                    point: {
+                        radius: 6,
+                        hoverRadius: 7,
+                        borderWidth: 2,
+                        hoverBorderWidth: 2,
+                    }
+                },
+                tension: 0.4,
+                scales: {
+                    y: {
+                        position: "right",
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            color: '#c1c1c1',
+                            stepSize: 20,
+                        },
+                        grid: {
+                            color: "#646464",
+                        },
+                        border: {
+                            dash: [3, 3],
+                        },
+                    },
+                    x: {
+                        reverse: true,
+                        ticks: {
+                            color: '#c1c1c1',
+                            align: "start",
+                        },
+                        offset: true,
+                        grid: {
+                            color: "#646464",
+                        },
+                        border: {
+                            dash: [3, 3],
+                        },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        rtl: true,
+                        position: 'bottom',
+                        labels: {
+                            padding: 30,
+                            usePointStyle: true,
+                            color: '#c1c1c1'
+                        }
+                    }
+                }
+            }
+        }
+        return config
+    }
+    if (attendaneChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(attendaneChart).destroy();
+    }
+    new Chart(attendaneChart, generateConfig(attendaneChartData))
+
+    if (dailyReportsChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(dailyReportsChart).destroy();
+    }
+    new Chart(dailyReportsChart, generateConfig(dailyReportsChartData));
+}
 
 onMounted(getAxes)
 
@@ -184,13 +194,16 @@ onMounted(getAxes)
             <v-col cols="12">
                 <select class="form-select w-100" aria-label="Default select example" style="background-color: #303030;"
                     v-model="selectedAxis">
-                    <option v-for="(axis, index) in fetchedAxes" :value="axis" :selected="index == 0">
+                    <option value="" disabled selected>اختر المحور</option>
+                    <option v-for="(axis, index) in fetchedAxes" :value="axis">
                         {{ axis.name }}
                     </option>
                 </select>
                 <select class="form-select w-100 mt-2" aria-label="Default select example"
                     style="background-color: #303030;" v-model="selectedArea">
-                    <option v-for="(area, index) in fetchedAreas" :value="area" :selected="index == 0">
+                    <option value="" disabled selected>اختر الموقع</option>
+                    style="background-color: #303030;" v-model="selectedArea">
+                    <option v-for="(area, index) in fetchedAreas" :value="area">
                         {{ area.name }}
                     </option>
                 </select>
@@ -289,14 +302,15 @@ onMounted(getAxes)
                 </v-col>
             </v-row>
             <hr>
-            <!-- <v-row>
+            <v-row>
+                <canvas id="blank" class="d-none" aria-label="Hello ARIA World" role="img"></canvas>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100" style="background-color: #303030; padding: 15px;">
                         <div class="w-100">
                             <p style="font-size: 0.9rem">الالتزام بالحضور في المحور</p>
                         </div>
                         <hr>
-                        <canvas id="attendanecChart" aria-label="Hello ARIA World" role="img"></canvas>
+                        <canvas id="attendaneChart" aria-label="Hello ARIA World" role="img"></canvas>
                     </v-card>
                 </v-col>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
@@ -308,7 +322,7 @@ onMounted(getAxes)
                         <canvas id="dailyReportsChart" aria-label="Hello ARIA World" role="img"></canvas>
                     </v-card>
                 </v-col>
-            </v-row> -->
+            </v-row>
             <v-row>
                 <v-col v-if="isLoading" :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`"
                     v-for="question in fetchedDetails.axisQuestions">
