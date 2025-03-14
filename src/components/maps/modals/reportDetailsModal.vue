@@ -13,7 +13,6 @@ const props = defineProps({
     markerId: null,
     userId: null,
 })
-
 const searchInput = ref("")
 const isLoading = ref(false)
 const reportId = ref(props.markerId)
@@ -23,8 +22,7 @@ const reportDetails = ref(null)
 async function getReportDetails() {
     try {
         isLoading.value = true
-        // const res = await http.get(`v1/map/getDailyReportDetails/${reportId.value}?user_id=${userId.value}`)
-        const res = await http.get(`v1/map/getDailyReportDetails/${45}?user_id=${55}`)
+        const res = await http.get(`v1/map/getDailyReportDetails/${reportId.value}?user_id=${userId.value}`)
         reportDetails.value = res.data.data
     } catch (error) {
         console.log(error);
@@ -59,7 +57,7 @@ onMounted(getReportDetails)
                         <v-skeleton-loader v-if="isLoading" width="200px" height="1.2rem"></v-skeleton-loader>
                         <div v-else class="breadcrumb">
                             <b style="cursor: pointer;" @click="isActive.value = false">{{ reportDetails.user_name
-                            }}</b><span>></span><span>عرض التقرير اليومي</span>
+                                }}</b><span>></span><span>عرض التقرير اليومي</span>
                         </div>
                         <div class="box">
                             <div class="box_header">

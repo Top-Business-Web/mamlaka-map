@@ -119,6 +119,7 @@ interface MapStoreState {
   locations: MapLocation[];
   supervisors: MapLocation[];
   users: MapLocation[];
+  usersRole: string;
   displayOperators: boolean;
   displayObservers: boolean;
   displayEntities: boolean;
@@ -146,6 +147,7 @@ export const useMapStore = defineStore("MapStore", {
     locations: [],
     supervisors: [],
     users: [],
+    usersRole: "all",
     displayOperators: true,
     displayObservers: true,
     displayEntities: true,
@@ -212,32 +214,63 @@ export const useMapStore = defineStore("MapStore", {
 
       return queryUserTypeParams;
     },
-    async getMapUsers(refreshData: boolean = false) {
+    async getMapUsers() {
       const usersData: MapLocation[] = [];
       try {
-        if (this.displayEntities && !refreshData) {
+        if (this.displayEntities) {
           // this.getMapEntites();
-
           const { minLat, maxLat, minLng, maxLng } = this.visibleCoordinates;
-          const q = firestoreQuery(
-            collection(firestoreDB, "users"),
-            and(
-              // where("user_type", "in", this.getUserTypeParams()),
-              where("lat", ">=", minLat),
-              where("lat", "<=", maxLat),
-              where("long", ">=", minLng),
-              where("long", "<=", maxLng)
-            ),
-            orderBy("lat"),
-            limit(500)
-          );
-          const querySnapshot = await getDocs(q);
-          querySnapshot.forEach((doc) => {
-            usersData.push(doc.data());
-          });
-
+          const role = this.usersRole
+          if (role == "all") {
+            const q = firestoreQuery(
+              collection(firestoreDB, "users"),
+              and(
+                // where("user_type", "in", this.getUserTypeParams()),
+                where("lat", ">=", minLat),
+                where("lat", "<=", maxLat),
+                where("long", ">=", minLng),
+                where("long", "<=", maxLng)
+              ),
+              orderBy("lat"),
+              limit(500)
+            );
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+              usersData.push(doc.data());
+            });
+          } else {
+            const q = firestoreQuery(
+              collection(firestoreDB, "users"),
+              and(
+                // where("user_type", "in", this.getUserTypeParams()),
+                where("lat", ">=", minLat),
+                where("lat", "<=", maxLat),
+                where("long", ">=", minLng),
+                where("long", "<=", maxLng),
+                where("role", "==", role)
+              ),
+              orderBy("lat"),
+              limit(500)
+            );
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+              usersData.push(doc.data());
+            });
+          }
           this.supervisors = usersData.filter(supervisor => (supervisor.role == "مشرف"));
-          this.users = usersData.filter(user => (user.role !== "مشرف"));
+          this.users = usersData.filter(user => (user.role != "مشرف"));
+
+          // if (userRole == "" || !userRole) {
+          //   this.supervisors = usersData.filter(supervisor => (supervisor.role == "مشرف"));
+          //   this.users = usersData.filter(user => (user.role != "مشرف"));
+          // } else if (userRole == "مشرف") {
+          //   this.supervisors = usersData.filter(supervisor => (supervisor.role == "مشرف"));
+          //   this.users = [];
+          // } else {
+          //   this.supervisors = [];
+          //   this.users = usersData.filter(user => (user.role == userRole));
+          //   console.log(this.users);
+          // }
         } else {
           this.supervisors = [];
           this.users = [];

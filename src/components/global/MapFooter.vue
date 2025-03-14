@@ -53,13 +53,8 @@ const mapStore = useMapStore();
 </script>
 
 <template>
-  <v-footer app flat tile elevation="0" class="map-footer bg-transparent pb-2 pt-0 px-8 px-xl-12" style="z-index: 9999">
-    <div class="w-100 d-flex align-center justify-space-between">
-      <div class="d-flex align-center ga-4 py-2">
-        <!-- <v-img src="/imgs/zimam-logo.svg" width="80"></v-img> -->
-        <v-img :src="companyLogo" width="110"></v-img>
-      </div>
-
+  <v-footer app flat tile elevation="0" class="map-footer bg-transparent" style="padding-block: 16px; z-index: 9999">
+    <div class="w-100 d-flex align-center justify-content-end">
       <transition name="scale">
         <div v-if="!mapStore.isMapStatisticsFullscreen" class="d-flex align-center ga-4">
           <v-switch :model-value="true" label="عرض الموظفين" hide-details inset class="custom-switch" color="#857854"

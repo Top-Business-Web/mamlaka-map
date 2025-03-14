@@ -19,6 +19,8 @@ import SupervisorDetailsModal from "./modals/supervisorDetailsModal.vue";
 import UserDetailsModal from "./modals/userDetailsModal.vue";
 import AreaDetailsModal from "./modals/AreaDetailsModal.vue";
 import ReportDetailsModal from "./modals/reportDetailsModal.vue"
+import ComplaintsModal from './modals/complaintsModal.vue'
+
 import MapFooter from "../global/MapFooter.vue";
 import MapTopNavbar from "../global/MapTopNavbar.vue";
 import http from "@/plugins/axios";
@@ -125,7 +127,6 @@ function showMarkers(targetInput) {
     return
   }
 }
-
 </script>
 
 <template>

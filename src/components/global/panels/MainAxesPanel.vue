@@ -317,7 +317,7 @@ onMounted(getAxes)
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100" style="background-color: #303030; padding: 15px;">
                         <div class="w-100">
-                            <p style="font-size: 0.9rem">الالتزام بالحضور في المحور</p>
+                            <p style="font-size: 0.9rem">التقارير اليومية</p>
                         </div>
                         <hr>
                         <canvas id="dailyReportsChart" aria-label="Hello ARIA World" role="img"></canvas>

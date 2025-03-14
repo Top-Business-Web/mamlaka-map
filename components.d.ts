@@ -7,10 +7,15 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AlertsModal: typeof import('./src/components/maps/modals/alertsModal.vue')['default']
+    AlertsPanel: typeof import('./src/components/global/panels/AlertsPanel.vue')['default']
     AreaChart: typeof import('./src/components/charts/AreaChart.vue')['default']
     AreaDetailsModal: typeof import('./src/components/maps/modals/areaDetailsModal.vue')['default']
     BarChart: typeof import('./src/components/eChart/BarChart.vue')['default']
+    ComplaintDetailsModal: typeof import('./src/components/maps/modals/complaintDetailsModal.vue')['default']
+    ComplaintsModal: typeof import('./src/components/maps/modals/complaintsModal.vue')['default']
     ComplaintsPanel: typeof import('./src/components/global/panels/ComplaintsPanel.vue')['default']
+    copy: typeof import('./src/components/global/panels/MainAxesPanel copy.vue')['default']
     DailyReportsPanel: typeof import('./src/components/global/panels/DailyReportsPanel.vue')['default']
     DonutChart: typeof import('./src/components/charts/DonutChart.vue')['default']
     DualBarChart: typeof import('./src/components/charts/DualBarChart.vue')['default']

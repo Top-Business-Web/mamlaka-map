@@ -4,21 +4,46 @@ import { useMapStore, type MapStatisticsFilterKeys } from "@/stores/MapStore";
 import dayjs from "dayjs";
 import avataImg from "@/assets/imgs/image1.png";
 import ProfileModal from '@/components/global/ProfileModal.vue';
+import http from "@/plugins/axios";
 const mapStore = useMapStore();
 const isMenuOpen = ref<boolean>(false);
 const searchText = ref<string>("");
 const selectedParent = ref<string>("0");
 const selectedPeriod = ref<string>("");
+const selectedUserType = ref<string>("all");
 const selectedType = ref<string>("");
 
-const handleFilter = (key: MapStatisticsFilterKeys, value: string) => {
+const handleStatsFilter = (key: MapStatisticsFilterKeys, value: string) => {
   mapStore.updateMapStatisticsFilter(key, value);
   mapStore.getMapStatistics();
 };
+const handleUsersFilter = () => {
+  mapStore.usersRole = selectedUserType.value;
+  mapStore.updateMapLocations(selectedUserType.value);
+};
 
-watch(searchText, () => { handleFilter("search", searchText.value) });
-watch(selectedParent, () => { handleFilter("parent", selectedParent.value) });
-watch(selectedPeriod, () => { handleFilter("period", selectedPeriod.value) });
+// const handleMarkersFilter = (search: string) => {
+//   const splitText = [];
+//   for (let i = 1; i < search.length + 1; i++) {
+//     splitText.push(search.substring(0, i));
+//   };
+//   mapStore.getMapUsers(true, splitText);
+// }
+
+const roles = ref([])
+async function getRoles() {
+  try {
+    const res = await http.get("v1/map/getRoles")
+    roles.value = res.data.data
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+watch(selectedParent, () => { handleStatsFilter("parent", selectedParent.value) });
+watch(selectedPeriod, () => { handleStatsFilter("period", selectedPeriod.value) });
+// watch(searchText, () => { handleStatsFilter("search", selectedPeriod.value) });
+watch(selectedUserType, () => { handleUsersFilter() });
 
 // const getFilterLabel = (Key: MapStatisticsFilterKeys) => {
 //   const filterLabels = {
@@ -39,10 +64,14 @@ const openProfileModal = () => {
 const closeProfileModal = () => {
   profileDialog.value = false;  // إغلاق modal
 };
+
+onMounted(() => {
+  getRoles();
+})
 </script>
 
 <template>
-  <v-app-bar flat tile elevation="0" class="bg-transparent px-4 pt-4 pb-0 px-xl-10" style="z-index: 9999">
+  <v-app-bar flat tile elevation="0" class="bg-transparent" style="padding: 16px; z-index: 9999">
     <template v-slot:prepend>
       <div class="d-flex align-center ga-16">
         <div class="d-flex align-center ga-4">
@@ -147,6 +176,7 @@ const closeProfileModal = () => {
           <option value="2">إدارة التقارير اليومية</option>
           <option value="3">إدارة الفرق الميدانية</option>
           <option value="4">إدارة البلاغات</option>
+          <option value="6">إدارة التنبيهات</option>
           <option value="5">إدارة تقارير المشرفين</option>
         </select>
         <select class="form-select" aria-label="Default select example" v-model="selectedPeriod">
@@ -164,6 +194,10 @@ const closeProfileModal = () => {
           <option value="2">سكة حديدية</option>
           <option value="3">طريق</option>
           <option value="4">محطة</option>
+        </select>
+        <select class="form-select" aria-label="Default select example" v-model="selectedUserType">
+          <option value="all"> كل الموظفين</option>
+          <option v-for="role in roles" :key="role.id" :value="role.name">{{ role.name }}</option>
         </select>
       </div>
 

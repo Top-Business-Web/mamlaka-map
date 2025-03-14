@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "@google/markerclusterer": "^2.0.9",
+        "@primeuix/themes": "^1.0.0",
         "@studiometa/vue-mapbox-gl": "^2.5.0",
         "@vueuse/core": "^10.9.0",
         "@vueuse/integrations": "^10.10.0",
@@ -32,6 +33,7 @@
         "mapbox-gl": "^3.3.0",
         "nprogress": "^0.2.0",
         "pinia": "^2.1.7",
+        "primevue": "^4.3.2",
         "v-select2-component": "^0.4.7",
         "vue": "^3.4.21",
         "vue-draggable-next": "^2.2.1",

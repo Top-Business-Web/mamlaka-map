@@ -12,6 +12,7 @@ import DailyReportsPanel from "./panels/DailyReportsPanel.vue";
 import FieldTeamsPanel from "./panels/FieldTeamsPanel.vue";
 import LocationsPanel from "./panels/LocationsPanel.vue";
 import SupervisorsPanel from "./panels/SupervisorsPanel.vue";
+import AlertsPanel from "./panels/AlertsPanel.vue";
 import { useMapStore } from "@/stores/MapStore";
 
 import arrowUpRight from "@/assets/imgs/arrow-up-right.png";
@@ -291,14 +292,11 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
           <DailyReportsPanel v-if="mapStore.mapStatisticsFilters.parent == '2'" />
           <FieldTeamsPanel v-if="mapStore.mapStatisticsFilters.parent == '3'" />
           <ComplaintsPanel v-if="mapStore.mapStatisticsFilters.parent == '4'" />
+          <AlertsPanel v-if="mapStore.mapStatisticsFilters.parent == '6'" />
           <SupervisorsPanel v-if="mapStore.mapStatisticsFilters.parent == '5'" />
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-
-    <MapTicketTypesDialog v-if="isTicketsDialog" v-model="isTicketsDialog" :ticket-type="ticketDialogType" />
-
-    <MapTaskDetailsDialog v-if="isTaskDialog" v-model="isTaskDialog" :task="taskDialogDetails" />
   </div>
 </template>
 
@@ -355,16 +353,14 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
 }
 
 .map-custom-panel {
-  --panel-top: 25px;
+  --panel-top: 16px;
   overflow: hidden;
   position: fixed;
   top: var(--panel-top);
   right: 30px;
   z-index: 9999;
   transition: width 300ms ease-in-out;
-  // box-shadow: 5px 10px 15px rgba(0, 0, 0, 0.1);
-  // width: 33rem;
-  // height: calc(100vh - var(--panel-top));
+  height: calc(100vh - (var(--panel-top)*2));
 
   .panel-bottom {
     .v-col {
@@ -387,7 +383,7 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
     border-radius: 10px;
 
     &.v-expansion-panel--active {
-      height: calc(100vh - (var(--panel-top) + 64px));
+      height: calc(100vh - (var(--panel-top)*2));
     }
   }
 
@@ -402,7 +398,7 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
 
   .v-expansion-panel-text {
     overflow-y: scroll;
-    height: calc(100% - (var(--panel-top) + 64px));
+    height: calc(100% - (var(--panel-top)*5.125));
   }
 
   [class*='status-'] {
