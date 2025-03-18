@@ -229,7 +229,8 @@ export const useMapStore = defineStore("MapStore", {
                 where("lat", ">=", minLat),
                 where("lat", "<=", maxLat),
                 where("long", ">=", minLng),
-                where("long", "<=", maxLng)
+                where("long", "<=", maxLng),
+                where("is_active", "==", true),
               ),
               orderBy("lat"),
               limit(500)
@@ -247,6 +248,7 @@ export const useMapStore = defineStore("MapStore", {
                 where("lat", "<=", maxLat),
                 where("long", ">=", minLng),
                 where("long", "<=", maxLng),
+                where("is_active", "==", true),
                 where("role", "==", role)
               ),
               orderBy("lat"),
@@ -260,17 +262,6 @@ export const useMapStore = defineStore("MapStore", {
           this.supervisors = usersData.filter(supervisor => (supervisor.role == "مشرف"));
           this.users = usersData.filter(user => (user.role != "مشرف"));
 
-          // if (userRole == "" || !userRole) {
-          //   this.supervisors = usersData.filter(supervisor => (supervisor.role == "مشرف"));
-          //   this.users = usersData.filter(user => (user.role != "مشرف"));
-          // } else if (userRole == "مشرف") {
-          //   this.supervisors = usersData.filter(supervisor => (supervisor.role == "مشرف"));
-          //   this.users = [];
-          // } else {
-          //   this.supervisors = [];
-          //   this.users = usersData.filter(user => (user.role == userRole));
-          //   console.log(this.users);
-          // }
         } else {
           this.supervisors = [];
           this.users = [];

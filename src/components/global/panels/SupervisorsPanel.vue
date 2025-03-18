@@ -210,53 +210,41 @@ onMounted(getReports)
 </script>
 <template>
     <div style="padding: 15px; height: 100%;">
-        <v-row>
-            <v-col cols="12">
-                <select class="form-select w-100" aria-label="Default select example" style="background-color: #303030;"
-                    v-model="selectedReport">
-                    <option value="" disabled selected>اختر الموقع</option>
-                    <option v-for="(report, index) in fetchedReports" :value="report" :selected="index == 0">
-                        {{ report.title }}
-                    </option>
-                </select>
+        <v-row class="my-0">
+            <v-col class="py-0" cols="12">
+                <div class="select_wrapper">
+                    <img src="@/assets/imgs/icons/arrow-down.svg" width="10px" alt="">
+                    <select class="dark_bg" v-model="selectedReport">
+                        <option value="" disabled selected>اسم التقرير</option>
+                        <option v-for="(report, index) in fetchedReports" :value="report" :selected="index == 0">
+                            {{ report.title }}
+                        </option>
+                    </select>
+                </div>
             </v-col>
         </v-row>
         <div v-if="selectedReport">
-            <v-row class="top-panel-grid mx-0"
-                :class="{ 'top-panel-grid--fullscreen': mapStore.isMapStatisticsFullscreen }" :style="[
-                    mapStore.isMapStatisticsFullscreen
-                        ? 'background-color: #303030; margin-top: 20px;'
-                        : ''
-                ]">
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                    <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                        style="background-color: transparent"
-                        :style="[mapStore.isMapStatisticsFullscreen ? 'border-left: 1px solid #494A4A; border-radius: 0;' : '']">
-                        <div class="w-100 h-100 d-flex flex-column">
-                            <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
-                                max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                            <h3 v-else class="font-weight-bold" style="color: #857854">
-                                {{ fetchedDetails.dailyReportAssignCount }}
-                                <!-- {{
-                                convertNumberWithSeperator(
-                                    parseValueToActialNumber(124, 0),
-                                    "٬"
+            <v-row class="stats_wrapper my-3"
+                :class="{ 'stats_wrapper_fullscreen': mapStore.isMapStatisticsFullscreen }">
+                <v-col cols="12" class="py-0">
+                    <div class="stat">
+                        <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
+                            max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
+                        <h3 v-else class="stat_value">
+                            {{ fetchedDetails.dailyReportAssignCount }}
+                            <!-- {{
+                                    convertNumberWithSeperator(
+                                        parseValueToActialNumber(21, 0),
+                                        "٬"
                                     )
-                                    }} -->
-                            </h3>
-                            <div class="d-flex" style="justify-content: space-between">
-                                <p style="font-size: 0.9rem">إجمالي عدد تقارير المشرفين</p>
-                                <!-- <div class="status-false">
-                                    <img style="width: 16px" class="h-16" :src="arrowDownRight" alt="no-icon" />
-                                    <p>4.1%</p>
-                                </div> -->
-                            </div>
-                        </div>
-                    </v-card>
+                                }} -->
+                        </h3>
+                        <label>إجمالي عدد تقارير المشرفين</label>
+                    </div>
                 </v-col>
             </v-row>
-            <hr>
-            <v-row>
+            <hr v-if="!mapStore.isMapStatisticsFullscreen" class="my-4">
+            <v-row class="my-0">
                 <canvas id="blank" class="d-none" aria-label="Hello ARIA World" role="img"></canvas>
                 <!-- <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100" style="background-color: #303030; padding: 15px;">
@@ -278,14 +266,18 @@ onMounted(getReports)
                             <h3 class="position-absolute">
                                 {{ fetchedDetails.dailyReportAssignCount }}
                             </h3>
-                            <div v-if="fetchedDetails.cancelledDailyReportAssignCount > 0" class="chart_legend_closed"
-                                style="--c: #C05E5E">
-                                <p>التقارير المرفوضة</p>
-                            </div>
                             <canvas id="reportsStatusChart" aria-label="Hello ARIA World" role="img"></canvas>
-                            <div v-if="fetchedDetails.completedDailyReportAssignCount > 0" class="chart_legend_opened"
-                                style="--c: #35685F">
-                                <p>التقارير المعتمدة</p>
+                            <div class="pie_legend_wrapper">
+                                <div class="legend">
+                                    <span>البلاغات المعتمدة: <b style="--c: #35685F">{{
+                                        fetchedDetails.completedDailyReportAssignCount
+                                            }}</b></span>
+                                </div>
+                                <div class="legend">
+                                    <span>البلاغات المرفوضة: <b style="--c: #C05E5E">{{
+                                        fetchedDetails.cancelledDailyReportAssignCount
+                                            }}</b></span>
+                                </div>
                             </div>
                         </div>
                     </v-card>
@@ -327,46 +319,100 @@ onMounted(getReports)
     text-align: center;
 }
 
-[class*="chart_legend_"] {
-    position: absolute;
-    width: 150px;
+.panel_content {
+    height: 100%;
 }
 
-.chart_legend_closed {
-    top: 30px;
-    left: 10px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--c);
+[class*="stats_wrapper"] {
+    display: flex;
+    row-gap: 30px;
+
 }
 
-.chart_legend_closed::before {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    right: 1px;
-    height: 1px;
-    width: 100px;
-    background-color: var(--c);
-    transform: translateX(100%) rotate(30deg);
-    transform-origin: 0;
+.stats_wrapper_fullscreen {
+    flex-direction: row;
+    background-color: #303030;
+    padding: 30px;
+    margin: 0;
 }
 
-.chart_legend_opened {
-    bottom: 30px;
-    right: 0;
-    padding-top: 10px;
-    border-top: 2px solid var(--c);
+.stat button {
+    background-color: #303030;
+    border-radius: 5px;
+    width: 35px;
+    aspect-ratio: 1;
+    font-size: 12px;
 }
 
-.chart_legend_opened::before {
-    content: "";
-    position: absolute;
-    top: -1px;
-    left: 1px;
-    height: 1px;
-    width: 50px;
-    background-color: var(--c);
-    transform: translateX(-100%) rotate(30deg);
-    transform-origin: 100%;
+.stat button.light {
+    background-color: #383838;
+}
+
+.stat_value {
+    font-size: 30px;
+    font-weight: bold;
+    color: #C4AB79;
+    margin: 0 0 5px;
+}
+
+.stats_wrapper_fullscreen .stat label {
+    color: #9EA3A5;
+}
+
+.pie_legend_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-block-start: -30px;
+}
+
+.pie_legend_wrapper .legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.pie_legend_wrapper .legend b {
+    color: var(--c);
+    font-size: 22px;
+}
+
+.question {
+    background-color: #303030;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.question_asnwers {
+    display: flex;
+    background-color: #383838;
+    border-radius: 8px;
+}
+
+[class*="_answer"] {
+    flex: 1;
+    padding: 10px;
+}
+
+[class*="_answer"] {
+    margin: 0;
+}
+
+.yes_answer {
+    border-left: 1px solid #F7F7F8;
+}
+
+.progress {
+    background-color: #F7F7F8;
+    height: 8px;
+}
+
+.chart_wrapper {
+    display: grid;
+    place-items: center;
+    margin: auto;
+    min-height: 400px;
 }
 </style>

@@ -145,14 +145,7 @@ function generateCharts() {
                 },
                 plugins: {
                     legend: {
-                        display: true,
-                        rtl: true,
-                        position: 'bottom',
-                        labels: {
-                            padding: 30,
-                            usePointStyle: true,
-                            color: '#c1c1c1'
-                        }
+                        display: false
                     }
                 }
             }
@@ -160,18 +153,14 @@ function generateCharts() {
         return config
     }
     if (attendaneChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
-        Chart.getChart(attendaneChart).update();
-        return
-    } else {
-        new Chart(attendaneChart, generateConfig(attendaneChartData));
+        Chart.getChart(attendaneChart).destroy();
     }
+    new Chart(attendaneChart, generateConfig(attendaneChartData));
 
     if (dailyReportsChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
-        Chart.getChart(dailyReportsChart).update();
-        return
-    } else {
-        new Chart(dailyReportsChart, generateConfig(dailyReportsChartData));
+        Chart.getChart(dailyReportsChart).destroy();
     }
+    new Chart(dailyReportsChart, generateConfig(dailyReportsChartData));
 }
 
 onMounted(getAreas)
@@ -179,82 +168,57 @@ onMounted(getAreas)
 </script>
 <template>
     <div style="padding: 15px;height: 100%;">
-        <v-row>
-            <v-col cols="12">
-                <select id="area_select" class="form-select w-100" aria-label="Default select example"
-                    style="background-color: #303030;" v-model="selectedArea">
-                    <option value="" disabled selected>اختر الموقع</option>
-                    <option v-for="(location, index) in fetchedAreas" :value="location" :selected="index == 0">
-                        {{ location.name }}
-                    </option>
-                </select>
+        <v-row class="my-0">
+            <v-col :class="`py-0 ${mapStore.isMapStatisticsFullscreen ? 'mt-0' : 'mt-2'}`" cols="12">
+                <div class="select_wrapper">
+                    <img src="@/assets/imgs/icons/arrow-down.svg" width="10px" alt="">
+                    <select class="dark_bg" v-model="selectedArea">
+                        <option value="" disabled selected>اسم الموقع</option>
+                        <option v-for="(area, index) in fetchedAreas" :value="area">
+                            {{ area.name }}
+                        </option>
+                    </select>
+                </div>
             </v-col>
         </v-row>
         <div v-if="selectedArea">
-            <v-row class="top-panel-grid mx-0"
-                :class="{ 'top-panel-grid--fullscreen': mapStore.isMapStatisticsFullscreen }" :style="[
-                    mapStore.isMapStatisticsFullscreen
-                        ? 'background-color: #303030; margin-top: 20px;'
-                        : ''
-                ]">
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                    <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                        style="background-color: transparent" :style="[
-                            mapStore.isMapStatisticsFullscreen
-                                ? 'border-left: 1px solid #494A4A; border-radius: 0;'
-                                : ''
-                        ]">
-                        <div class="w-100 h-100 d-flex flex-column">
-
-                            <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
-                                max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                            <h3 v-else class="font-weight-bold" style="color: #857854;">
-                                {{ fetchedDetails.numberOfUsersInAreaCount }}
-                                <!-- {{
+            <v-row class="stats_wrapper my-3"
+                :class="{ 'stats_wrapper_fullscreen': mapStore.isMapStatisticsFullscreen }">
+                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 12}`" class="py-0">
+                    <div class="stat">
+                        <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
+                            max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
+                        <h3 v-else class="stat_value">
+                            {{ fetchedDetails.numberOfUsersInAreaCount }}
+                            <!-- {{
                                     convertNumberWithSeperator(
-                                        parseValueToActialNumber(76, 0),
+                                        parseValueToActialNumber(21, 0),
                                         "٬"
                                     )
                                 }} -->
-                            </h3>
-                            <div class="d-flex" style="justify-content: space-between">
-                                <p style="font-size: 0.9rem">عدد العاملين في الموقع</p>
-                                <!-- <div class="status-normal d-flex justify-content-center">
-                                    <img style="width: 16px" class="h-16" :src="arrowRight" alt="no-icon" />
-                                    <p>0.0%</p>
-                                </div> -->
-                            </div>
-                        </div>
-                    </v-card>
+                        </h3>
+                        <label>عدد العاملين في الموقع</label>
+                    </div>
                 </v-col>
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`">
-                    <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
-                        style="background-color: transparent">
-                        <div class="w-100 h-100 d-flex flex-column">
-                            <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
-                                max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                            <h3 v-else class="font-weight-bold" style="color: #857854">
-                                {{ fetchedDetails.numberOfDailyReportsInArea }}
-                                <!-- {{
+                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 12}`" class="py-0">
+                    <div class="stat">
+                        <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
+                            max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
+                        <h3 v-else class="stat_value">
+                            {{ fetchedDetails.numberOfDailyReportsInArea }}
+                            <!-- {{
                                     convertNumberWithSeperator(
-                                        parseValueToActialNumber(176, 0),
+                                        parseValueToActialNumber(, 0),
                                         "٬"
                                     )
                                 }} -->
-                            </h3>
-                            <div class="d-flex" style="justify-content: space-between">
-                                <p style="font-size: 0.9rem">اجمالي عدد التقارير اليومية</p>
-                                <!-- <div class="status-false">
-                                    <img style="width: 16px" class="h-16" :src="arrowDownRight" alt="no-icon" />
-                                    <p>4.1%</p>
-                                </div> -->
-                            </div>
-                        </div>
-                    </v-card>
+                        </h3>
+                        <label>اجمالي عدد التقارير اليومية</label>
+                    </div>
                 </v-col>
             </v-row>
-            <hr>
-            <v-row>
+            <hr v-if="!mapStore.isMapStatisticsFullscreen" class="my-4">
+            <v-row class="my-0">
                 <canvas id="blank" class="d-none" aria-label="Hello ARIA World" role="img"></canvas>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100" style="background-color: #303030; padding: 15px;">
@@ -263,6 +227,16 @@ onMounted(getAreas)
                         </div>
                         <hr>
                         <canvas id="attendaneChart" aria-label="Hello ARIA World" role="img"></canvas>
+                        <div class="line_legend_wrapper">
+                            <div class="legend">
+                                <span>نسبة التقارير اليومية المنجزة</span>
+                                <img src="@/assets/imgs/icons/legend-green.svg" width="20" alt="">
+                            </div>
+                            <div class="legend">
+                                <span>نسبة التقارير اليومية المنجزة</span>
+                                <img src="@/assets/imgs/icons/legend-red.svg" width="20" alt="">
+                            </div>
+                        </div>
                     </v-card>
                 </v-col>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
@@ -272,69 +246,78 @@ onMounted(getAreas)
                         </div>
                         <hr>
                         <canvas id="dailyReportsChart" aria-label="Hello ARIA World" role="img"></canvas>
+                        <div class="line_legend_wrapper">
+                            <div class="legend">
+                                <span>نسبة التقارير اليومية المنجزة</span>
+                                <img src="@/assets/imgs/icons/legend-green.svg" width="20" alt="">
+                            </div>
+                            <div class="legend">
+                                <span>نسبة التقارير اليومية المنجزة</span>
+                                <img src="@/assets/imgs/icons/legend-red.svg" width="20" alt="">
+                            </div>
+                        </div>
                     </v-card>
                 </v-col>
             </v-row>
-            <v-row>
-                <v-col v-if="isLoading" :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`"
-                    v-for="question in fetchedDetails.axisQuestions">
-                    <div class="card-border mt-2" style="background-color: #303030">
-                        <p style="color: white; margin-bottom: 10px">
+            <hr v-if="!mapStore.isMapStatisticsFullscreen" class="mt-4 mb-0">
+            <v-row :class="`${mapStore.isMapStatisticsFullscreen ? '' : 'mt-2'}`">
+                <v-col v-if="isLoading" :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`"
+                    v-for="question in fetchedDetails.axisQuestions" class="py-0">
+                    <div class="question">
+                        <p class="question_title">
                             <v-skeleton-loader type="button" height="1rem" width="8rem" max-width="100%"
                                 max-height="100%"></v-skeleton-loader>
                         </p>
-                        <div class="card-border" style="background-color: #383838">
-                            <div class="row">
-                                <div class="col-lg-6 col-12" style="border-left: 1px solid #e6ebee">
-                                    <div class="d-flex justify-content-between mb-2 text-white">
-                                        <v-skeleton-loader type="button" height="1rem" width="8rem" max-width="100%"
-                                            max-height="100%"></v-skeleton-loader>
-                                    </div>
-                                    <v-skeleton-loader type="button" height="1rem" width="100%" max-width="100%"
+                        <div class="question_asnwers">
+                            <div class="yes_answer">
+                                <div class="d-flex justify-content-between mb-2 text-white">
+                                    <span>نعم</span>
+                                    <v-skeleton-loader type="button" height="1rem" width="8rem" max-width="100%"
                                         max-height="100%"></v-skeleton-loader>
                                 </div>
-                                <div class="col-lg-6 col-12">
-                                    <div class="d-flex justify-content-between mb-2 text-white">
-                                        <v-skeleton-loader type="button" height="1rem" width="8rem" max-width="100%"
-                                            max-height="100%"></v-skeleton-loader>
-                                    </div>
-                                    <v-skeleton-loader type="button" height="1rem" width="100%" max-width="100%"
+                                <v-skeleton-loader type="button" height="1rem" width="100%" max-width="100%"
+                                    max-height="100%"></v-skeleton-loader>
+                            </div>
+                            <div class="no_answer">
+                                <div class="d-flex justify-content-between mb-2 text-white">
+                                    <span>لا</span>
+                                    <v-skeleton-loader type="button" height="1rem" width="8rem" max-width="100%"
                                         max-height="100%"></v-skeleton-loader>
                                 </div>
+                                <v-skeleton-loader type="button" height="1rem" width="100%" max-width="100%"
+                                    max-height="100%"></v-skeleton-loader>
                             </div>
                         </div>
                     </div>
                 </v-col>
-                <v-col v-else :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`"
+                <v-col v-else :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`"
                     v-for="question in fetchedDetails.axisQuestions">
-                    <div class="card-border mt-2" style="background-color: #303030">
-                        <p style="color: white; margin-bottom: 10px">
+                    <div class="question">
+                        <p class="question_title">
                             {{ question.question }}
                         </p>
-                        <div class="card-border" style="background-color: #383838">
-                            <div class="row">
-                                <div class="col-lg-6 col-12" style="border-left: 1px solid #e6ebee">
-                                    <div class="d-flex justify-content-between mb-2 text-white">
-                                        <p>نعم</p>
-                                        <p>{{ question.yesAnswers }}%</p>
-                                    </div>
-                                    <div class="progress primary">
-                                        <div class="progress-bar" role="progressbar"
-                                            :style="`width: ${question.yesAnswers}`"
-                                            :aria-valuenow="question.yesAnswers" aria-valuemin="0" aria-valuemax="100">
-                                        </div>
+                        <div class="question_asnwers">
+                            <div class="yes_answer">
+                                <div class="d-flex justify-content-between mb-2 text-white">
+                                    <span>نعم</span>
+                                    <span>{{ question.yesAnswers }}%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"
+                                        :style="`width: ${question.yesAnswers}%; background-color: #B6AD98;`"
+                                        :aria-valuenow="question.yesAnswers" aria-valuemin="0" aria-valuemax="100">
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-12">
-                                    <div class="d-flex justify-content-between mb-2 text-white">
-                                        <p>لا</p>
-                                        <p>{{ question.noAnswers }}%</p>
-                                    </div>
-                                    <div class="progress primary">
-                                        <div class="progress-bar" role="progressbar"
-                                            :style="`width: ${question.noAnswers}`" :aria-valuenow="question.noAnswers"
-                                            aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
+                            </div>
+                            <div class="no_answer">
+                                <div class="d-flex justify-content-between mb-2 text-white">
+                                    <span>لا</span>
+                                    <span>{{ question.noAnswers }}%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"
+                                        :style="`width: ${question.noAnswers}%; background-color: #C05E5E;`"
+                                        :aria-valuenow="question.noAnswers" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                             </div>
                         </div>
@@ -359,3 +342,84 @@ onMounted(getAreas)
         </div>
     </div>
 </template>
+
+
+<style scoped>
+.panel_content {
+    height: 100%;
+}
+
+[class*="stats_wrapper"] {
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+}
+
+
+.stats_wrapper_fullscreen {
+    flex-direction: row;
+    background-color: #303030;
+    padding: 30px;
+    margin: 0;
+}
+
+.stats_wrapper_fullscreen .stat {
+    border-inline-end: 1px solid #494A4A;
+}
+
+.stat_value {
+    font-size: 30px;
+    color: #C4AB79;
+    margin: 5px 0;
+}
+
+.stats_wrapper_fullscreen .stat label {
+    color: #9EA3A5;
+}
+
+.line_legend_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-block-start: 20px;
+}
+
+.line_legend_wrapper .legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.question {
+    background-color: #303030;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.question_asnwers {
+    display: flex;
+    background-color: #383838;
+    border-radius: 8px;
+}
+
+[class*="_answer"] {
+    flex: 1;
+    padding: 10px;
+}
+
+[class*="_answer"] {
+    margin: 0;
+}
+
+.yes_answer {
+    border-left: 1px solid #F7F7F8;
+}
+
+.progress {
+    background-color: #F7F7F8;
+    height: 8px;
+}
+</style>

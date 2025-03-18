@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { useDebounceFn } from "@vueuse/core";
+import { objectEntries, useDebounceFn } from "@vueuse/core";
 import { MapConfigs } from "@/config";
 import { GoogleMap, MarkerCluster, CustomMarker } from "vue3-google-map";
 import {
@@ -42,7 +42,7 @@ async function getAreas(type = "") {
   filterAreaTypes(type)
 }
 
-function filterAreaTypes(type = "") {
+function filterAreaTypes(type: string = "") {
   if (type == "0") {
     areas.value = areas.value.filter(location => (location.type == "موقف"));
   }
@@ -127,17 +127,34 @@ function showMarkers(targetInput) {
     return
   }
 }
+
+const searchText = ref('');
+const filteredResults = ref([]);
+
+function getsearch(text) {
+  searchText.value = text;
+  const data = ref([
+    { name: "apple", category: "fruit" },
+    { name: "banana", category: "fruit" },
+    { name: "carrot", category: "vegetable" },
+    { name: "date", category: "fruit" }
+  ]);
+  filteredResults.value = data.value.filter(item => item['name'] && item['name'].toString().toLowerCase().includes(searchText.value.toLowerCase())
+  );
+  console.log(filteredResults.value);
+}
+
 </script>
 
 <template>
 
   <div class="interactive-map__wrapper">
-    <MapTopNavbar @changeTypeHandler="getAreas" />
+    <MapPanel />
+    <MapTopNavbar @changeTypeHandler="getAreas" @searching-users="getsearch(searchText)" />
     <transition name="scale" mode="out-in">
       <div v-if="mapStore.isMapStatisticsFullscreen" class=""></div>
     </transition>
     <!-- <MapStatisticsPanel /> -->
-    <MapPanel />
     <transition name="scale" mode="out-in">
       <MapLoader v-if="mapStore.isMapDataLoading" style="z-index: 99" />
     </transition>
@@ -161,7 +178,8 @@ function showMarkers(targetInput) {
         <CustomMarker v-if="isSupervisors" v-for="(supervisor, index) in mapStore.supervisors" :key="index"
           :options="{ position: { lat: supervisor.lat, lng: supervisor.long }, anchorPoint: 'BOTTOM_CENTER' }"
           @click="displaySupervisorDetails(supervisor.user_id)">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"
+            style="border-radius: 50%; animation: pulseSupervisor 2s infinite;">
             <circle cx="20" cy="20" r="15" fill="#35685f" />
             <circle cx="20" cy="20" r="17.5" stroke="#35685f" stroke-opacity="0.3" stroke-width="5" />
             <g clip-path="url(#clip0_1_35095)">
@@ -180,11 +198,12 @@ function showMarkers(targetInput) {
           </svg>
         </CustomMarker>
         <CustomMarker v-if="isUsers" v-for="(user, index) in mapStore.users" :key="index"
-          :options="{ position: { lat: user.lat, lng: user.long }, anchorPoint: 'BOTTOM_CENTER' }"
+          :options="{ position: { lat: user.lat, lng: user.long }, anchorPoint: 'BOTTOM_CENTER' }" class="marker_pulse"
           @click="displayUserDetails(user.user_id)">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="20" cy="20" r="15" fill="#857854" />
-            <circle cx="20" cy="20" r="17.5" stroke="#857854" stroke-opacity="0.3" stroke-width="5" />
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"
+            style="border-radius: 50%; animation: pulse 2s infinite;">
+            <circle cx="20" cy="20" r="15" fill="#C4AB79" />
+            <circle cx="20" cy="20" r="17.5" stroke="#C4AB79" stroke-opacity="0.3" stroke-width="5" />
             <g clip-path="url(#clip0_1_35095)">
               <path
                 d="M19.5 13C17.6099 13 16.0723 14.5377 16.0723 16.4277C16.0723 18.3178 17.6099 19.8555 19.5 19.8555C21.3901 19.8555 22.9277 18.3178 22.9277 16.4277C22.9277 14.5377 21.3901 13 19.5 13Z"
@@ -261,64 +280,23 @@ body {
   }
 }
 
-@keyframes pulse-observer {
+@keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(180, 145, 100, 0.4);
-  }
-
-  25% {
-    box-shadow: 0 0 0 10px rgba(180, 145, 100, 0.4);
-  }
-
-  50% {
-    box-shadow: 0 0 0 15px rgba(180, 145, 100, 0);
-  }
-
-  75% {
-    box-shadow: 0 0 0 10px rgba(180, 145, 100, 0);
+    box-shadow: 0 0 0 0px rgba(196, 171, 121, 0.2);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(180, 145, 100, 0);
+    box-shadow: 0 0 0 20px rgba(196, 171, 121, 0);
   }
 }
 
-@keyframes pulse-operator {
+@keyframes pulseSupervisor {
   0% {
-    box-shadow: 0 0 0 0 rgba(95, 166, 166, 0.4);
-  }
-
-  25% {
-    box-shadow: 0 0 0 10px rgba(95, 166, 166, 0.4);
-  }
-
-  50% {
-    box-shadow: 0 0 0 15px rgba(95, 166, 166, 0);
-  }
-
-  75% {
-    box-shadow: 0 0 0 10px rgba(95, 166, 166, 0);
+    box-shadow: 0 0 0 0px rgba(53, 104, 95, 0.2);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(95, 166, 166, 0);
+    box-shadow: 0 0 0 20px rgba(53, 104, 95, 0);
   }
 }
-
-// @keyframes pulse-operator {
-//   0% {
-//     box-shadow: 0 0 0 0 rgba(167, 136, 255, 0.4);
-//   }
-//   25% {
-//     box-shadow: 0 0 0 10px rgba(167, 136, 255, 0.4);
-//   }
-//   50% {
-//     box-shadow: 0 0 0 15px rgba(167, 136, 255, 0);
-//   }
-//   75% {
-//     box-shadow: 0 0 0 10px rgba(167, 136, 255, 0);
-//   }
-//   100% {
-//     box-shadow: 0 0 0 0 rgba(167, 136, 255, 0);
-//   }
-// }</style>
+</style>

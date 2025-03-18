@@ -113,7 +113,7 @@ onMounted(getComplaints)
                                 <button @click="getComplaints($event.target, '0')">البلاغات المفتوحة</button>
                                 <button @click="getComplaints($event.target, '1')">البلاغات المقفولة</button>
                             </div>
-                            <DataTable paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" :value="complaints"
+                            <DataTable paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]" :value="complaints"
                                 selectionMode="single" :loading="isLoading"
                                 @rowSelect="emit('showDetails', selectedComplaint.id)"
                                 v-model:selection="selectedComplaint">
@@ -121,7 +121,7 @@ onMounted(getComplaints)
                                     <template #body="slotProps">
                                         <div class="d-flex align-items-center ga-2">
                                             <v-icon icon="mdi-information-outline" class="icon"></v-icon>
-                                            <p>{{ slotProps.data.title }}</p>
+                                            <span>{{ slotProps.data.title }}</span>
                                         </div>
                                     </template>
                                 </Column>
@@ -131,15 +131,15 @@ onMounted(getComplaints)
                                             <div class="avatar">
                                                 <img :src="avataImg" alt="">
                                             </div>
-                                            <p>{{ slotProps.data.user }}</p>
+                                            <span>{{ slotProps.data.user }}</span>
                                         </div>
                                     </template>
                                 </Column>
                                 <Column field="status" header="حالة البلاغ">
                                     <template #body="slotProps">
-                                        <p class="complaint_status"
+                                        <span class="complaint_status"
                                             :style="{ 'background-color': slotProps.data.status_name == 'مفتوحه' ? '#EBF0EF' : '#FFF0F0', 'color': slotProps.data.status_name == 'مفتوحه' ? '#35685F' : '#C05E5E' }">
-                                            {{ slotProps.data.status_name }}</p>
+                                            {{ slotProps.data.status_name }}</span>
                                     </template>
                                 </Column>
                                 <Column field="date" header="تاريخ الإرسال"></Column>
@@ -158,6 +158,10 @@ onMounted(getComplaints)
 * {
     font-size: 14px;
     --p-highlight-background: red !important;
+}
+
+span {
+    color: #fff;
 }
 
 .card_title {

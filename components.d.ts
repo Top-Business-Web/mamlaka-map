@@ -15,7 +15,6 @@ declare module 'vue' {
     ComplaintDetailsModal: typeof import('./src/components/maps/modals/complaintDetailsModal.vue')['default']
     ComplaintsModal: typeof import('./src/components/maps/modals/complaintsModal.vue')['default']
     ComplaintsPanel: typeof import('./src/components/global/panels/ComplaintsPanel.vue')['default']
-    copy: typeof import('./src/components/global/panels/MainAxesPanel copy.vue')['default']
     DailyReportsPanel: typeof import('./src/components/global/panels/DailyReportsPanel.vue')['default']
     DonutChart: typeof import('./src/components/charts/DonutChart.vue')['default']
     DualBarChart: typeof import('./src/components/charts/DualBarChart.vue')['default']

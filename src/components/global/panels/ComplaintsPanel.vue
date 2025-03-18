@@ -162,104 +162,105 @@ onMounted(getReports)
 </script>
 <template>
     <div style="padding: 15px; height: 100%;">
-        <v-row>
-            <v-col cols="12">
-                <select class="form-select w-100 mt-2" aria-label="Default select example"
-                    style="background-color: #303030;" v-model="selectedReport">
-                    <option value="" disabled selected>اختر الموقع</option>
-                    <option v-for="(report, index) in fetchedReports" :value="report" :selected="index == 0">
-                        {{ report.title }}
-                    </option>
-                </select>
+        <v-row class="my-0">
+            <v-col :class="`py-0 ${mapStore.isMapStatisticsFullscreen ? 'mt-0' : 'mt-2'}`" cols="12">
+                <div class="select_wrapper">
+                    <img src="@/assets/imgs/icons/arrow-down.svg" width="10px" alt="">
+                    <select class="dark_bg" v-model="selectedReport">
+                        <option value="" disabled selected>نوع البلاغ </option>
+                        <option v-for="(report, index) in fetchedReports" :value="report" :selected="index == 0">
+                            {{ report.title }}
+                        </option>
+                    </select>
+                </div>
             </v-col>
         </v-row>
         <div v-if="selectedReport">
-            <v-row class="top-panel-grid mx-0"
-                :class="{ 'top-panel-grid--fullscreen': mapStore.isMapStatisticsFullscreen }" :style="[
-                    mapStore.isMapStatisticsFullscreen
-                        ? 'background-color: #303030; margin-top: 20px;'
-                        : ''
-                ]">
-                <v-col cols="6">
-                    <v-card class="stats_card">
+            <v-row class="stats_wrapper my-3"
+                :class="{ 'stats_wrapper_fullscreen': mapStore.isMapStatisticsFullscreen }">
+                <v-col cols="6" class="py-0">
+                    <div class="stat">
                         <div>
                             <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
                                 max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                            <h3 v-else class="stat_value" style="color: #C4AB79;">
+                            <h3 v-else class="stat_value">
                                 {{ fetchedDetails.notice }}
                                 <!-- {{
-                                    convertNumberWithSeperator(
-                                        parseValueToActialNumber(14456, 0),
-                                        "٬"
-                                    )
-                                }} -->
+                                        convertNumberWithSeperator(
+                                            parseValueToActialNumber(21, 0),
+                                            "٬"
+                                        )
+                                    }} -->
                             </h3>
                             <label>اجمالي عدد البلاغات</label>
                         </div>
-                    </v-card>
+                        <button :class="mapStore.isMapStatisticsFullscreen ? 'light' : ''"
+                            @click="toggleComplaintsModal('low')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
+                    </div>
                 </v-col>
-                <v-col cols="6">
-                    <v-card class="stats_card">
+                <v-col cols="6" class="py-0">
+                    <div class="stat">
                         <div>
                             <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
                                 max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
                             <h3 v-else class="stat_value" style="color: #C05E5E;">
                                 {{ fetchedDetails.highNoticesCount }}
                                 <!-- {{
-                                    convertNumberWithSeperator(
-                                        parseValueToActialNumber(14456, 0),
-                                        "٬"
-                                    )
-                                }} -->
+                                        convertNumberWithSeperator(
+                                            parseValueToActialNumber(, 0),
+                                            "٬"
+                                        )
+                                    }} -->
                             </h3>
                             <label>البلاغات ذات الأهمية العالية</label>
                         </div>
                         <button :class="mapStore.isMapStatisticsFullscreen ? 'light' : ''"
                             @click="toggleComplaintsModal('high')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
-                    </v-card>
+                    </div>
                 </v-col>
-                <v-col cols="6">
-                    <v-card class="stats_card">
+                <v-col cols="6" class="py-0">
+                    <div class="stat">
                         <div>
                             <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
                                 max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                            <h3 v-else class="stat_value" style="color: #B49164 ;">
+                            <h3 v-else class="stat_value">
                                 {{ fetchedDetails.midNoticesCount }}
                                 <!-- {{
-                                    convertNumberWithSeperator(
-                                        parseValueToActialNumber(14456, 0),
-                                        "٬"
-                                    )
-                                }} -->
+                                        convertNumberWithSeperator(
+                                            parseValueToActialNumber(1512, 0),
+                                            "٬"
+                                        )
+                                    }} -->
                             </h3>
                             <label>البلاغات ذات الأهمية المتوسطة</label>
                         </div>
                         <button :class="mapStore.isMapStatisticsFullscreen ? 'light' : ''"
                             @click="toggleComplaintsModal('mid')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
-                    </v-card>
+                    </div>
                 </v-col>
-                <v-col cols="6">
-                    <v-card class="stats_card">
+                <v-col cols="6" class="py-0">
+                    <div class="stat">
                         <div>
                             <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
                                 max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                            <h3 v-else class="stat_value" style="color: #35685F ;">
+                            <h3 v-else class="stat_value" style="color: #35685F;">
                                 {{ fetchedDetails.lowNoticesCount }}
                                 <!-- {{
-                                    convertNumberWithSeperator(
-                                        parseValueToActialNumber(14456, 0),
-                                        "٬"
-                                    )
-                                }} -->
+                                        convertNumberWithSeperator(
+                                            parseValueToActialNumber(1512, 0),
+                                            "٬"
+                                        )
+                                    }} -->
                             </h3>
                             <label>البلاغات ذات الأهمية المنخفضة</label>
                         </div>
                         <button :class="mapStore.isMapStatisticsFullscreen ? 'light' : ''"
                             @click="toggleComplaintsModal('low')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
-                    </v-card>
+                    </div>
                 </v-col>
             </v-row>
-            <v-row>
+            <hr v-if="!mapStore.isMapStatisticsFullscreen" class="my-4">
+            <v-row class="my-0">
                 <canvas id="blank" style="display: none;" aria-label="Hello ARIA World" role="img"></canvas>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100 h-100" style="background-color: #303030; padding: 15px;">
@@ -280,15 +281,19 @@ onMounted(getReports)
                             </h3>
                             <canvas id="complaintsPeriorityChart" aria-label="Hello ARIA World" role="img"></canvas>
                         </div>
-                        <div class="legend_wrapper">
-                            <div class="chart_legend_high" style="--c: #C05E5E">
-                                <p>عالية الأهمية: <b>{{ fetchedDetails.highNoticesCount }}</b></p>
+
+                        <div class="pie_legend_wrapper">
+                            <div class="legend">
+                                <span>عالية الأهمية: <b style="--c: #C05E5E">{{ fetchedDetails.highNoticesCount
+                                }}</b></span>
                             </div>
-                            <div class="chart_legend_medium" style="--c: #857854">
-                                <p>متوسطة الأهمية: <b>{{ fetchedDetails.midNoticesCount }}</b></p>
+                            <div class="legend">
+                                <span>متوسطة الأهمية: <b style="--c: #857854">{{ fetchedDetails.midNoticesCount
+                                }}</b></span>
                             </div>
-                            <div class="chart_legend_low" style="--c: #35685F">
-                                <p>منخفضة الأهمية: <b>{{ fetchedDetails.lowNoticesCount }}</b></p>
+                            <div class="legend">
+                                <span>منخفضة الأهمية: <b style="--c: #35685F">{{ fetchedDetails.lowNoticesCount
+                                }}</b></span>
                             </div>
                         </div>
                     </v-card>
@@ -312,18 +317,20 @@ onMounted(getReports)
                             </h3>
                             <canvas id="complaintsStatusChart" aria-label="Hello ARIA World" role="img"></canvas>
                         </div>
-                        <div class="legend_wrapper">
-                            <div class="chart_legend_low" style="--c: #35685F">
-                                <p>بلاغات مفتوحة: <b>{{ fetchedDetails.openNoticesCount }}</b></p>
+                        <div class="pie_legend_wrapper">
+                            <div class="legend">
+                                <span>بلاغات مفتوحة: <b style="--c: #35685F">{{ fetchedDetails.openNoticesCount
+                                }}</b></span>
                             </div>
-                            <div class="chart_legend_high" style="--c: #C05E5E">
-                                <p>بلاغات مقفولة: <b>{{ fetchedDetails.midNoticesCount }}</b></p>
+                            <div class="legend">
+                                <span>بلاغات مقفولة: <b style="--c: #C05E5E">{{ fetchedDetails.closedNoticesCount
+                                }}</b></span>
                             </div>
                         </div>
                     </v-card>
                 </v-col>
             </v-row>
-            <v-row>
+            <v-row class="my-0">
                 <v-col v-if="isLoading" :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`"
                     v-for="question in fetchedDetails.axisQuestions">
                     <div class="card-border mt-2" style="background-color: #303030">
@@ -410,32 +417,36 @@ onMounted(getReports)
         ">
             <img :src=emptyBox width="150" alt="Empty box">
             <h1>لا توجد معلومات</h1>
-            <p style="color: #ffffff90">برجاء اختيار الموقع.</p>
+            <p style="color: #ffffff90">برجاء اختيار نوع البلاغ.</p>
         </div>
     </div>
-
-
 </template>
 
 <style scoped>
-.stats_card {
+.panel_content {
+    height: 100%;
+}
+
+[class*="stats_wrapper"] {
+    display: flex;
+    row-gap: 30px;
+
+}
+
+.stats_wrapper_fullscreen {
+    flex-direction: row;
+    background-color: #303030;
+    padding: 30px;
+    margin: 0;
+}
+
+.stat {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    background-color: transparent;
-    padding: 15px 0;
 }
 
-.stats_card .stat_value {
-    font-size: 30px;
-    font-weight: bold;
-}
-
-.stats_card label {
-    font-size: 14px;
-}
-
-.stats_card button {
+.stat button {
     background-color: #303030;
     border-radius: 5px;
     width: 35px;
@@ -443,8 +454,69 @@ onMounted(getReports)
     font-size: 12px;
 }
 
-.stats_card button.light {
+.stat button.light {
     background-color: #383838;
+}
+
+.stat_value {
+    font-size: 30px;
+    font-weight: bold;
+    color: #C4AB79;
+    margin: 0 0 5px;
+}
+
+.stats_wrapper_fullscreen .stat label {
+    color: #9EA3A5;
+}
+
+.pie_legend_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-block-start: -30px;
+}
+
+.pie_legend_wrapper .legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.pie_legend_wrapper .legend b {
+    color: var(--c);
+    font-size: 22px;
+}
+
+.question {
+    background-color: #303030;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.question_asnwers {
+    display: flex;
+    background-color: #383838;
+    border-radius: 8px;
+}
+
+[class*="_answer"] {
+    flex: 1;
+    padding: 10px;
+}
+
+[class*="_answer"] {
+    margin: 0;
+}
+
+.yes_answer {
+    border-left: 1px solid #F7F7F8;
+}
+
+.progress {
+    background-color: #F7F7F8;
+    height: 8px;
 }
 
 .chart_wrapper {
@@ -452,70 +524,5 @@ onMounted(getReports)
     place-items: center;
     margin: auto;
     min-height: 400px;
-}
-
-.chart_legend_closed {
-    position: absolute;
-    text-align: center;
-    top: 30px;
-    left: 10px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--c);
-}
-
-.chart_legend_closed::before {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    right: 1px;
-    height: 1px;
-    width: 100px;
-    background-color: var(--c);
-    transform: translateX(100%) rotate(45deg);
-    transform-origin: 0;
-}
-
-.chart_legend_opened {
-    position: absolute;
-    text-align: center;
-    bottom: 30px;
-    right: 0;
-    padding-top: 10px;
-    border-top: 2px solid var(--c);
-}
-
-.chart_legend_opened::before {
-    content: "";
-    position: absolute;
-    top: -2px;
-    left: 1px;
-    height: 1px;
-    width: 50px;
-    background-color: var(--c);
-    transform: translateX(-100%) rotate(30deg);
-    transform-origin: 100%;
-}
-
-.legend_wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin-top: -30px;
-    margin-bottom: 15px;
-}
-
-.legend_wrapper [class*="chart_legend"] {
-    padding-right: 10px;
-    border-right: 5px solid var(--c);
-    padding-inline: 10px;
-}
-
-.legend_wrapper [class*="chart_legend"] p {
-    color: #ffffff90;
-}
-
-.legend_wrapper [class*="chart_legend"] b {
-    color: #ffffff;
 }
 </style>

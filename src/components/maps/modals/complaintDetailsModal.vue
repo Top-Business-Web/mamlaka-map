@@ -1,29 +1,8 @@
 <script setup>
-import idIcon from "@/assets/imgs/icons/number.svg"
-import phoneIcon from "@/assets/imgs/icons/phone.svg"
-import roleIcon from "@/assets/imgs/icons/user.svg"
-import displayIcon from "@/assets/imgs/icons/display.svg"
-import locationIcon from "@/assets/imgs/icons/location.svg"
-import searchIcon from "@/assets/imgs/icons/search.svg"
-import pattern from "@/assets/imgs/pattern.svg"
 import avataImg from "@/assets/imgs/image1.png";
 import imgIcon from "@/assets/imgs/icons/img-icon.svg";
-import videoIcon from "@/assets/imgs/icons/video-icon.svg";
-import { computed, onMounted } from "vue"
-import axios from "axios"
+import { onMounted } from "vue"
 import http from "@/plugins/axios"
-
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';
-import Paginator from "primevue/paginator"
-
-import Tabs from 'primevue/tabs';
-import TabList from 'primevue/tablist';
-import Tab from 'primevue/tab';
-import TabPanels from 'primevue/tabpanels';
-import TabPanel from 'primevue/tabpanel';
 
 const props = defineProps({
     complaintId: null
@@ -74,7 +53,7 @@ onMounted(getComplaintDetails)
                         <h6>شرح البلاغ</h6>
                         <hr>
                         <v-skeleton-loader v-if="isLoading" width="200px" height="1.2rem"></v-skeleton-loader>
-                        <p v-else>{{ complaintDetails.description }}</p>
+                        <span v-else class="box_content">{{ complaintDetails.description }}</span>
                     </div>
                     <div class="box">
                         <h6>تفاصيل البلاغ</h6>
@@ -83,7 +62,7 @@ onMounted(getComplaintDetails)
                             <div class="info_box">
                                 <label>موقع البلاغ</label>
                                 <v-skeleton-loader v-if="isLoading" width="200px" height="1.2rem"></v-skeleton-loader>
-                                <p v-else>شارع النصر، المنطقة الصناعية – مكة</p>
+                                <span v-else>شارع النصر، المنطقة الصناعية – مكة</span>
                             </div>
                             <div class="info_box">
                                 <label>مرسل البلاغ</label>
@@ -96,28 +75,34 @@ onMounted(getComplaintDetails)
                                     </div>
                                     <v-skeleton-loader v-if="isLoading" width="200px"
                                         height="1.2rem"></v-skeleton-loader>
-                                    <p v-else>{{ complaintDetails.user }}</p>
+                                    <span v-else>{{ complaintDetails.user }}</span>
                                 </div>
                             </div>
                             <div class="info_box">
                                 <label>درجة الأهمية</label>
                                 <v-skeleton-loader v-if="isLoading" width="200px" height="1.2rem"></v-skeleton-loader>
-                                <p v-else>{{ complaintDetails.priority }}</p>
+                                <div v-else>
+                                    <span v-if="complaintDetails.priority == 'عالية'" style="color: #C05E5E;">{{
+                                        complaintDetails.priority }}</span>
+                                    <span v-else-if="complaintDetails.priority == 'متوسطة'" style="color: #C4AB79;"> {{
+                                        complaintDetails.priority }}</span>
+                                    <span v-else style="color: #35685F">{{ complaintDetails.priority }}</span>
+                                </div>
                             </div>
                             <div class="info_box">
                                 <label>تاريخ ووقت الإبلاغ</label>
                                 <v-skeleton-loader v-if="isLoading" width="200px" height="1.2rem"></v-skeleton-loader>
-                                <p v-else>{{ complaintDetails.date }}</p>
+                                <span v-else>{{ complaintDetails.date }}</span>
                             </div>
                             <div class="info_box">
                                 <label>حالة البلاغ</label>
                                 <v-skeleton-loader v-if="isLoading" width="200px" height="1.2rem"></v-skeleton-loader>
-                                <p v-else>{{ complaintDetails.status_name }}</p>
+                                <span v-else>{{ complaintDetails.status_name }}</span>
                             </div>
                             <div class="info_box">
                                 <label>تاريخ الإرسال</label>
                                 <v-skeleton-loader v-if="isLoading" width="200px" height="1.2rem"></v-skeleton-loader>
-                                <p v-else>{{ complaintDetails.created_at }}</p>
+                                <span v-else>{{ complaintDetails.created_at }}</span>
                             </div>
                         </div>
                     </div>
@@ -131,12 +116,12 @@ onMounted(getComplaintDetails)
                                     class="file" target="_blank">
                                     <img :src="imgIcon" alt="">
                                     <div class="file_info">
-                                        <p>{{ file.file_name }}</p>
+                                        <span>{{ file.file_name }}</span>
                                         <small> {{ file.file_size }}</small>
                                     </div>
                                 </a>
                             </div>
-                            <p v-else>لا يوجد</p>
+                            <span v-else>لا يوجد</span>
                         </div>
                     </div>
                 </v-card-text>
@@ -159,7 +144,6 @@ onMounted(getComplaintDetails)
     padding: 25px;
 }
 
-
 .modal_card {
     background-color: #383838;
     padding: 0;
@@ -175,6 +159,11 @@ onMounted(getComplaintDetails)
     margin-top: 15px;
 }
 
+.box_content {
+    color: #9EA3A5;
+    margin: 0;
+}
+
 .details_wrapper {
     display: flex;
     align-items: flex-start;
@@ -184,6 +173,8 @@ onMounted(getComplaintDetails)
 
 .info_box {
     flex: 1 1 300px;
+    display: flex;
+    flex-direction: column;
 }
 
 .info_box label {

@@ -212,10 +212,6 @@ onMounted(() => {
   mapStore.getMapStatistics();
 });
 
-import brandMark from "@/assets/imgs/logo.png";
-import refreshIcon from "@/assets/imgs/refresh.png";
-import maximizeIcon from "@/assets/imgs/maximize.png";
-import minimizeIcon from "@/assets/imgs/minimize.png";
 </script>
 
 <template>
@@ -223,31 +219,34 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
     <v-expansion-panels variant="popout" v-model="opendPanel" bg-color="transparent">
       <v-expansion-panel value="panel" bg-color="#383838" @group:selected="togglePanel">
         <v-expansion-panel-title :readonly="mapStore.isMapStatisticsFullscreen"
-          :hide-actions="mapStore.isMapStatisticsFullscreen" :class="{ 'pe-0': mapStore.isMapStatisticsFullscreen }">
+          :hide-actions="mapStore.isMapStatisticsFullscreen">
+          <template v-slot:actions="{ expanded }">
+            <v-icon :icon="expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" class="expand_icon"></v-icon>
+          </template>
           <template v-slot:default="{ expanded }">
             <div ref="panelTitle" class="w-100 d-flex align-center justify-space-between">
-              <h2 style="min-width: 10rem" class="text-h6 font-weight-bold m-0" @click="(e) => e.stopPropagation()">
-                <img :src="brandMark" style="height: 50px" />
-              </h2>
+              <img src="@/assets/imgs/logo.png" style="height: 50px" @click="(e) => e.stopPropagation()" />
               <transition name="list" mode="out-in">
-                <div v-if="expanded" class="d-flex align-center ga-2 pe-4">
-                  <v-btn @click="refreshData" icon variant="text">
-                    <img :src="refreshIcon" style="height: 25px" />
+                <div v-if="expanded" class="actions_wrapper">
+                  <v-btn v-if="!mapStore.isMapStatisticsFullscreen" @click="refreshData" icon variant="text">
+                    <img src="@/assets/imgs/refresh.png" width="20px" />
                   </v-btn>
-                  <v-btn v-if="mapStore.isMapStatisticsFullscreen" @click="minimaizePanel" variant="text">
+                  <v-btn v-if="mapStore.isMapStatisticsFullscreen" @click="minimaizePanel" variant="text"
+                    class="shrink_screen">
                     <div class="w-100 d-flex align-center ga-2">
+                      <img src="@/assets/imgs/minimize.png" width="20px" />
                       <span>تقليص الشاشة</span>
-                      <img :src="minimizeIcon" style="height: 25px" />
                     </div>
                   </v-btn>
                   <v-btn v-else @click="maximaizePanel" icon variant="text">
-                    <img :src="maximizeIcon" style="height: 25px" />
+                    <img src="@/assets/imgs/maximize.png" width="20px" />
                   </v-btn>
                 </div>
               </transition>
             </div>
           </template>
         </v-expansion-panel-title>
+        <hr v-if="mapStore.isMapStatisticsFullscreen" class="mt-0">
         <v-expansion-panel-text v-if="mapStore.isLoadingMapStatistics">
           <div class="h-100 d-flex flex-column pt-8">
             <div class="w-100 pb-8 px-4">
@@ -303,32 +302,6 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
 <style lang="scss">
 @import "vue3-perfect-scrollbar/style.css";
 
-.v-btn-icon {
-  transition: transform 300ms ease-in-out;
-}
-
-// [aria-expanded="true"] .v-btn-icon {
-//   transform: rotate(180deg);
-// }
-
-.top-panel-grid {
-  &--fullscreen {
-    &>.v-col:not(:last-child) {
-      width: calc(100% / 5);
-    }
-
-    &>.v-col:last-child {
-      width: calc((100% / 5) * 2);
-    }
-  }
-
-  &:not(.top-panel-grid--fullscreen) {
-    .v-card {
-      background-color: transparent !important;
-    }
-  }
-}
-
 .panel-bottom:not(.panel-bottom--fullscreen) {
   .v-card {
     background-color: transparent !important;
@@ -353,11 +326,11 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
 }
 
 .map-custom-panel {
-  --panel-top: 16px;
+  --panel-top: 20px;
   overflow: hidden;
   position: fixed;
   top: var(--panel-top);
-  right: 30px;
+  right: 20px;
   z-index: 9999;
   transition: width 300ms ease-in-out;
   height: calc(100vh - (var(--panel-top)*2));
@@ -381,6 +354,8 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
 
   .v-expansion-panel {
     border-radius: 10px;
+    max-width: 100%;
+    overflow: hidden;
 
     &.v-expansion-panel--active {
       height: calc(100vh - (var(--panel-top)*2));
@@ -393,11 +368,15 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
   }
 
   .v-expansion-panel-text__wrapper {
-    padding: 8px 0px 16px;
+    padding: 0;
   }
 
   .v-expansion-panel-text {
+    overflow: hidden;
     overflow-y: scroll;
+    padding: 0 15px;
+    box-sizing: content-box;
+    width: calc(100% - 15px);
     height: calc(100% - (var(--panel-top)*5.125));
   }
 
@@ -432,6 +411,38 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
     color: #857854;
   }
 
+}
+</style>
+<style scoped>
+.actions_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.actions_wrapper button:not(.shrink_screen) {
+  width: 32px;
+  height: 32px;
+  background-color: #303030;
+  border-radius: 4px;
+}
+
+.shrink_screen {
+  background-color: #F8F5EF;
+  color: #C4AB79;
+  border-radius: 8px;
+}
+
+.v-expansion-panel-title__icon {
+  background: red !important;
+}
+
+.expand_icon {
+  width: 32px;
+  height: 32px;
+  margin-inline-start: 10px;
+  border-radius: 4px;
+  background-color: #303030;
 }
 
 .progress {
