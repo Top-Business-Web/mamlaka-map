@@ -95,7 +95,7 @@ function generateCharts() {
                 radius: "80%",
                 circumference: 360 * (fetchedDetails.value.midNoticesCount / fetchedDetails.value.notice * 100) / 100,
                 rotation: -360 * ((fetchedDetails.value.midNoticesCount / fetchedDetails.value.notice * 100) + (fetchedDetails.value.lowNoticesCount / fetchedDetails.value.notice * 100)) / 100,
-                backgroundColor: '#857854',
+                backgroundColor: '#C4AB79',
             },
             {
                 label: 'منخفضة الأهمية',
@@ -161,9 +161,9 @@ onMounted(getReports)
 
 </script>
 <template>
-    <div style="padding: 15px; height: 100%;">
+    <div class="panel_content">
         <v-row class="my-0">
-            <v-col :class="`py-0 ${mapStore.isMapStatisticsFullscreen ? 'mt-0' : 'mt-2'}`" cols="12">
+            <v-col class="py-0" cols="12">
                 <div class="select_wrapper">
                     <img src="@/assets/imgs/icons/arrow-down.svg" width="10px" alt="">
                     <select class="dark_bg" v-model="selectedReport">
@@ -195,7 +195,7 @@ onMounted(getReports)
                             <label>اجمالي عدد البلاغات</label>
                         </div>
                         <button :class="mapStore.isMapStatisticsFullscreen ? 'light' : ''"
-                            @click="toggleComplaintsModal('low')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
+                            @click="toggleComplaintsModal()"><v-icon icon="mdi-chevron-left"></v-icon> </button>
                     </div>
                 </v-col>
                 <v-col cols="6" class="py-0">
@@ -285,15 +285,15 @@ onMounted(getReports)
                         <div class="pie_legend_wrapper">
                             <div class="legend">
                                 <span>عالية الأهمية: <b style="--c: #C05E5E">{{ fetchedDetails.highNoticesCount
-                                }}</b></span>
+                                        }}</b></span>
                             </div>
                             <div class="legend">
-                                <span>متوسطة الأهمية: <b style="--c: #857854">{{ fetchedDetails.midNoticesCount
-                                }}</b></span>
+                                <span>متوسطة الأهمية: <b style="--c: #C4AB79">{{ fetchedDetails.midNoticesCount
+                                        }}</b></span>
                             </div>
                             <div class="legend">
                                 <span>منخفضة الأهمية: <b style="--c: #35685F">{{ fetchedDetails.lowNoticesCount
-                                }}</b></span>
+                                        }}</b></span>
                             </div>
                         </div>
                     </v-card>
@@ -320,11 +320,11 @@ onMounted(getReports)
                         <div class="pie_legend_wrapper">
                             <div class="legend">
                                 <span>بلاغات مفتوحة: <b style="--c: #35685F">{{ fetchedDetails.openNoticesCount
-                                }}</b></span>
+                                        }}</b></span>
                             </div>
                             <div class="legend">
                                 <span>بلاغات مقفولة: <b style="--c: #C05E5E">{{ fetchedDetails.closedNoticesCount
-                                }}</b></span>
+                                        }}</b></span>
                             </div>
                         </div>
                     </v-card>
@@ -425,6 +425,7 @@ onMounted(getReports)
 <style scoped>
 .panel_content {
     height: 100%;
+    padding-block-start: 15px;
 }
 
 [class*="stats_wrapper"] {
@@ -492,13 +493,14 @@ onMounted(getReports)
 .question {
     background-color: #303030;
     border-radius: 8px;
-    padding: 20px;
+    padding: 15px;
 }
 
-.question_asnwers {
+.answers {
     display: flex;
     background-color: #383838;
     border-radius: 8px;
+    margin-block-start: 15px;
 }
 
 [class*="_answer"] {

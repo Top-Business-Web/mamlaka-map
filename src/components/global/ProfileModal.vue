@@ -117,6 +117,6 @@ hr {
 .btn-closee {
     margin: 25px;
     background-color: white !important;
-    color: #857854 !important;
+    color: #C4AB79 !important;
 }
 </style>

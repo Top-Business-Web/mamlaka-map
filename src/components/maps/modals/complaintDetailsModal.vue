@@ -82,11 +82,12 @@ onMounted(getComplaintDetails)
                                 <label>درجة الأهمية</label>
                                 <v-skeleton-loader v-if="isLoading" width="200px" height="1.2rem"></v-skeleton-loader>
                                 <div v-else>
+                                    <span v-if="complaintDetails.priority == 'منخفضة'" style="color: #35685F;">{{
+                                        complaintDetails.priority }}</span>
+                                    <span v-if="complaintDetails.priority == 'متوسطة'" style="color: #C4AB79;">{{
+                                        complaintDetails.priority }}</span>
                                     <span v-if="complaintDetails.priority == 'عالية'" style="color: #C05E5E;">{{
                                         complaintDetails.priority }}</span>
-                                    <span v-else-if="complaintDetails.priority == 'متوسطة'" style="color: #C4AB79;"> {{
-                                        complaintDetails.priority }}</span>
-                                    <span v-else style="color: #35685F">{{ complaintDetails.priority }}</span>
                                 </div>
                             </div>
                             <div class="info_box">

@@ -179,7 +179,7 @@ function getsearch(text) {
           :options="{ position: { lat: supervisor.lat, lng: supervisor.long }, anchorPoint: 'BOTTOM_CENTER' }"
           @click="displaySupervisorDetails(supervisor.user_id)">
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"
-            style="border-radius: 50%; animation: pulseSupervisor 2s infinite;">
+            style="border-radius: 50%; animation: pulseSupervisor 1.5s infinite;">
             <circle cx="20" cy="20" r="15" fill="#35685f" />
             <circle cx="20" cy="20" r="17.5" stroke="#35685f" stroke-opacity="0.3" stroke-width="5" />
             <g clip-path="url(#clip0_1_35095)">
@@ -201,7 +201,7 @@ function getsearch(text) {
           :options="{ position: { lat: user.lat, lng: user.long }, anchorPoint: 'BOTTOM_CENTER' }" class="marker_pulse"
           @click="displayUserDetails(user.user_id)">
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"
-            style="border-radius: 50%; animation: pulse 2s infinite;">
+            style="border-radius: 50%; animation: pulse 1.5s infinite;">
             <circle cx="20" cy="20" r="15" fill="#C4AB79" />
             <circle cx="20" cy="20" r="17.5" stroke="#C4AB79" stroke-opacity="0.3" stroke-width="5" />
             <g clip-path="url(#clip0_1_35095)">

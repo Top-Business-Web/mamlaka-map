@@ -21,6 +21,7 @@ const detailsSearchQuery = reactive({
     period: searchQuery.value.period
 });
 const isLoading = ref(false);
+const todayDate = ref(new Date().getDate())
 
 async function getAreas() {
     try {
@@ -167,9 +168,9 @@ onMounted(getAreas)
 
 </script>
 <template>
-    <div style="padding: 15px;height: 100%;">
+    <div class="panel_content">
         <v-row class="my-0">
-            <v-col :class="`py-0 ${mapStore.isMapStatisticsFullscreen ? 'mt-0' : 'mt-2'}`" cols="12">
+            <v-col class="py-0" cols="12">
                 <div class="select_wrapper">
                     <img src="@/assets/imgs/icons/arrow-down.svg" width="10px" alt="">
                     <select class="dark_bg" v-model="selectedArea">
@@ -184,7 +185,7 @@ onMounted(getAreas)
         <div v-if="selectedArea">
             <v-row class="stats_wrapper my-3"
                 :class="{ 'stats_wrapper_fullscreen': mapStore.isMapStatisticsFullscreen }">
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 12}`" class="py-0">
+                <v-col cols="6" class="py-0">
                     <div class="stat">
                         <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
                             max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
@@ -200,7 +201,7 @@ onMounted(getAreas)
                         <label>عدد العاملين في الموقع</label>
                     </div>
                 </v-col>
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 12}`" class="py-0">
+                <v-col cols="6" class="py-0">
                     <div class="stat">
                         <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
                             max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
@@ -214,6 +215,38 @@ onMounted(getAreas)
                                 }} -->
                         </h3>
                         <label>اجمالي عدد التقارير اليومية</label>
+                    </div>
+                </v-col>
+                <v-col v-if="fetchedDetails.busesCount" cols="6" class="py-0">
+                    <div class="stat">
+                        <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
+                            max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
+                        <h3 v-else class="stat_value">
+                            {{ fetchedDetails.busesCount }}
+                            <!-- {{
+                                    convertNumberWithSeperator(
+                                        parseValueToActialNumber(, 0),
+                                        "٬"
+                                    )
+                                }} -->
+                        </h3>
+                        <label>عدد الحافلات في الموقع</label>
+                    </div>
+                </v-col>
+                <v-col v-if="fetchedDetails.end_time" cols="6" class="py-0">
+                    <div class="stat">
+                        <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
+                            max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
+                        <h3 v-else class="stat_value">
+                            {{ fetchedDetails.end_time.time }}
+                            <!-- {{
+                                    convertNumberWithSeperator(
+                                        parseValueToActialNumber(, 0),
+                                        "٬"
+                                    )
+                                }} -->
+                        </h3>
+                        <label>وقت انتهاء الذروة</label>
                     </div>
                 </v-col>
             </v-row>
@@ -268,7 +301,7 @@ onMounted(getAreas)
                             <v-skeleton-loader type="button" height="1rem" width="8rem" max-width="100%"
                                 max-height="100%"></v-skeleton-loader>
                         </p>
-                        <div class="question_asnwers">
+                        <div class="answers">
                             <div class="yes_answer">
                                 <div class="d-flex justify-content-between mb-2 text-white">
                                     <span>نعم</span>
@@ -296,7 +329,7 @@ onMounted(getAreas)
                         <p class="question_title">
                             {{ question.question }}
                         </p>
-                        <div class="question_asnwers">
+                        <div class="answers">
                             <div class="yes_answer">
                                 <div class="d-flex justify-content-between mb-2 text-white">
                                     <span>نعم</span>
@@ -347,12 +380,12 @@ onMounted(getAreas)
 <style scoped>
 .panel_content {
     height: 100%;
+    padding-block-start: 15px;
 }
 
 [class*="stats_wrapper"] {
     display: flex;
-    flex-direction: column;
-    row-gap: 15px;
+    row-gap: 30px;
 }
 
 
@@ -396,13 +429,14 @@ onMounted(getAreas)
 .question {
     background-color: #303030;
     border-radius: 8px;
-    padding: 20px;
+    padding: 15px;
 }
 
-.question_asnwers {
+.answers {
     display: flex;
     background-color: #383838;
     border-radius: 8px;
+    margin-block-start: 15px;
 }
 
 [class*="_answer"] {

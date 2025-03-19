@@ -58,11 +58,11 @@ const isLoading = ref(false)
 //     labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
 //     datasets: [{
 //         data: [39, 80, 17, 18, 63, 16, 80],
-//         pointBackgroundColor: "#857854",
+//         pointBackgroundColor: "#C4AB79",
 //         pointBorderColor: "#fff",
-//         borderColor: "#857854",
+//         borderColor: "#C4AB79",
 //         fill: true,
-//         backgroundColor: "#85785420"
+//         backgroundColor: "#C4AB7920"
 //     }]
 // }
 // function generateConfig(data, isLegend = true) {
@@ -171,7 +171,7 @@ onMounted(getReports)
 
 </script>
 <template>
-    <div style="padding: 15px; height: 100%;">
+    <div class="panel_content">
         <v-row class="my-0">
             <v-col class="py-0" cols="12">
                 <div class="select_wrapper">
@@ -244,7 +244,7 @@ onMounted(getReports)
                             <v-skeleton-loader type="button" height="1rem" width="8rem" max-width="100%"
                                 max-height="100%"></v-skeleton-loader>
                         </p>
-                        <div class="question_asnwers">
+                        <div class="answers">
                             <div class="yes_answer">
                                 <div class="d-flex justify-content-between mb-2 text-white">
                                     <span>نعم</span>
@@ -272,7 +272,7 @@ onMounted(getReports)
                         <p class="question_title">
                             {{ question.question }}
                         </p>
-                        <div class="question_asnwers">
+                        <div class="answers">
                             <div class="yes_answer">
                                 <div class="d-flex justify-content-between mb-2 text-white">
                                     <span>نعم</span>
@@ -322,6 +322,7 @@ onMounted(getReports)
 <style scoped>
 .panel_content {
     height: 100%;
+    padding-block-start: 15px;
 }
 
 [class*="stats_wrapper"] {
@@ -371,13 +372,14 @@ onMounted(getReports)
 .question {
     background-color: #303030;
     border-radius: 8px;
-    padding: 20px;
+    padding: 15px;
 }
 
-.question_asnwers {
+.answers {
     display: flex;
     background-color: #383838;
     border-radius: 8px;
+    margin-block-start: 15px;
 }
 
 [class*="_answer"] {

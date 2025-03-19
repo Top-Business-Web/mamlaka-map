@@ -57,7 +57,7 @@ const mapStore = useMapStore();
     <div class="w-100 d-flex align-center justify-content-end">
       <transition name="scale">
         <div v-if="!mapStore.isMapStatisticsFullscreen" class="d-flex align-center ga-4">
-          <v-switch :model-value="true" label="عرض الموظفين" hide-details inset class="custom-switch" color="#857854"
+          <v-switch :model-value="true" label="عرض الموظفين" hide-details inset class="custom-switch" color="#C4AB79"
             @click="$emit('showMarkers', $event.target)"></v-switch>
           <v-switch :model-value="true" label="عرض المشرفين" hide-details inset class="custom-switch" color="#35685F"
             @click="$emit('showMarkers', $event.target)"></v-switch>

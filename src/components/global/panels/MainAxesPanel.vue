@@ -313,7 +313,7 @@ onMounted(getAxes)
                             <v-skeleton-loader type="button" height="1rem" width="8rem" max-width="100%"
                                 max-height="100%"></v-skeleton-loader>
                         </p>
-                        <div class="question_asnwers">
+                        <div class="answers">
                             <div class="yes_answer">
                                 <div class="d-flex justify-content-between mb-2 text-white">
                                     <span>نعم</span>
@@ -341,7 +341,7 @@ onMounted(getAxes)
                         <p class="question_title">
                             {{ question.question }}
                         </p>
-                        <div class="question_asnwers">
+                        <div class="answers">
                             <div class="yes_answer">
                                 <div class="d-flex justify-content-between mb-2 text-white">
                                     <span>نعم</span>
@@ -391,6 +391,7 @@ onMounted(getAxes)
 <style scoped>
 .panel_content {
     height: 100%;
+    padding-block-start: 15px;
 }
 
 [class*="stats_wrapper"] {
@@ -440,13 +441,15 @@ onMounted(getAxes)
 .question {
     background-color: #303030;
     border-radius: 8px;
-    padding: 20px;
+    padding: 15px;
 }
 
-.question_asnwers {
+.answers {
     display: flex;
     background-color: #383838;
     border-radius: 8px;
+    margin-block-start: 15px;
+
 }
 
 [class*="_answer"] {

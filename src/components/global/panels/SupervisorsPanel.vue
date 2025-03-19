@@ -209,7 +209,7 @@ onMounted(getReports)
 
 </script>
 <template>
-    <div style="padding: 15px; height: 100%;">
+    <div class="panel_content">
         <v-row class="my-0">
             <v-col class="py-0" cols="12">
                 <div class="select_wrapper">
@@ -269,12 +269,12 @@ onMounted(getReports)
                             <canvas id="reportsStatusChart" aria-label="Hello ARIA World" role="img"></canvas>
                             <div class="pie_legend_wrapper">
                                 <div class="legend">
-                                    <span>البلاغات المعتمدة: <b style="--c: #35685F">{{
+                                    <span>التقارير المعتمدة: <b style="--c: #35685F">{{
                                         fetchedDetails.completedDailyReportAssignCount
                                             }}</b></span>
                                 </div>
                                 <div class="legend">
-                                    <span>البلاغات المرفوضة: <b style="--c: #C05E5E">{{
+                                    <span>التقارير المرفوضة: <b style="--c: #C05E5E">{{
                                         fetchedDetails.cancelledDailyReportAssignCount
                                             }}</b></span>
                                 </div>
@@ -321,6 +321,7 @@ onMounted(getReports)
 
 .panel_content {
     height: 100%;
+    padding-block-start: 15px;
 }
 
 [class*="stats_wrapper"] {
@@ -382,13 +383,14 @@ onMounted(getReports)
 .question {
     background-color: #303030;
     border-radius: 8px;
-    padding: 20px;
+    padding: 15px;
 }
 
-.question_asnwers {
+.answers {
     display: flex;
     background-color: #383838;
     border-radius: 8px;
+    margin-block-start: 15px;
 }
 
 [class*="_answer"] {

@@ -18,12 +18,15 @@ const selectedAlert = ref("");
 const fetchedDetails = ref({});
 const detailsSearchQuery = reactive({
     period: searchQuery.value.period,
-    status: selectedAlert.value
+    is_seen: null,
 });
 const isLoading = ref(false)
 
 async function getDetails() {
     isLoading.value = true
+    detailsSearchQuery.is_seen = selectedAlert.value;
+    console.log(detailsSearchQuery);
+
     try {
         const params = Object.fromEntries(
             Object.entries(detailsSearchQuery).filter(([_, v]) => v)
@@ -79,7 +82,7 @@ function generateCharts() {
                 radius: "80%",
                 circumference: 360 * (fetchedDetails.value.midAlertsCount / fetchedDetails.value.alertsCount * 100) / 100,
                 rotation: -360 * ((fetchedDetails.value.midAlertsCount / fetchedDetails.value.alertsCount * 100) + (fetchedDetails.value.lowAlertsCount / fetchedDetails.value.alertsCount * 100)) / 100,
-                backgroundColor: '#857854',
+                backgroundColor: '#C4AB79',
             },
             {
                 label: 'منخفضة الأهمية',
@@ -116,10 +119,10 @@ function generateCharts() {
     }
 
 
-    if (alertsStatusChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
-        Chart.getChart(alertsStatusChart).destroy();
-    }
-    new Chart(alertsStatusChart, generateConfig(alertsStatusData));
+    // if (alertsStatusChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+    //     Chart.getChart(alertsStatusChart).destroy();
+    // }
+    // new Chart(alertsStatusChart, generateConfig(alertsStatusData));
 
     if (alertsPeriorityChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
         Chart.getChart(alertsPeriorityChart).destroy();
@@ -138,9 +141,9 @@ function toggleAlertsModal(periority) {
 
 </script>
 <template>
-    <div style="padding: 15px; height: 100%;">
+    <div class="panel_content">
         <v-row class="my-0">
-            <v-col :class="`py-0 ${mapStore.isMapStatisticsFullscreen ? 'mt-0' : 'mt-2'}`" cols="12">
+            <v-col class="py-0" cols="12">
                 <div class="select_wrapper">
                     <img src="@/assets/imgs/icons/arrow-down.svg" width="10px" alt="">
                     <select class="dark_bg" v-model="selectedAlert">
@@ -171,7 +174,7 @@ function toggleAlertsModal(periority) {
                             <label>اجمالي عدد التنبيهات</label>
                         </div>
                         <button :class="mapStore.isMapStatisticsFullscreen ? 'light' : ''"
-                            @click="toggleAlertsModal('low')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
+                            @click="toggleAlertsModal()"><v-icon icon="mdi-chevron-left"></v-icon> </button>
                     </div>
                 </v-col>
                 <v-col cols="6" class="py-0">
@@ -264,7 +267,7 @@ function toggleAlertsModal(periority) {
                                         }}</b></span>
                             </div>
                             <div class="legend">
-                                <span>متوسطة الأهمية: <b style="--c: #857854">{{ fetchedDetails.midAlertsCount
+                                <span>متوسطة الأهمية: <b style="--c: #C4AB79">{{ fetchedDetails.midAlertsCount
                                         }}</b></span>
                             </div>
                             <div class="legend">
@@ -395,6 +398,7 @@ function toggleAlertsModal(periority) {
 <style scoped>
 .panel_content {
     height: 100%;
+    padding-block-start: 15px;
 }
 
 [class*="stats_wrapper"] {
@@ -462,13 +466,14 @@ function toggleAlertsModal(periority) {
 .question {
     background-color: #303030;
     border-radius: 8px;
-    padding: 20px;
+    padding: 15px;
 }
 
-.question_asnwers {
+.answers {
     display: flex;
     background-color: #383838;
     border-radius: 8px;
+    margin-block-start: 15px;
 }
 
 [class*="_answer"] {

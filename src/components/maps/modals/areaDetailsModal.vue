@@ -146,7 +146,7 @@ onMounted(getAreaDetails)
                         <div class="team_box">
                             <div class="box_header">
                                 <h2 class="text-h6 d-flex align-items-center ga-3 m-0 font-weight-bold">الموظفين</h2>
-                                <div class="input_wrapper">
+                                <div class="input_wrapper search_wrapper">
                                     <img :src="searchIcon" alt="">
                                     <input type="text" v-model="searchInput" placeholder="البحث">
                                 </div>
@@ -315,7 +315,7 @@ onMounted(getAreaDetails)
 
 .team_box .box_header span {
     font-weight: bold;
-    color: #857854;
+    color: #C4AB79;
 }
 
 .team_box .box_header .input_wrapper {

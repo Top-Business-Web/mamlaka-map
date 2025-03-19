@@ -146,7 +146,7 @@ onMounted(getSupervisorDetails)
                                         style="display: inline;"></v-skeleton-loader>
                                     <span class="text-h6" v-else>({{ supervisorDetails.leader_team.length }})</span>
                                 </h2>
-                                <div class="input_wrapper">
+                                <div class="input_wrapper search_wrapper">
                                     <img :src="searchIcon" alt="">
                                     <input type="text" v-model="searchInput" placeholder="البحث">
                                 </div>
@@ -287,7 +287,7 @@ onMounted(getSupervisorDetails)
 }
 
 .stats_box {
-    padding: 15px;
+    padding: 30px;
     border-radius: 10px;
     color: #9EA3A5;
     border: 1px solid #303030;
@@ -297,7 +297,7 @@ onMounted(getSupervisorDetails)
 .stats_box .stats_wrapper {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 30px;
 }
 
 .stats_box .stats_wrapper .stat {
@@ -310,7 +310,7 @@ onMounted(getSupervisorDetails)
 }
 
 .stats_box .stats_wrapper .stat p {
-    color: #857854;
+    color: #C4AB79;
     font-size: 28px;
     font-weight: 500;
 }
@@ -330,7 +330,7 @@ onMounted(getSupervisorDetails)
 
 .team_box .box_header span {
     font-weight: bold;
-    color: #857854;
+    color: #C4AB79;
 }
 
 .team_box .box_header .input_wrapper {

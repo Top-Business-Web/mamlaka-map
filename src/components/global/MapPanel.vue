@@ -246,7 +246,7 @@ onMounted(() => {
             </div>
           </template>
         </v-expansion-panel-title>
-        <hr v-if="mapStore.isMapStatisticsFullscreen" class="mt-0">
+        <hr v-if="mapStore.isMapStatisticsFullscreen" class="my-0">
         <v-expansion-panel-text v-if="mapStore.isLoadingMapStatistics">
           <div class="h-100 d-flex flex-column pt-8">
             <div class="w-100 pb-8 px-4">
@@ -408,7 +408,7 @@ onMounted(() => {
 
   .status-normal {
     background-color: #fff9eb;
-    color: #857854;
+    color: #C4AB79;
   }
 
 }
