@@ -246,4 +246,12 @@ select.dark_bg {
   background-color: #C4AB79;
   left: 100%;
 }
+
+select:hover {
+  background-color: green;
+}
+
+option:focus-visible {
+  background-color: red !important;
+}
 </style>

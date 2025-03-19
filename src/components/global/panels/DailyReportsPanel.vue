@@ -19,7 +19,7 @@ const fetchedDetails = ref({})
 const detailsSearchQuery = reactive({
     axis_id: "",
     area_id: "",
-    period: searchQuery.value.period ?? "3"
+    period: searchQuery.value.period
 });
 const isLoading = ref(false);
 
@@ -251,6 +251,22 @@ onMounted(getReports)
                                 }} -->
                         </h3>
                         <label>عدد التقارير اليومية المرفوضة</label>
+                    </div>
+                </v-col>
+                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 12}`" class="py-0">
+                    <div class="stat">
+                        <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
+                            max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
+                        <h3 v-else class="stat_value">
+                            {{ fetchedDetails.usersRate }}%
+                            <!-- {{
+                                    convertNumberWithSeperator(
+                                        parseValueToActialNumber(, 0),
+                                        "٬"
+                                    )
+                                }} -->
+                        </h3>
+                        <label>معدل إنجاز الأفراد</label>
                     </div>
                 </v-col>
             </v-row>

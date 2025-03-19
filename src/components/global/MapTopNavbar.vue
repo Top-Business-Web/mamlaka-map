@@ -6,6 +6,7 @@ import avataImg from "@/assets/imgs/image1.png";
 import searchIcon from "@/assets/imgs/icons/search.svg";
 import ProfileModal from '@/components/global/ProfileModal.vue';
 import http from "@/plugins/axios";
+
 const mapStore = useMapStore();
 const isMenuOpen = ref<boolean>(false);
 const searchText = ref<string>("");
@@ -13,6 +14,9 @@ const selectedParent = ref<string>("0");
 const selectedPeriod = ref<string>("");
 const selectedUserType = ref<string>("all");
 const selectedType = ref<string>("");
+
+const myValue = ref('')
+const myOptions = ref(['op1', 'op2', 'op3'])
 
 const emit = defineEmits(["searchingUsers"])
 
@@ -54,6 +58,7 @@ const closeProfileModal = () => {
 onMounted(() => {
   getRoles();
 })
+
 </script>
 
 <template>

@@ -113,7 +113,7 @@ onMounted(getAlerts)
                                         </div>
                                     </template>
                                 </Column>
-                                <Column field="priority" header="أهمية البلاغ">
+                                <Column v-if="!searchQuery.priority" field="priority" header="أهمية البلاغ">
                                     <template #body="slotProps">
                                         <span v-if="slotProps.data.priority == 'low'" class="alert_status"
                                             style="background-color: #35685F20;color: #35685F;">{{
