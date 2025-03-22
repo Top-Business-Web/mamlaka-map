@@ -5,8 +5,10 @@ import dayjs from "dayjs";
 import avataImg from "@/assets/imgs/image1.png";
 import searchIcon from "@/assets/imgs/icons/search.svg";
 import ProfileModal from '@/components/global/ProfileModal.vue';
+import LoginModal from "@/components/maps/modals/loginModal.vue";
 import http from "@/plugins/axios";
 
+const autharized = ref(sessionStorage.getItem('token') != null)
 const mapStore = useMapStore();
 const isMenuOpen = ref<boolean>(false);
 const searchText = ref<string>("");
@@ -14,12 +16,10 @@ const selectedParent = ref<string>("0");
 const selectedPeriod = ref<string>("");
 const selectedUserType = ref<string>("all");
 const selectedType = ref<string>("");
-
 const myValue = ref('')
 const myOptions = ref(['op1', 'op2', 'op3'])
 
 const emit = defineEmits(["searchingUsers"])
-
 const handleStatsFilter = (key: MapStatisticsFilterKeys, value: string) => {
   mapStore.updateMapStatisticsFilter(key, value);
   mapStore.getMapStatistics();
@@ -32,7 +32,11 @@ const handleUsersFilter = () => {
 const roles = ref([])
 async function getRoles() {
   try {
-    const res = await http.get("v1/map/getRoles")
+    const res = await http.get("v1/map/getRoles", {
+      headers: {
+        Authorization: sessionStorage.getItem('token')
+      }
+    })
     roles.value = res.data.data
   } catch (error) {
     console.log(error);
@@ -54,6 +58,23 @@ const openProfileModal = () => {
 const closeProfileModal = () => {
   profileDialog.value = false;
 };
+
+const isLogin = ref(false);
+function openLoginModal() {
+  isLogin.value = true
+}
+
+async function handleLogout() {
+  try {
+    await http.get('v1/map/logout').then(() => {
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('mapUser')
+      location.reload();
+    });
+  } catch (error) {
+    console.log('Error while logging out!', error);
+  }
+}
 
 onMounted(() => {
   getRoles();
@@ -109,17 +130,20 @@ onMounted(() => {
         </select>
       </div>
     </div>
-    <v-menu>
+
+    <div v-if="!autharized" @click="openLoginModal">
+      <v-icon icon="mdi-login" class="mx-0 ms-2"></v-icon> تسجيل الدخول
+    </div>
+    <v-menu v-else>
       <template v-slot:activator="{ props }">
         <img width="40px" :src="avataImg" v-bind="props" />
       </template>
-
       <v-list width="200" class="user_dropdown">
         <v-list-item @click="openProfileModal" style="border-bottom: 1px solid;">
           <v-list-item-title><v-icon icon="mdi-account-outline" class="mx-0 ms-2"></v-icon>
             الحساب</v-list-item-title>
         </v-list-item>
-        <v-list-item href="#">
+        <v-list-item @click="handleLogout">
           <v-list-item-title><v-icon icon="mdi-logout" class="mx-0 ms-2"></v-icon> تسجيل الخروج</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -128,6 +152,9 @@ onMounted(() => {
   <v-dialog v-model="profileDialog" min-width="90%" min-height="90%">
     <ProfileModal @close="closeProfileModal" />
   </v-dialog>
+  <div v-if="isLogin">
+    <LoginModal v-model="isLogin" />
+  </div>
 </template>
 
 <!-- <style lang="scss">

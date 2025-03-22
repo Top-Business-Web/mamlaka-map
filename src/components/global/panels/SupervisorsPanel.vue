@@ -22,29 +22,36 @@ const detailsSearchQuery = reactive({
 });
 const isLoading = ref(false)
 
-function generateCharts() {
-    // const compliancePercentageChartData = {
-    //     labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-    //     datasets: [{
-    //         label: 'ملتزم',
-    //         data: [69, 20, 68, 18, 63, 16, 50],
-    //         pointBackgroundColor: "#35685F",
-    //         pointBorderColor: "#fff",
-    //         borderColor: "#35685F",
-    //         fill: true,
-    //         backgroundColor: "#35685F20"
-    //     }, {
-    //         label: 'غير ملتزم',
-    //         data: [58, 36, 48, 39, 69, 38, 30],
-    //         pointBackgroundColor: "#C05E5E",
-    //         pointBorderColor: "#fff",
-    //         borderColor: "#C05E5E",
-    //         fill: true,
-    //         backgroundColor: "#C05E5E20"
-    //     }]
-    // }
 
-    console.log(fetchedDetails.value.cancelledDailyReportAssignCount);
+
+
+function generateCharts() {
+    const dataCalc = Object.values(fetchedDetails.value.reports_status_percentages).map(data => {
+        const sum = data.pending + data.approved + data.rejected;
+        if (sum == 0) return 0;
+        return (data.approved / sum) * 100;
+    })
+
+    const compliancePercentageChartData = {
+        labels: Object.keys(fetchedDetails.value.general_reports_percentages),
+        datasets: [{
+            label: 'ملتزم',
+            data: Object.values(fetchedDetails.value.general_reports_percentages),
+            pointBackgroundColor: "#35685F",
+            pointBorderColor: "#fff",
+            borderColor: "#35685F",
+            fill: true,
+            backgroundColor: "#35685F20"
+        }, {
+            label: 'غير ملتزم',
+            data: Object.values(fetchedDetails.value.violation_reports_percentages),
+            pointBackgroundColor: "#C05E5E",
+            pointBorderColor: "#fff",
+            borderColor: "#C05E5E",
+            fill: true,
+            backgroundColor: "#C05E5E20"
+        }]
+    }
 
     const reportsStatusChartData = {
         datasets: [
@@ -68,18 +75,19 @@ function generateCharts() {
             }
         ],
     }
-    // const reportsQualityChartData = {
-    //     labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-    //     datasets: [{
-    //         label: 'نسبة الالتزام بالحضور',
-    //         data: [58, 63, 78, 79, 69, 38, 30],
-    //         pointBackgroundColor: "#35685F",
-    //         pointBorderColor: "#fff",
-    //         borderColor: "#35685F",
-    //         fill: true,
-    //         backgroundColor: "#35685F20"
-    //     }]
-    // }
+
+    const reportsQualityChartData = {
+        labels: Object.keys(fetchedDetails.value.reports_status_percentages),
+        datasets: [{
+            label: 'نسبة الالتزام بالحضور',
+            data: dataCalc,
+            pointBackgroundColor: "#35685F",
+            pointBorderColor: "#fff",
+            borderColor: "#35685F",
+            fill: true,
+            backgroundColor: "#35685F20"
+        }]
+    }
 
     const reportsStatusChartConfig = {
         type: 'doughnut',
@@ -99,79 +107,79 @@ function generateCharts() {
         }
     }
 
-    // function generateConfig(data, isLegend = true) {
-    //     const config = {
-    //         type: 'line',
-    //         data: data,
-    //         options: {
-    //             aspectRatio: 2 / 1,
-    //             layout: {
-    //                 padding: 0
-    //             },
-    //             elements: {
-    //                 point: {
-    //                     radius: 6,
-    //                     hoverRadius: 7,
-    //                     borderWidth: 2,
-    //                     hoverBorderWidth: 2,
-    //                 }
-    //             },
-    //             tension: 0.4,
-    //             scales: {
-    //                 y: {
-    //                     position: "right",
-    //                     min: 0,
-    //                     max: 100,
-    //                     ticks: {
-    //                         color: '#c1c1c1',
-    //                         stepSize: 20,
-    //                     },
-    //                     grid: {
-    //                         color: "#646464",
-    //                     },
-    //                     border: {
-    //                         dash: [3, 3],
-    //                     },
-    //                 },
-    //                 x: {
-    //                     reverse: true,
-    //                     ticks: {
-    //                         color: '#c1c1c1',
-    //                         align: "start",
-    //                     },
-    //                     offset: true,
-    //                     grid: {
-    //                         color: "#646464",
-    //                     },
-    //                     border: {
-    //                         dash: [3, 3],
-    //                     },
-    //                 },
-    //             },
-    //             plugins: {
-    //                 legend: {
-    //                     display: isLegend,
-    //                     rtl: true,
-    //                     position: 'bottom',
-    //                     labels: {
-    //                         padding: 30,
-    //                         usePointStyle: true,
-    //                         color: '#c1c1c1'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return config
-    // }
-    // new Chart(compliancePercentageChart, generateConfig(compliancePercentageChartData, true));
+    function generateConfig(data) {
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                aspectRatio: 2 / 1,
+                layout: {
+                    padding: 0
+                },
+                elements: {
+                    point: {
+                        radius: 6,
+                        hoverRadius: 7,
+                        borderWidth: 2,
+                        hoverBorderWidth: 2,
+                    }
+                },
+                tension: 0.4,
+                scales: {
+                    y: {
+                        position: "right",
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            color: '#c1c1c1',
+                            stepSize: 20,
+                        },
+                        grid: {
+                            color: "#646464",
+                        },
+                        border: {
+                            dash: [3, 3],
+                        },
+                    },
+                    x: {
+                        reverse: true,
+                        ticks: {
+                            color: '#c1c1c1',
+                            align: "start",
+                        },
+                        offset: true,
+                        grid: {
+                            color: "#646464",
+                        },
+                        border: {
+                            dash: [3, 3],
+                        },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                }
+            }
+        }
+        return config
+    }
+
+    if (compliancePercentageChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(compliancePercentageChart).destroy();
+    }
+    new Chart(compliancePercentageChart, generateConfig(compliancePercentageChartData));
 
     if (reportsStatusChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
         Chart.getChart(reportsStatusChart).destroy();
     }
     new Chart(reportsStatusChart, reportsStatusChartConfig);
-    // new Chart(reportsStatusChart, reportsStatusChartConfig);
-    // new Chart(reportsQualityChart, generateConfig(reportsQualityChartData, false));
+
+    if (reportsQualityChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(reportsQualityChart).destroy();
+    }
+    new Chart(reportsQualityChart, generateConfig(reportsQualityChartData));
 }
 
 async function getReports() {
@@ -246,15 +254,25 @@ onMounted(getReports)
             <hr v-if="!mapStore.isMapStatisticsFullscreen" class="my-4">
             <v-row class="my-0">
                 <canvas id="blank" class="d-none" aria-label="Hello ARIA World" role="img"></canvas>
-                <!-- <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
+                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100" style="background-color: #303030; padding: 15px;">
                         <div class="w-100">
                             <p style="font-size: 0.9rem">نسبة التزام المشرفين برفع التقارير</p>
                         </div>
                         <hr>
                         <canvas id="compliancePercentageChart" aria-label="Hello ARIA World" role="img"></canvas>
+                        <div class="line_legend_wrapper">
+                            <div class="legend">
+                                <span>ملتزم</span>
+                                <img src="@/assets/imgs/icons/legend-green.svg" width="20" alt="">
+                            </div>
+                            <div class="legend">
+                                <span>غير ملتزم</span>
+                                <img src="@/assets/imgs/icons/legend-red.svg" width="20" alt="">
+                            </div>
+                        </div>
                     </v-card>
-                </v-col> -->
+                </v-col>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100 h-100" style="background-color: #303030; padding: 15px;">
                         <div class="w-100">
@@ -282,7 +300,7 @@ onMounted(getReports)
                         </div>
                     </v-card>
                 </v-col>
-                <!-- <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
+                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100" style="background-color: #303030; padding: 15px;">
                         <div class="w-100">
                             <p style="font-size: 0.9rem">نسبة جودة التقارير</p>
@@ -290,7 +308,7 @@ onMounted(getReports)
                         <hr>
                         <canvas id="reportsQualityChart" aria-label="Hello ARIA World" role="img"></canvas>
                     </v-card>
-                </v-col> -->
+                </v-col>
             </v-row>
         </div>
         <div v-else style="
@@ -358,6 +376,22 @@ onMounted(getReports)
 
 .stats_wrapper_fullscreen .stat label {
     color: #9EA3A5;
+}
+
+.line_legend_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-block-start: 20px;
+}
+
+.line_legend_wrapper .legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .pie_legend_wrapper {

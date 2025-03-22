@@ -23,135 +23,157 @@ const detailsSearchQuery = reactive({
 });
 const isLoading = ref(false);
 
-// function generateCharts() {
-//     const completionRateChartData = {
-//         labels: Object.keys(fetchedDetails.value.percentageOfDoneAxisToDailyReports),
-//         labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-//         datasets: [{
-//             label: 'معدل الإنجاز الكلي',
-//             data: [69, 20, 37, 18, 63, 16, 50],
-//             pointBackgroundColor: "#35685F",
-//             pointBorderColor: "#fff",
-//             borderColor: "#35685F",
-//             fill: true,
-//             backgroundColor: "#35685F20"
-//         }, {
-//             label: 'معدل الخطأ للتقرير يومي',
-//             data: [58, 36, 48, 39, 69, 38, 30],
-//             pointBackgroundColor: "#C05E5E",
-//             pointBorderColor: "#fff",
-//             borderColor: "#C05E5E",
-//             fill: true,
-//             backgroundColor: "#C05E5E20"
-//         }]
-//     }
-//     const compliancePercentageChartData = {
-//         datasets: [
-//             {
-//                 label: 'نسبة الالتزام بالإجابة بلا لسؤال معين',
-//                 data: [70],
-//                 borderWidth: 0,
-//                 radius: "80%",
-//                 cutout: "0%",
-//                 circumference: 360 * 70 / 100,
-//                 backgroundColor: '#35685F',
-//             },
-//             {
-//                 label: 'نسبة الالتزام بالإجابة بنعم لسؤال معين',
-//                 data: [30],
-//                 borderWidth: 0,
-//                 radius: "80%",
-//                 backgroundColor: '#C05E5E',
-//                 circumference: 360 * 30 / 100,
-//                 rotation: -360 * 30 / 100,
-//             }
-//         ],
-//     }
-//     const doughnutChartConfig = {
-//         type: 'doughnut',
-//         data: compliancePercentageChartData,
-//         options: {
-//             plugins: {
-//                 legend: {
-//                     display: true,
-//                     position: "bottom",
-//                     labels: {
-//                         padding: 30,
-//                         usePointStyle: true,
-//                         color: '#c1c1c1'
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     function generateConfig(data) {
-//         const config = {
-//             type: 'line',
-//             data: data,
-//             options: {
-//                 aspectRatio: 2 / 1,
-//                 layout: {
-//                     padding: 0
-//                 },
-//                 elements: {
-//                     point: {
-//                         radius: 6,
-//                         hoverRadius: 7,
-//                         borderWidth: 2,
-//                         hoverBorderWidth: 2,
-//                     }
-//                 },
-//                 tension: 0.4,
-//                 scales: {
-//                     y: {
-//                         position: "right",
-//                         min: 0,
-//                         max: 100,
-//                         ticks: {
-//                             color: '#c1c1c1',
-//                             stepSize: 20,
-//                         },
-//                         grid: {
-//                             color: "#646464",
-//                         },
-//                         border: {
-//                             dash: [3, 3],
-//                         },
-//                     },
-//                     x: {
-//                         reverse: true,
-//                         ticks: {
-//                             color: '#c1c1c1',
-//                             align: "start",
-//                         },
-//                         offset: true,
-//                         grid: {
-//                             color: "#646464",
-//                         },
-//                         border: {
-//                             dash: [3, 3],
-//                         },
-//                     },
-//                 },
-//                 plugins: {
-//                     legend: {
-//                         display: true,
-//                         rtl: true,
-//                         position: 'bottom',
-//                         labels: {
-//                             padding: 30,
-//                             usePointStyle: true,
-//                             color: '#c1c1c1'
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//         return config
-//     }
-//     new Chart(completionRateChart, generateConfig(completionRateChartData));
-//     new Chart(compliancePercentageChart, doughnutChartConfig);
-// }
+function generateCharts() {
+    const completionRateChartData = {
+        labels: Object.keys(fetchedDetails.value.daily_report_completion),
+        datasets: [{
+            label: 'معدل الإنجاز الكلي',
+            data: Object.values(fetchedDetails.value.daily_report_completion),
+            pointBackgroundColor: "#35685F",
+            pointBorderColor: "#fff",
+            borderColor: "#35685F",
+            fill: true,
+            backgroundColor: "#35685F20"
+        }, {
+            label: 'معدل الخطأ للتقرير يومي',
+            data: Object.values(fetchedDetails.value.daily_report_non_completion),
+            pointBackgroundColor: "#C05E5E",
+            pointBorderColor: "#fff",
+            borderColor: "#C05E5E",
+            fill: true,
+            backgroundColor: "#C05E5E20"
+        }]
+    }
+    // const completionRateChartData = {
+    //     labels: Object.keys(fetchedDetails.value.percentageOfDoneAxisToDailyReports),
+    //     labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+    //     datasets: [{
+    //         label: 'معدل الإنجاز الكلي',
+    //         data: [69, 20, 37, 18, 63, 16, 50],
+    //         pointBackgroundColor: "#35685F",
+    //         pointBorderColor: "#fff",
+    //         borderColor: "#35685F",
+    //         fill: true,
+    //         backgroundColor: "#35685F20"
+    //     }, {
+    //         label: 'معدل الخطأ للتقرير يومي',
+    //         data: [58, 36, 48, 39, 69, 38, 30],
+    //         pointBackgroundColor: "#C05E5E",
+    //         pointBorderColor: "#fff",
+    //         borderColor: "#C05E5E",
+    //         fill: true,
+    //         backgroundColor: "#C05E5E20"
+    //     }]
+    // }
+    const compliancePercentageChartData = {
+        datasets: [
+            {
+                label: 'نسبة الالتزام بالإجابة بلا لسؤال معين',
+                data: [fetchedDetails.value.YesAnswerPercentage],
+                borderWidth: 0,
+                radius: "80%",
+                cutout: "0%",
+                circumference: 360 * fetchedDetails.value.YesAnswerPercentage / 100,
+                backgroundColor: '#35685F',
+            },
+            {
+                label: 'نسبة الالتزام بالإجابة بنعم لسؤال معين',
+                data: [fetchedDetails.value.noAnswerPercentage],
+                borderWidth: 0,
+                radius: "80%",
+                backgroundColor: '#C05E5E',
+                circumference: 360 * fetchedDetails.value.noAnswerPercentage / 100,
+                rotation: -360 * fetchedDetails.value.noAnswerPercentage / 100,
+            }
+        ],
+    }
+    const doughnutChartConfig = {
+        type: 'doughnut',
+        data: compliancePercentageChartData,
+        options: {
+            plugins: {
+                legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                        padding: 30,
+                        usePointStyle: true,
+                        color: '#c1c1c1'
+                    }
+                }
+            }
+        }
+    }
+    function generateConfig(data) {
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                aspectRatio: 2 / 1,
+                layout: {
+                    padding: 0
+                },
+                elements: {
+                    point: {
+                        radius: 6,
+                        hoverRadius: 7,
+                        borderWidth: 2,
+                        hoverBorderWidth: 2,
+                    }
+                },
+                tension: 0.4,
+                scales: {
+                    y: {
+                        position: "right",
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            color: '#c1c1c1',
+                            stepSize: 20,
+                        },
+                        grid: {
+                            color: "#646464",
+                        },
+                        border: {
+                            dash: [3, 3],
+                        },
+                    },
+                    x: {
+                        reverse: true,
+                        ticks: {
+                            color: '#c1c1c1',
+                            align: "start",
+                        },
+                        offset: true,
+                        grid: {
+                            color: "#646464",
+                        },
+                        border: {
+                            dash: [3, 3],
+                        },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                }
+            }
+        }
+        return config
+    }
+
+
+    if (completionRateChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(completionRateChart).destroy();
+    }
+    new Chart(completionRateChart, generateConfig(completionRateChartData))
+
+    if (compliancePercentageChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(compliancePercentageChart).destroy();
+    }
+    new Chart(compliancePercentageChart, doughnutChartConfig);
+}
 
 async function getReports() {
     try {
@@ -176,6 +198,7 @@ async function getDetails() {
         );
         const res = await http.get(`v1/map/getDetailsForParent2`, { params });
         fetchedDetails.value = res.data.data
+        generateCharts();
         isLoading.value = false
 
     } catch (error) {
@@ -205,7 +228,7 @@ onMounted(getReports)
         <div v-if="selectedReport">
             <v-row class="stats_wrapper my-3"
                 :class="{ 'stats_wrapper_fullscreen': mapStore.isMapStatisticsFullscreen }">
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 12}`" class="py-0">
+                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`" class="py-0">
                     <div class="stat">
                         <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
                             max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
@@ -221,7 +244,7 @@ onMounted(getReports)
                         <label>عدد التقارير اليومية المرفوعة</label>
                     </div>
                 </v-col>
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 12}`" class="py-0">
+                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`" class="py-0">
                     <div class="stat">
                         <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
                             max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
@@ -237,7 +260,7 @@ onMounted(getReports)
                         <label>عدد التقارير اليومية المقبولة</label>
                     </div>
                 </v-col>
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 12}`" class="py-0">
+                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`" class="py-0">
                     <div class="stat">
                         <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
                             max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
@@ -253,7 +276,7 @@ onMounted(getReports)
                         <label>عدد التقارير اليومية المرفوضة</label>
                     </div>
                 </v-col>
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 4 : 12}`" class="py-0">
+                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`" class="py-0">
                     <div class="stat">
                         <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
                             max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
@@ -271,7 +294,7 @@ onMounted(getReports)
                 </v-col>
             </v-row>
             <hr v-if="!mapStore.isMapStatisticsFullscreen" class="my-4">
-            <!-- <v-row class="my-0">
+            <v-row class="my-0">
                 <canvas id="blank" class="d-none" aria-label="Hello ARIA World" role="img"></canvas>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100" style="background-color: #303030; padding: 15px;">
@@ -280,6 +303,16 @@ onMounted(getReports)
                         </div>
                         <hr>
                         <canvas id="completionRateChart" aria-label="Hello ARIA World" role="img"></canvas>
+                        <div class="line_legend_wrapper">
+                            <div class="legend">
+                                <span>معدل الإنجاز الكلي</span>
+                                <img src="@/assets/imgs/icons/legend-green.svg" width="20" alt="">
+                            </div>
+                            <div class="legend">
+                                <span>معدل الخطأ للتقرير اليومي</span>
+                                <img src="@/assets/imgs/icons/legend-red.svg" width="20" alt="">
+                            </div>
+                        </div>
                     </v-card>
                 </v-col>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
@@ -290,18 +323,22 @@ onMounted(getReports)
                         <hr>
                         <div class="chart_wrapper position-relative"
                             :class="`${mapStore.isMapStatisticsFullscreen ? 'w-50 h-75' : ''}`">
-                            <div class="chart_legend_no" style="--c: #C05E5E">
-                                <p>نسبة الالتزام بالإجابة بلا لسؤال معين</p>
-                            </div>
                             <canvas id="compliancePercentageChart" aria-label="Hello ARIA World" role="img"></canvas>
-                            <div class="chart_legend_yes" style="--c: #35685F">
-                                <p>نسبة الالتزام بالإجابة بنعم لسؤال معين</p>
+                            <div class="line_legend_wrapper">
+                                <div class="legend">
+                                    <span>نسبة الالتزام بالإجابة بنعم لسؤال معين</span>
+                                    <img src="@/assets/imgs/icons/legend-green.svg" width="20" alt="">
+                                </div>
+                                <div class="legend">
+                                    <span>نسبة الالتزام بالإجابة بلا لسؤال معين</span>
+                                    <img src="@/assets/imgs/icons/legend-red.svg" width="20" alt="">
+                                </div>
                             </div>
                         </div>
                     </v-card>
                 </v-col>
-            </v-row> 
-            <hr v-if="!mapStore.isMapStatisticsFullscreen" class="mt-4 mb-0"> -->
+            </v-row>
+            <hr v-if="!mapStore.isMapStatisticsFullscreen" class="mt-4 mb-0">
             <v-row :class="`${mapStore.isMapStatisticsFullscreen ? '' : 'mt-2'}`">
                 <v-col v-if="isLoading" :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`"
                     v-for="question in fetchedDetails.axisQuestions" class="py-0">
@@ -479,9 +516,31 @@ onMounted(getReports)
 .line_legend_wrapper .legend {
     display: flex;
     align-items: center;
+    white-space: nowrap;
     gap: 10px;
     font-size: 14px;
     color: rgba(255, 255, 255, 0.7);
+}
+
+.pie_legend_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px 30px;
+    margin-block-start: -30px;
+}
+
+.pie_legend_wrapper .legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.pie_legend_wrapper .legend b {
+    color: var(--c);
+    font-size: 22px;
 }
 
 .question {

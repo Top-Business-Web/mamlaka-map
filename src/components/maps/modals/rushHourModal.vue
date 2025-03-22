@@ -6,55 +6,18 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
 const props = defineProps({
-    periority: null,
-    status: null
+    areaId: null
 })
 
-const emit = defineEmits(['showDetails'])
-
-const alertsPeriority = ref("")
-const alertsPeriorityColor = ref("")
-function getPeriority() {
-    if (props.periority && props.periority == "high") {
-        searchQuery.value.priority = "high"
-        alertsPeriority.value = "العالية";
-        alertsPeriorityColor.value = "#C05E5E";
-        return
-    }
-    if (props.periority && props.periority == "mid") {
-        searchQuery.value.priority = "mid"
-        alertsPeriority.value = "المتوسطة";
-        alertsPeriorityColor.value = "#B49164";
-        return
-    }
-    if (props.periority && props.periority == "low") {
-        searchQuery.value.priority = "low"
-        alertsPeriority.value = "المنخفضة";
-        alertsPeriorityColor.value = "#35685F";
-        return
-    }
-    searchQuery.value.priority = null
-    alertsPeriority.value = "";
-    alertsPeriorityColor.value = "#B49164";
-    return
-};
 const isLoading = ref(false)
-const alerts = ref([]);
-const searchQuery = ref({
-    priority: props.periority,
-    seen: props.status,
-})
+const fetchedData = ref([]);
 
-async function getAlerts(status = null) {
-    getPeriority();
-    searchQuery.value.status = status
+async function getRushHours() {
     try {
         isLoading.value = true
-        const params = Object.fromEntries(
-            Object.entries(searchQuery.value).filter(([_, v]) => v)
-        );
-        const res = await http.get("v1/map/getAlerts", { params })
-        alerts.value = res.data.data;
+        // const res = await http.get(`v1/map/getBusesTimes/${area_id}`)
+        const res = await http.get(`v1/map/getBusesTimes/78`)
+        fetchedData.value = res.data.data;
     } catch (error) {
         console.log(error);
     } finally {
@@ -62,7 +25,7 @@ async function getAlerts(status = null) {
     }
 }
 
-onMounted(getAlerts)
+onMounted(getRushHours)
 
 </script>
 
@@ -72,12 +35,7 @@ onMounted(getAlerts)
             <v-card class="modal_card">
                 <v-card-title class="card_title">
                     <div class="text">
-                        <div class="alerts_count" :style="{ 'background-color': alertsPeriorityColor }">
-                            <p>{{ alerts.length }}</p>
-                        </div>
-                        <h2 v-if="props.periority" class="text-h6 m-0 font-weight-bold">التنبيهات ذات الأهمية {{
-                            alertsPeriority }}</h2>
-                        <h2 v-else class="text-h6 m-0 font-weight-bold">جميع التنبيهات</h2>
+                        <h2 class="text-h6 m-0 font-weight-bold">أوقات انتهاء الذروة</h2>
                     </div>
                     <v-btn color="#303030" @click="isActive.value = false">
                         <div class="d-flex align-items-center ga-1">
@@ -89,50 +47,32 @@ onMounted(getAlerts)
                     <div class="card_body">
                         <div class="data_table_wrapper">
                             <DataTable :alwaysShowPaginator="false" paginator :rows="20"
-                                :rowsPerPageOptions="[5, 10, 20, 50]" :value="alerts" :loading="isLoading">
+                                :rowsPerPageOptions="[5, 10, 20, 50]" :value="fetchedData" :loading="isLoading">
                                 <template #empty>
                                     <p class="text-center">
                                         لا يوجد بيانات
                                     </p>
                                 </template>
-                                <Column field="title" header="اسم التنبيه">
+                                <Column field="area" header="اسم الموقع">
                                     <template #body="slotProps">
                                         <div class="d-flex align-items-center ga-2">
                                             <v-icon icon="mdi-information-outline" class="icon"></v-icon>
-                                            <p class="m-0">{{ slotProps.data.title }}</p>
+                                            <p class="m-0">{{ slotProps.data.area }}</p>
                                         </div>
                                     </template>
                                 </Column>
-                                <Column field="user" header="مرسل التنبيه">
+                                <Column field="user" header="المشرف">
                                     <template #body="slotProps">
                                         <div class="reporter_info">
                                             <div class="avatar">
-                                                <img :src="avataImg" alt="">
+                                                <img :src="slotProps.data.image" alt="">
                                             </div>
-                                            <p class="m-0">{{ slotProps.data.sender }}</p>
+                                            <p class="m-0">{{ slotProps.data.user }}</p>
                                         </div>
                                     </template>
                                 </Column>
-                                <Column v-if="!searchQuery.priority" field="priority" header="أهمية البلاغ">
-                                    <template #body="slotProps">
-                                        <span v-if="slotProps.data.priority == 'low'" class="alert_status"
-                                            style="background-color: #35685F20;color: #35685F;">{{
-                                                slotProps.data.priority_name
-                                            }}
-                                        </span>
-                                        <span v-if="slotProps.data.priority == 'mid'" class="alert_status"
-                                            style="background-color: #C4AB7920;color: #C4AB79;">{{
-                                                slotProps.data.priority_name
-                                            }}
-                                        </span>
-                                        <span v-if="slotProps.data.priority == 'high'" class="alert_status"
-                                            style="background-color: #C05E5E20;color: #C05E5E;">{{
-                                                slotProps.data.priority_name
-                                            }}
-                                        </span>
-                                    </template>
-                                </Column>
-                                <Column field="created_at" header="تاريخ الإرسال"></Column>
+                                <Column field="bus_count" header="عدد الحافلات"></Column>
+                                <Column field="end_time" header="وقت انتهاء الذروة"></Column>
                             </DataTable>
                         </div>
                     </div>

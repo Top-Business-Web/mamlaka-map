@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+
+const userDetails = JSON.parse(sessionStorage.getItem('mapUser'))
+
 </script>
+
+
 <template>
     <v-card class="card">
         <div class="d-flex justify-content-between">
             <div>
-                <img src="@/assets/imgs/Brandmark.png" class="img-company" alt="no-image">
+                <img src="@/assets/imgs/logo.png" class="img-company" alt="no-image">
             </div>
             <v-btn @click="$emit('close')" color="red" class="btn-closee">
                 <img src="@/assets/imgs/close.svg">
@@ -15,9 +20,10 @@ import { ref, watch } from 'vue';
         <hr class="mt-0">
         <v-card-text>
             <div class="general_info_box">
-                <img src="@/assets/imgs/image1.png" style="height: 125px;" alt="no-image">
+                <img :src="userDetails.image" style="height: 125px;
+                width: 125px; object-fit: cover;" alt="no-image">
                 <div class="w-100">
-                    <h6 class="text-white mb-2">عبد الله الشمري</h6>
+                    <h6 class="text-white mb-2">{{ userDetails.full_name }}</h6>
                     <p>مدير الخريطة التفاعلية</p>
                     <hr>
                     <button type="button" class="btn-profile">تغيير صورة الملف الشخصي</button>
@@ -32,23 +38,23 @@ import { ref, watch } from 'vue';
                     <div class="row mt-4">
                         <div class="col-lg-3 col-md-6 col-12 mb-3">
                             <label>رقم الحساب</label>
-                            <p class="text-white">#2378903242</p>
+                            <p class="text-white">{{ userDetails.account_number }}</p>
                         </div>
                         <div class="col-lg-3 col-md-6 col-12 mb-3">
-                            <label>رقم الهاتف </label>
-                            <p class="text-white">378903242 </p>
+                            <label>البريد الإلكتروني</label>
+                            <p class="text-white">{{ userDetails.email }}</p>
                         </div>
                         <div class="col-lg-3 col-md-6 col-12 mb-3">
                             <label>رقم الجوال</label>
-                            <p class="text-white">+966378903242 </p>
+                            <p class="text-white">{{ userDetails.phone }}</p>
                         </div>
                         <div class="col-lg-3 col-md-6 col-12 mb-3">
                             <label>رقم الهوية</label>
-                            <p class="text-white"> 378903242</p>
+                            <p class="text-white">{{ userDetails.national_id }}</p>
                         </div>
                         <div class="col-lg-3 col-md-6 col-12 mb-3">
                             <label> المنطقة</label>
-                            <p class="text-white">الرباض</p>
+                            <p class="text-white">-</p>
                         </div>
                         <div class="col-lg-3 col-md-6 col-12 mb-3">
                             <label> المدينة</label>
@@ -64,7 +70,6 @@ import { ref, watch } from 'vue';
         </v-card-text>
     </v-card>
 </template>
-
 
 <style scoped>
 hr {

@@ -170,6 +170,7 @@ select.dark_bg {
 
 .p-datatable .p-datatable-tbody tr td {
   background-color: #303030;
+  color: #fff;
   border: none;
 }
 

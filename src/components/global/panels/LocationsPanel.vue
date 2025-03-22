@@ -4,11 +4,13 @@ import { useMapStore } from '@/stores/MapStore';
 import Chart from "chart.js/auto";
 import { onMounted, reactive } from 'vue';
 import http from '@/plugins/axios';
+import rushHourModal from "@/components/maps/modals/rushHourModal.vue"
 
 import arrowUpRight from "@/assets/imgs/arrow-up-right.png";
 import arrowDownRight from "@/assets/imgs/arrow-down-right.png";
 import arrowRight from "@/assets/imgs/arrow-right.png";
 import emptyBox from "@/assets/imgs/empty-box.svg";
+import ComplaintsModal from '@/components/maps/modals/complaintsModal.vue';
 
 const mapStore = useMapStore();
 const searchQuery = ref(mapStore.mapStatisticsFilters);
@@ -164,6 +166,11 @@ function generateCharts() {
     new Chart(dailyReportsChart, generateConfig(dailyReportsChartData));
 }
 
+const isModalShow = ref(false);
+function toggleComplaintsModal() {
+    isModalShow.value = true;
+}
+
 onMounted(getAreas)
 
 </script>
@@ -234,19 +241,23 @@ onMounted(getAreas)
                     </div>
                 </v-col>
                 <v-col v-if="fetchedDetails.end_time" cols="6" class="py-0">
-                    <div class="stat">
-                        <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
-                            max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
-                        <h3 v-else class="stat_value">
-                            {{ fetchedDetails.end_time.time }}
-                            <!-- {{
-                                    convertNumberWithSeperator(
-                                        parseValueToActialNumber(, 0),
-                                        "٬"
-                                    )
-                                }} -->
-                        </h3>
-                        <label>وقت انتهاء الذروة</label>
+                    <div class="stat with_action">
+                        <div>
+                            <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
+                                max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
+                            <h3 v-else class="stat_value">
+                                {{ fetchedDetails.end_time.time }}
+                                <!-- {{
+                                        convertNumberWithSeperator(
+                                            parseValueToActialNumber(, 0),
+                                            "٬"
+                                        )
+                                    }} -->
+                            </h3>
+                            <label>وقت انتهاء الذروة</label>
+                        </div>
+                        <button :class="mapStore.isMapStatisticsFullscreen ? 'light' : ''"
+                            @click="toggleComplaintsModal"><v-icon icon="mdi-chevron-left"></v-icon> </button>
                     </div>
                 </v-col>
             </v-row>
@@ -374,6 +385,10 @@ onMounted(getAreas)
             <p style="color: #ffffff90">برجاء اختيار الموقع.</p>
         </div>
     </div>
+
+    <div v-if="isModalShow">
+        <rushHourModal v-model="isModalShow" :areaId="selectedArea.id" />
+    </div>
 </template>
 
 
@@ -388,12 +403,25 @@ onMounted(getAreas)
     row-gap: 30px;
 }
 
-
 .stats_wrapper_fullscreen {
     flex-direction: row;
     background-color: #303030;
     padding: 30px;
     margin: 0;
+}
+
+.stat.with_action {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.stat.with_action button {
+    background-color: #303030;
+    border-radius: 5px;
+    width: 35px;
+    aspect-ratio: 1;
+    font-size: 12px;
 }
 
 .stats_wrapper_fullscreen .stat {

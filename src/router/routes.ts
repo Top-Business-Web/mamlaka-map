@@ -9,6 +9,10 @@ const routes = [
         name: 'dashboard',
         children: []
       },
+      {
+        path: '/login',
+        component: () => import('@/views/login/login.vue')
+      }
     ]
   },
   {
@@ -18,18 +22,6 @@ const routes = [
     },
     children: []
   },
-  // {
-  //   path: '/map',
-  //   component: () => import('@/layouts/map.vue'),
-  //   children: [
-  //     {
-  //       path: '',
-  //       component: () => import('@/views/map/index.vue'),
-  //       name: 'dashboard.map',
-  //       children: [],
-  //     }
-  //   ]
-  // }
 ];
 
 export default routes;

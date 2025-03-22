@@ -22,120 +22,6 @@ const detailsSearchQuery = reactive({
 });
 const isLoading = ref(false)
 
-// const teamAttendanecChartData = {
-//     labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-//     datasets: [{
-//         label: 'نسبة الالتزام بالحضور',
-//         data: [69, 20, 37, 18, 63, 16, 50],
-//         pointBackgroundColor: "#35685F",
-//         pointBorderColor: "#fff",
-//         borderColor: "#35685F",
-//         fill: true,
-//         backgroundColor: "#35685F20"
-//     }, {
-//         label: 'نسبة الغياب',
-//         data: [58, 36, 48, 39, 69, 38, 30],
-//         pointBackgroundColor: "#C05E5E",
-//         pointBorderColor: "#fff",
-//         borderColor: "#C05E5E",
-//         fill: true,
-//         backgroundColor: "#C05E5E20"
-//     }]
-// }
-// const teamReportsChartData = {
-//     labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-//     datasets: [{
-//         label: 'نسبة الالتزام بالحضور',
-//         data: [58, 63, 78, 79, 69, 38, 30],
-//         pointBackgroundColor: "#35685F",
-//         pointBorderColor: "#fff",
-//         borderColor: "#35685F",
-//         fill: true,
-//         backgroundColor: "#35685F20"
-//     }]
-// }
-// const teamComplaintsChartData = {
-//     labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-//     datasets: [{
-//         data: [39, 80, 17, 18, 63, 16, 80],
-//         pointBackgroundColor: "#C4AB79",
-//         pointBorderColor: "#fff",
-//         borderColor: "#C4AB79",
-//         fill: true,
-//         backgroundColor: "#C4AB7920"
-//     }]
-// }
-// function generateConfig(data, isLegend = true) {
-//     const config = {
-//         type: 'line',
-//         data: data,
-//         options: {
-//             aspectRatio: 2 / 1,
-//             layout: {
-//                 padding: 0
-//             },
-//             elements: {
-//                 point: {
-//                     radius: 6,
-//                     hoverRadius: 7,
-//                     borderWidth: 2,
-//                     hoverBorderWidth: 2,
-//                 }
-//             },
-//             tension: 0.4,
-//             scales: {
-//                 y: {
-//                     position: "right",
-//                     min: 0,
-//                     max: 100,
-//                     ticks: {
-//                         color: '#c1c1c1',
-//                         stepSize: 20,
-//                     },
-//                     grid: {
-//                         color: "#646464",
-//                     },
-//                     border: {
-//                         dash: [3, 3],
-//                     },
-//                 },
-//                 x: {
-//                     reverse: true,
-//                     ticks: {
-//                         color: '#c1c1c1',
-//                         align: "start",
-//                     },
-//                     offset: true,
-//                     grid: {
-//                         color: "#646464",
-//                     },
-//                     border: {
-//                         dash: [3, 3],
-//                     },
-//                 },
-//             },
-//             plugins: {
-//                 legend: {
-//                     display: isLegend,
-//                     rtl: true,
-//                     position: 'bottom',
-//                     labels: {
-//                         padding: 30,
-//                         usePointStyle: true,
-//                         color: '#c1c1c1'
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     return config
-// }
-// onMounted(() => {
-//     new Chart(teamAttendanecChart, generateConfig(teamAttendanecChartData));
-//     new Chart(teamReportsChart, generateConfig(teamReportsChartData, false));
-//     new Chart(teamComplaintsChart, generateConfig(teamComplaintsChartData, false));
-// })
-
 async function getReports() {
     try {
         const params = Object.fromEntries(
@@ -159,13 +45,132 @@ async function getDetails() {
         );
         const res = await http.get(`v1/map/getDetailsForParent3`, { params });
         fetchedDetails.value = res.data.data
+        generateCharts();
         isLoading.value = false
-
     } catch (error) {
         console.log("fetch failed", error);
     }
 }
 watch(selectedReport, getDetails, { deep: true });
+
+
+function generateCharts() {
+    const teamAttendanecChartData = {
+        labels: Object.keys(fetchedDetails.value.attendance_percentages),
+        datasets: [{
+            label: 'نسبة الالتزام بالحضور',
+            data: Object.values(fetchedDetails.value.attendance_percentages),
+            pointBackgroundColor: "#35685F",
+            pointBorderColor: "#fff",
+            borderColor: "#35685F",
+            fill: true,
+            backgroundColor: "#35685F20"
+        }, {
+            label: 'نسبة الغياب',
+            data: Object.values(fetchedDetails.value.absence_percentages),
+            pointBackgroundColor: "#C05E5E",
+            pointBorderColor: "#fff",
+            borderColor: "#C05E5E",
+            fill: true,
+            backgroundColor: "#C05E5E20"
+        }]
+    }
+    const teamReportsChartData = {
+        labels: Object.keys(fetchedDetails.value.daily_report_completion_percentages),
+        datasets: [{
+            label: 'نسبة الالتزام بالحضور',
+            data: Object.values(fetchedDetails.value.daily_report_completion_percentages),
+            pointBackgroundColor: "#35685F",
+            pointBorderColor: "#fff",
+            borderColor: "#35685F",
+            fill: true,
+            backgroundColor: "#35685F20"
+        }]
+    }
+    const teamComplaintsChartData = {
+        labels: Object.keys(fetchedDetails.value.attendance_percentages),
+        datasets: [{
+            data: Object.values(fetchedDetails.value.notice_percentages),
+            pointBackgroundColor: "#C4AB79",
+            pointBorderColor: "#fff",
+            borderColor: "#C4AB79",
+            fill: true,
+            backgroundColor: "#C4AB7920"
+        }]
+    }
+    function generateConfig(data) {
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                aspectRatio: 2 / 1,
+                layout: {
+                    padding: 0
+                },
+                elements: {
+                    point: {
+                        radius: 6,
+                        hoverRadius: 7,
+                        borderWidth: 2,
+                        hoverBorderWidth: 2,
+                    }
+                },
+                tension: 0.4,
+                scales: {
+                    y: {
+                        position: "right",
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            color: '#c1c1c1',
+                            stepSize: 20,
+                        },
+                        grid: {
+                            color: "#646464",
+                        },
+                        border: {
+                            dash: [3, 3],
+                        },
+                    },
+                    x: {
+                        reverse: true,
+                        ticks: {
+                            color: '#c1c1c1',
+                            align: "start",
+                        },
+                        offset: true,
+                        grid: {
+                            color: "#646464",
+                        },
+                        border: {
+                            dash: [3, 3],
+                        },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                }
+            }
+        }
+        return config
+    }
+    if (teamAttendanecChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(teamAttendanecChart).destroy();
+    }
+    new Chart(teamAttendanecChart, generateConfig(teamAttendanecChartData))
+
+    if (teamReportsChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(teamReportsChart).destroy();
+    }
+    new Chart(teamReportsChart, generateConfig(teamReportsChartData))
+
+    if (teamComplaintsChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(teamComplaintsChart).destroy();
+    }
+    new Chart(teamComplaintsChart, generateConfig(teamComplaintsChartData));
+}
 
 onMounted(getReports)
 
@@ -194,7 +199,7 @@ onMounted(getReports)
                         <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem" max-width="100%"
                             max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
                         <h3 v-else class="stat_value">
-                            {{ fetchedDetails.axisTeamCount }}
+                            {{ fetchedDetails.numberOfUsersInAxisCount }}
                             <!-- {{
                                     convertNumberWithSeperator(
                                         parseValueToActialNumber(21, 0),
@@ -206,7 +211,8 @@ onMounted(getReports)
                     </div>
                 </v-col>
             </v-row>
-            <!-- <v-row class="my-0">
+            <v-row class="my-0">
+                <canvas id="blank" class="d-none" aria-label="Hello ARIA World" role="img"></canvas>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100" style="background-color: #303030; padding: 15px;">
                         <div class="w-100">
@@ -214,6 +220,16 @@ onMounted(getReports)
                         </div>
                         <hr>
                         <canvas id="teamAttendanecChart" aria-label="Hello ARIA World" role="img"></canvas>
+                        <div class="line_legend_wrapper">
+                            <div class="legend">
+                                <span>نسبة الالتزام بالحضور</span>
+                                <img src="@/assets/imgs/icons/legend-green.svg" width="20" alt="">
+                            </div>
+                            <div class="legend">
+                                <span>نسبة الغياب</span>
+                                <img src="@/assets/imgs/icons/legend-red.svg" width="20" alt="">
+                            </div>
+                        </div>
                     </v-card>
                 </v-col>
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
@@ -234,7 +250,7 @@ onMounted(getReports)
                         <canvas id="teamComplaintsChart" aria-label="Hello ARIA World" role="img"></canvas>
                     </v-card>
                 </v-col>
-            </v-row> -->
+            </v-row>
             <hr v-if="!mapStore.isMapStatisticsFullscreen" class="mt-4 mb-0">
             <v-row :class="`${mapStore.isMapStatisticsFullscreen ? '' : 'mt-2'}`">
                 <v-col v-if="isLoading" :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`"
@@ -314,7 +330,7 @@ onMounted(getReports)
         ">
             <img :src=emptyBox width="150" alt="Empty box">
             <h1>لا توجد معلومات</h1>
-            <p style="color: #ffffff90">برجاء اختيار الموقع.</p>
+            <p style="color: #ffffff90">برجاء اختيار التقرير.</p>
         </div>
     </div>
 </template>
