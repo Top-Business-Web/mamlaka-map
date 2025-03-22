@@ -15,8 +15,7 @@ const fetchedData = ref([]);
 async function getRushHours() {
     try {
         isLoading.value = true
-        // const res = await http.get(`v1/map/getBusesTimes/${area_id}`)
-        const res = await http.get(`v1/map/getBusesTimes/78`)
+        const res = await http.get(`v1/map/getBusesTimes/${area_id}`)
         fetchedData.value = res.data.data;
     } catch (error) {
         console.log(error);
