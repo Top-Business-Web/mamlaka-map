@@ -5,7 +5,11 @@ import roleIcon from "@/assets/imgs/icons/user.svg"
 import locationIcon from "@/assets/imgs/icons/location.svg"
 import markerIcon from "@/assets/imgs/icons/marker.svg"
 import searchIcon from "@/assets/imgs/icons/search.svg"
-import buildingIcon from "@/assets/imgs/icons/building.svg"
+import stationMarker from "@/assets/imgs/markers-icons/station.svg";
+import carStationMarker from "@/assets/imgs/markers-icons/car-station.svg";
+import busMarker from "@/assets/imgs/markers-icons/bus-station.svg";
+import highwayMarker from "@/assets/imgs/markers-icons/highway.svg";
+import trainMarker from "@/assets/imgs/markers-icons/train.svg";
 import pattern from "@/assets/imgs/pattern.svg"
 import { computed, onMounted } from "vue"
 import axios from "axios"
@@ -32,6 +36,7 @@ const headers = [
     { title: 'وقت الحضور', key: 'attendance_time' },
 ]
 const team = ref([]);
+
 
 async function getAreaDetails() {
     try {
@@ -75,8 +80,13 @@ onMounted(getAreaDetails)
                     <div class="card_body">
                         <div class="box">
                             <div class="box_header">
-                                <div class="area_icon">
-                                    <img :src="buildingIcon" alt="">
+                                <v-skeleton-loader v-if="isLoading" width="1.2rem" height="1.2rem"></v-skeleton-loader>
+                                <div v-else class="area_icon">
+                                    <img v-if="areaDetails.type == '0'" :src="carStationMarker" alt="">
+                                    <img v-if="areaDetails.type == '1'" :src="busMarker" alt="">
+                                    <img v-if="areaDetails.type == '2'" :src="trainMarker" alt="">
+                                    <img v-if="areaDetails.type == '3'" :src="highwayMarker" alt="">
+                                    <img v-if="areaDetails.type == '4'" :src="stationMarker" alt="">
                                 </div>
                                 <v-skeleton-loader v-if="isLoading" width="200px" height="1.2rem"></v-skeleton-loader>
                                 <div v-else class="name">
@@ -240,8 +250,8 @@ onMounted(getAreaDetails)
 }
 
 .box_header .area_icon {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border-radius: 5px;
     overflow: hidden;
 }

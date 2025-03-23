@@ -20,13 +20,13 @@ const userDetails = JSON.parse(sessionStorage.getItem('mapUser'))
         <hr class="mt-0">
         <v-card-text>
             <div class="general_info_box">
-                <img :src="userDetails.image" style="height: 125px;
-                width: 125px; object-fit: cover;" alt="no-image">
+                <img :src="userDetails.image" style="height: 80px;
+                width: 80px; object-fit: cover;" alt="no-image">
                 <div class="w-100">
                     <h6 class="text-white mb-2">{{ userDetails.full_name }}</h6>
                     <p>مدير الخريطة التفاعلية</p>
-                    <hr>
-                    <button type="button" class="btn-profile">تغيير صورة الملف الشخصي</button>
+                    <!-- <hr>
+                    <button type="button" class="btn-profile">تغيير صورة الملف الشخصي</button> -->
                 </div>
             </div>
             <div class="details_box mt-4">
@@ -82,7 +82,7 @@ hr {
 
 .general_info_box {
     display: flex;
-    align-items: stretch;
+    align-items: center;
     gap: 20px;
     padding: 20px;
     background-color: #303030;

@@ -35,7 +35,7 @@ function generateCharts() {
     const compliancePercentageChartData = {
         labels: Object.keys(fetchedDetails.value.general_reports_percentages),
         datasets: [{
-            label: 'ملتزم',
+            label: 'تقارير الإدارة',
             data: Object.values(fetchedDetails.value.general_reports_percentages),
             pointBackgroundColor: "#35685F",
             pointBorderColor: "#fff",
@@ -43,7 +43,7 @@ function generateCharts() {
             fill: true,
             backgroundColor: "#35685F20"
         }, {
-            label: 'غير ملتزم',
+            label: 'تقارير المخالفه',
             data: Object.values(fetchedDetails.value.violation_reports_percentages),
             pointBackgroundColor: "#C05E5E",
             pointBorderColor: "#fff",
@@ -263,11 +263,11 @@ onMounted(getReports)
                         <canvas id="compliancePercentageChart" aria-label="Hello ARIA World" role="img"></canvas>
                         <div class="line_legend_wrapper">
                             <div class="legend">
-                                <span>ملتزم</span>
+                                <span>تقارير الإدارة</span>
                                 <img src="@/assets/imgs/icons/legend-green.svg" width="20" alt="">
                             </div>
                             <div class="legend">
-                                <span>غير ملتزم</span>
+                                <span>تقارير المخالفه</span>
                                 <img src="@/assets/imgs/icons/legend-red.svg" width="20" alt="">
                             </div>
                         </div>
