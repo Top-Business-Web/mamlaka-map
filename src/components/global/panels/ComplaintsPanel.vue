@@ -6,10 +6,6 @@ import { onMounted } from 'vue';
 import http from '@/plugins/axios';
 import ComplaintsModal from '@/components/maps/modals/complaintsModal.vue'
 import ComplaintDetailsModal from '@/components/maps/modals/complaintDetailsModal.vue'
-
-import arrowUpRight from "@/assets/imgs/arrow-up-right.png";
-import arrowDownRight from "@/assets/imgs/arrow-down-right.png";
-import arrowRight from "@/assets/imgs/arrow-right.png";
 import emptyBox from "@/assets/imgs/empty-box.svg";
 
 const mapStore = useMapStore();
@@ -18,14 +14,17 @@ const fetchedReports = ref({});
 const selectedReport = ref("");
 const fetchedDetails = ref({});
 const isLoading = ref(false)
+const isTypesLoading = ref(false)
 
 async function getReports() {
     try {
+        isTypesLoading.value = true
         const params = Object.fromEntries(
             Object.entries(searchQuery.value).filter(([_, v]) => v)
         );
         const res = await http.get(`v1/map/getFilterObjects`, { params });
         fetchedReports.value = res.data.data.notice
+        isTypesLoading.value = false
     } catch (error) {
         console.log("fetch failed", error);
     }
@@ -37,6 +36,7 @@ const detailsSearchQuery = reactive({
     notice_type_id: selectedReport.value.id,
     period: searchQuery.value.period
 });
+
 async function getDetails() {
     isLoading.value = true
     detailsSearchQuery.notice_type_id = selectedReport.value.id
@@ -168,6 +168,8 @@ onMounted(getReports)
                     <img src="@/assets/imgs/icons/arrow-down.svg" width="10px" alt="">
                     <select class="dark_bg" v-model="selectedReport">
                         <option value="" disabled selected>نوع البلاغ </option>
+                        <option v-if="isTypesLoading" disabled>حاري التحميل</option>
+                        <option v-if="!isTypesLoading && fetchedReports.length > 0" value="all">الكل</option>
                         <option v-for="(report, index) in fetchedReports" :value="report" :selected="index == 0">
                             {{ report.title }}
                         </option>
@@ -285,15 +287,15 @@ onMounted(getReports)
                         <div class="pie_legend_wrapper">
                             <div class="legend">
                                 <span>عالية الأهمية: <b style="--c: #C05E5E">{{ fetchedDetails.highNoticesCount
-                                        }}</b></span>
+                                }}</b></span>
                             </div>
                             <div class="legend">
                                 <span>متوسطة الأهمية: <b style="--c: #C4AB79">{{ fetchedDetails.midNoticesCount
-                                        }}</b></span>
+                                }}</b></span>
                             </div>
                             <div class="legend">
                                 <span>منخفضة الأهمية: <b style="--c: #35685F">{{ fetchedDetails.lowNoticesCount
-                                        }}</b></span>
+                                }}</b></span>
                             </div>
                         </div>
                     </v-card>
@@ -320,11 +322,11 @@ onMounted(getReports)
                         <div class="pie_legend_wrapper">
                             <div class="legend">
                                 <span>بلاغات مفتوحة: <b style="--c: #35685F">{{ fetchedDetails.openNoticesCount
-                                        }}</b></span>
+                                }}</b></span>
                             </div>
                             <div class="legend">
                                 <span>بلاغات مقفولة: <b style="--c: #C05E5E">{{ fetchedDetails.closedNoticesCount
-                                        }}</b></span>
+                                }}</b></span>
                             </div>
                         </div>
                     </v-card>
