@@ -24,8 +24,7 @@ const isLoading = ref(false)
 
 async function getDetails() {
     isLoading.value = true
-    detailsSearchQuery.is_seen = selectedAlert.value;
-    console.log(detailsSearchQuery);
+    detailsSearchQuery.is_seen = selectedAlert.value == "all" ? null : selectedAlert.value;
 
     try {
         const params = Object.fromEntries(
@@ -148,6 +147,7 @@ function toggleAlertsModal(periority) {
                     <img src="@/assets/imgs/icons/arrow-down.svg" width="10px" alt="">
                     <select class="dark_bg" v-model="selectedAlert">
                         <option value="" disabled selected>حالة التنبيه</option>
+                        <option value="all">الكل</option>
                         <option value="0">غير مقروءة</option>
                         <option value="1">مقروءة</option>
                     </select>

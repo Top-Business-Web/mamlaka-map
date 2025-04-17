@@ -1,11 +1,5 @@
 <script setup>
-// import { useMapStore } from "@/stores/MapStore";
-
-// const mapStore = useMapStore();
-
-// onMounted(() => {
-
-// });
+console.log(sessionStorage.getItem('token'));
 </script>
 
 

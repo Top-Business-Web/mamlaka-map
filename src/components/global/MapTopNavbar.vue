@@ -66,9 +66,10 @@ function openLoginModal() {
 
 async function handleLogout() {
   try {
-    await http.get('v1/map/logout').then(() => {
+    await http.post('v1/map/logout').then(() => {
       sessionStorage.removeItem('token')
       sessionStorage.removeItem('mapUser')
+      sessionStorage.removeItem('fcm_token')
       location.reload();
     });
   } catch (error) {

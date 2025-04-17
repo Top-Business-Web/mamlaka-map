@@ -1,40 +1,84 @@
 <script setup>
 import http from "@/plugins/axios"
 import { toast } from "vue3-toastify";
+import { initializeApp } from "firebase/app";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCZK--BS46mGae50fbRWsxmL6N9x8RqMDE",
+    authDomain: "malakia-cd959.firebaseapp.com",
+    databaseURL: "https://malakia-cd959-default-rtdb.firebaseio.com",
+    projectId: "malakia-cd959",
+    storageBucket: "malakia-cd959.firebasestorage.app",
+    messagingSenderId: "111578269732",
+    appId: "1:111578269732:web:f9aac12af7d78438e170b1",
+    measurementId: "G-6LEGY36DNX"
+};
+const app = initializeApp(firebaseConfig);
+
+
+const messaging = getMessaging();
+onMessage(messaging, (payload) => {
+    console.log('Message received. ', payload);
+    // ...
+});
+
+getToken(messaging, { vapidKey: 'BL8_tjGeW4Dk1Y22P7EPOYaUFtShcbA6nq25V2yyi7x7A0XdCgalYeCAm9YYPvr6clsDLEbdFZcusVBMOkNaeho' }).then((currentToken) => {
+    if (currentToken) {
+        console.log(currentToken);
+        sessionStorage.setItem('fcm_token', currentToken)
+    } else {
+        console.log('No registration token available. Request permission to generate one.');
+    }
+}).catch((err) => {
+    console.log('An error occurred while retrieving token. ', err);
+});
 
 const email = ref("");
 const password = ref("")
 
-function validateData(res) {
+function validateData() {
+    let hasError = false;
     if (email.value.trim() == '') {
-        emailError.innerHTML = "برجاء إدخال البريد الإلكتروني"
+        emailError.innerHTML = "برجاء إدخال البريد الإلكتروني";
+        hasError = true;
     } else {
         emailError.innerHTML = null
     }
     if (password.value.trim() == '') {
-        passwordError.innerHTML = "برجاء إدخال كلمة المرور"
+        passwordError.innerHTML = "برجاء إدخال كلمة المرور";
+        hasError = true;
     } else {
         passwordError.innerHTML = null
     }
-    if (email.value && password.value && !res.data) {
-        dataError.innerHTML = res.msg;
-    }
+    return hasError;
 }
 
 async function handleSubmit() {
     try {
-        await http.post("v1/map/login", {
-            national_or_email: email.value,
-            password: password.value,
-        }).then((res) => {
-            validateData(res.data);
-            sessionStorage.setItem('mapUser', JSON.stringify(res.data.data));
-            sessionStorage.setItem('token', res.data.data.jwt_token);
-            location.replace('/');
-        })
+        if (!validateData()) {
+            await http.post("v1/map/login", {
+                national_or_email: email.value,
+                password: password.value,
+            }).then((res) => {
+                if (!res.data.data) {
+                    dataError.innerHTML = res.data.msg;
+                }
+                sessionStorage.setItem('mapUser', JSON.stringify(res.data.data));
+                sessionStorage.setItem('token', res.data.data.jwt_token);
+                sendFCMToken();
+                location.replace('/');
+            })
+        };
     } catch (error) {
         console.log("Login Error", error)
     }
+}
+
+async function sendFCMToken() {
+    await http.post("v1/map/storeFcm", {
+        fcm_token: sessionStorage.getItem('fcm_token')
+    })
 }
 
 </script>

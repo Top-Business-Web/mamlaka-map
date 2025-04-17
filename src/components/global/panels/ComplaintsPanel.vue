@@ -46,6 +46,7 @@ async function getDetails() {
         );
         const res = await http.get(`v1/map/getDetailsForParent4`, { params });
         fetchedDetails.value = res.data.data
+
         generateCharts();
         isLoading.value = false
     } catch (error) {
@@ -287,15 +288,15 @@ onMounted(getReports)
                         <div class="pie_legend_wrapper">
                             <div class="legend">
                                 <span>عالية الأهمية: <b style="--c: #C05E5E">{{ fetchedDetails.highNoticesCount
-                                }}</b></span>
+                                        }}</b></span>
                             </div>
                             <div class="legend">
                                 <span>متوسطة الأهمية: <b style="--c: #C4AB79">{{ fetchedDetails.midNoticesCount
-                                }}</b></span>
+                                        }}</b></span>
                             </div>
                             <div class="legend">
                                 <span>منخفضة الأهمية: <b style="--c: #35685F">{{ fetchedDetails.lowNoticesCount
-                                }}</b></span>
+                                        }}</b></span>
                             </div>
                         </div>
                     </v-card>
@@ -322,11 +323,11 @@ onMounted(getReports)
                         <div class="pie_legend_wrapper">
                             <div class="legend">
                                 <span>بلاغات مفتوحة: <b style="--c: #35685F">{{ fetchedDetails.openNoticesCount
-                                }}</b></span>
+                                        }}</b></span>
                             </div>
                             <div class="legend">
                                 <span>بلاغات مقفولة: <b style="--c: #C05E5E">{{ fetchedDetails.closedNoticesCount
-                                }}</b></span>
+                                        }}</b></span>
                             </div>
                         </div>
                     </v-card>
