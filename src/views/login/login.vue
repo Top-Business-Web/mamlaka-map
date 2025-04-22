@@ -25,7 +25,6 @@ onMessage(messaging, (payload) => {
 
 getToken(messaging, { vapidKey: 'BL8_tjGeW4Dk1Y22P7EPOYaUFtShcbA6nq25V2yyi7x7A0XdCgalYeCAm9YYPvr6clsDLEbdFZcusVBMOkNaeho' }).then((currentToken) => {
     if (currentToken) {
-        console.log(currentToken);
         sessionStorage.setItem('fcm_token', currentToken)
     } else {
         console.log('No registration token available. Request permission to generate one.');
@@ -67,7 +66,6 @@ async function handleSubmit() {
                 sessionStorage.setItem('mapUser', JSON.stringify(res.data.data));
                 sessionStorage.setItem('token', res.data.data.jwt_token);
                 sendFCMToken();
-                location.replace('/');
             })
         };
     } catch (error) {
@@ -78,6 +76,8 @@ async function handleSubmit() {
 async function sendFCMToken() {
     await http.post("v1/map/storeFcm", {
         fcm_token: sessionStorage.getItem('fcm_token')
+    }).then(() => {
+        location.replace('/');
     })
 }
 

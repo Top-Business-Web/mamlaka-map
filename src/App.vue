@@ -1,8 +1,3 @@
-<script setup>
-console.log(sessionStorage.getItem('token'));
-</script>
-
-
 <template>
   <RouterView />
 </template>
