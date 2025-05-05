@@ -81,12 +81,19 @@ onMounted(getReportDetails)
                                         style="margin: 15px 0;"></v-skeleton-loader>
                                 </div>
                                 <v-expansion-panels variant="accordion" v-else>
-                                    <v-expansion-panel v-for="report in reportDetails.questions"
-                                        :title="report.question" bg-color="#303030" selected-class="expandedQuestion">
+                                    <v-expansion-panel v-for="question in reportDetails.questions"
+                                        :title="question.question" bg-color="#303030" selected-class="expandedQuestion">
                                         <v-expansion-panel-text bg-color="#383838">
                                             <div class="answers_wrapper">
-                                                <h1 v-if="report.answer_type == 0">مقالي</h1>
-                                                <h1 v-else v-for="answer in report.answers">{{ answer.answer }}</h1>
+                                                <h1 v-if="question.my_daily_report_answers.length > 0 && question.answer_type == 0"
+                                                    v-for="answer in question.my_daily_report_answers">
+                                                    {{ answer.answer }}
+                                                </h1>
+                                                <h1 v-else-if="question.my_daily_report_answers.length > 0 && !question.answer_type == 0"
+                                                    v-for="answer in question.my_daily_report_answers">
+                                                    {{ answer.question_answer.answer }}
+                                                </h1>
+                                                <h1 v-else>لا توجد إجابة</h1>
                                             </div>
                                         </v-expansion-panel-text>
                                     </v-expansion-panel>

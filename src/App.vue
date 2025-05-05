@@ -1,3 +1,28 @@
+<script setup>
+console.log(sessionStorage.getItem("fcm_token"));
+console.log(sessionStorage.getItem("token"));
+import { onMounted } from "vue";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { initializeApp } from "firebase/app";
+import http from '@/plugins/axios';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCZK--BS46mGae50fbRWsxmL6N9x8RqMDE",
+  authDomain: "malakia-cd959.firebaseapp.com",
+  databaseURL: "https://malakia-cd959-default-rtdb.firebaseio.com",
+  projectId: "malakia-cd959",
+  storageBucket: "malakia-cd959.firebasestorage.app",
+  messagingSenderId: "111578269732",
+  appId: "1:111578269732:web:f9aac12af7d78438e170b1",
+  measurementId: "G-6LEGY36DNX"
+};
+
+const app = initializeApp(firebaseConfig);
+
+
+
+</script>
+
 <template>
   <RouterView />
 </template>

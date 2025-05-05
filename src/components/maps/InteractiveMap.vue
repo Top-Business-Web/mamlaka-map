@@ -10,7 +10,7 @@ import {
   type LocationType
 } from "@/stores/MapStore";
 import MapPanel from "../global/MapPanel.vue";
-import stationMarker from "@/assets/imgs/markers-icons/station.svg";
+import stationMarker from "@/assets/imgs/markers-icons/bus.svg";
 import carStationMarker from "@/assets/imgs/markers-icons/car-station.svg";
 import busMarker from "@/assets/imgs/markers-icons/bus-station.svg";
 import highwayMarker from "@/assets/imgs/markers-icons/highway.svg";
@@ -173,7 +173,7 @@ function getsearch(text) {
           <img v-if="area.type == 'باص'" :src="busMarker" alt="">
           <img v-if="area.type == 'سكة حديدية'" :src="trainMarker" alt="">
           <img v-if="area.type == 'طريق'" :src="highwayMarker" alt="">
-          <img v-if="area.type == 'محطة'" :src="stationMarker" alt="">
+          <img v-if="area.type == 'محطة'" :src="stationMarker" alt="" width="40">
         </CustomMarker>
         <CustomMarker v-if="isSupervisors" v-for="(supervisor, index) in mapStore.supervisors" :key="index"
           :options="{ position: { lat: supervisor.lat, lng: supervisor.long }, anchorPoint: 'BOTTOM_CENTER' }"

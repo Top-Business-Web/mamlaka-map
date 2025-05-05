@@ -1,5 +1,4 @@
 <script setup>
-import loginModal from '@/components/maps/modals/loginModal.vue';
 const isAuth = sessionStorage.getItem('token') != null
 
 if (!isAuth) { window.location.replace('/login') }

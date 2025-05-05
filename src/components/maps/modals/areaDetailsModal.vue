@@ -5,7 +5,7 @@ import roleIcon from "@/assets/imgs/icons/user.svg"
 import locationIcon from "@/assets/imgs/icons/location.svg"
 import markerIcon from "@/assets/imgs/icons/marker.svg"
 import searchIcon from "@/assets/imgs/icons/search.svg"
-import stationMarker from "@/assets/imgs/markers-icons/station.svg";
+import stationMarker from "@/assets/imgs/markers-icons/bus.svg";
 import carStationMarker from "@/assets/imgs/markers-icons/car-station.svg";
 import busMarker from "@/assets/imgs/markers-icons/bus-station.svg";
 import highwayMarker from "@/assets/imgs/markers-icons/highway.svg";
@@ -259,7 +259,7 @@ onMounted(getAreaDetails)
 .box_header .area_icon img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .box_header .name {
