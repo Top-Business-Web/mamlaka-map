@@ -15,6 +15,7 @@ import carStationMarker from "@/assets/imgs/markers-icons/car-station.svg";
 import busMarker from "@/assets/imgs/markers-icons/bus-station.svg";
 import highwayMarker from "@/assets/imgs/markers-icons/highway.svg";
 import trainMarker from "@/assets/imgs/markers-icons/train.svg";
+import noticeMarker from "@/assets/imgs/markers-icons/flag.svg";
 import SupervisorDetailsModal from "./modals/supervisorDetailsModal.vue";
 import UserDetailsModal from "./modals/userDetailsModal.vue";
 import AreaDetailsModal from "./modals/AreaDetailsModal.vue";
@@ -24,6 +25,7 @@ import ComplaintsModal from './modals/complaintsModal.vue'
 import MapFooter from "../global/MapFooter.vue";
 import MapTopNavbar from "../global/MapTopNavbar.vue";
 import http from "@/plugins/axios";
+import ComplaintDetailsModal from "./modals/complaintDetailsModal.vue";
 
 
 interface MapReference {
@@ -33,7 +35,7 @@ interface MapReference {
 
 const mapStore = useMapStore();
 const mapRef = ref<MapReference | null>(null);
-const mapZoom = ref(12);
+const mapZoom = ref(13);
 const areas = ref([]);
 
 async function getAreas(type = "") {
@@ -68,6 +70,7 @@ watch(
       mapStore.setMapInstance(mapRef.value?.map);
       setTimeout(() => {
         mapStore.getMapUsers();
+        mapStore.getMapNotices();
         getAreas();
       }, 0);
     }
@@ -88,6 +91,7 @@ const isUserDetails = ref<boolean>(false);
 const isSupervisorDetails = ref<boolean>(false);
 const isAreaDetails = ref<boolean>(false);
 const isReportDetails = ref<boolean>(false);
+const isNoticeDetails = ref<boolean>(false);
 const clickedMarkerId = ref<object | null>(null);
 const clickedUserId = ref<object | null>(null);
 
@@ -102,6 +106,10 @@ const displaySupervisorDetails = (markerId) => {
 const displayAreaDetails = (markerId) => {
   clickedMarkerId.value = markerId;
   isAreaDetails.value = true;
+};
+const displayNoticeDetails = (markerId) => {
+  clickedMarkerId.value = markerId;
+  isNoticeDetails.value = true;
 };
 const displayReportDetails = (markerId, userId) => {
   clickedMarkerId.value = markerId;
@@ -166,6 +174,11 @@ function getsearch(text) {
       <template #default="{ ready, api, map, mapTilesLoaded }">
         <MapLoader v-if="!ready" style="z-index: 98; background-color: #000" />
         <!-- <MarkerCluster> -->
+        <CustomMarker v-for="(notice, index) in mapStore.notices" :key="index"
+          :options="{ position: { lat: notice.lat, lng: notice.long }, anchorPoint: 'BOTTOM_CENTER' }"
+          @click="displayNoticeDetails(notice.notice_id)">
+          <img :src="noticeMarker" width="40" alt="">
+        </CustomMarker>
         <CustomMarker v-if="isAreas" v-for="(area, index) in areas" :key="index"
           :options="{ position: { lat: parseFloat(area.location.north), lng: parseFloat(area.location.east) }, anchorPoint: 'BOTTOM_CENTER' }"
           @click="displayAreaDetails(area.id)">
@@ -237,6 +250,9 @@ function getsearch(text) {
     </div>
     <div v-if="isReportDetails">
       <ReportDetailsModal v-model="isReportDetails" :markerId="clickedMarkerId" :userId="clickedUserId" />
+    </div>
+    <div v-if="isNoticeDetails">
+      <ComplaintDetailsModal v-model="isNoticeDetails" :complaintId="clickedMarkerId" />
     </div>
   </div>
 </template>

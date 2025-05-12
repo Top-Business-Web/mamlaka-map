@@ -22,6 +22,8 @@ async function getComplaintDetails() {
         isLoading.value = true
         const res = await http.get(`v1/map/getNoticeDetails/${complaintId.value}`)
         complaintDetails.value = res.data.data;
+        console.log(complaintDetails.value);
+
     } catch (error) {
         console.log(error);
     } finally {

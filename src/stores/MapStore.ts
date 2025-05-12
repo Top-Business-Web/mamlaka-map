@@ -120,6 +120,7 @@ interface MapStoreState {
   supervisors: MapLocation[];
   users: MapLocation[];
   usersRole: string;
+  notices: MapLocation[];
   displayOperators: boolean;
   displayObservers: boolean;
   displayEntities: boolean;
@@ -148,6 +149,7 @@ export const useMapStore = defineStore("MapStore", {
     supervisors: [],
     users: [],
     usersRole: "all",
+    notices: [],
     displayOperators: true,
     displayObservers: true,
     displayEntities: true,
@@ -214,6 +216,39 @@ export const useMapStore = defineStore("MapStore", {
 
       return queryUserTypeParams;
     },
+
+    async getMapNotices() {
+      const noticeData: MapLocation[] = [];
+      try {
+        // this.getMapEntites();
+        const { minLat, maxLat, minLng, maxLng } = this.visibleCoordinates;
+        const q = firestoreQuery(
+          collection(firestoreDB, "high_notices"),
+          and(
+            where("lat", ">=", minLat),
+            where("lat", "<=", maxLat),
+            where("long", ">=", minLng),
+            where("long", "<=", maxLng),
+            where("status", "==", 0),
+          ),
+          limit(500)
+        );
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          noticeData.push(doc.data());
+        });
+
+        this.notices = noticeData;
+      }
+
+      catch (err) {
+        console.error("Error fetching data from Firestore:", err);
+      } finally {
+        this.isMapDataLoading = false;
+        isLoading.value = false
+      }
+    },
+
     async getMapUsers() {
       const usersData: MapLocation[] = [];
       try {
@@ -230,7 +265,7 @@ export const useMapStore = defineStore("MapStore", {
                 where("lat", "<=", maxLat),
                 where("long", ">=", minLng),
                 where("long", "<=", maxLng),
-                where("is_active", "==", true),
+                where("is_active_map", "==", true),
               ),
               orderBy("lat"),
               limit(500)
@@ -248,7 +283,7 @@ export const useMapStore = defineStore("MapStore", {
                 where("lat", "<=", maxLat),
                 where("long", ">=", minLng),
                 where("long", "<=", maxLng),
-                where("is_active", "==", true),
+                where("is_active_map", "==", true),
                 where("role", "==", role)
               ),
               orderBy("lat"),
@@ -276,6 +311,7 @@ export const useMapStore = defineStore("MapStore", {
     async updateMapLocations() {
       // this.unsubscribeRealtime();
       this.getMapUsers();
+      this.getMapNotices();
     },
     async getMapStatistics(needLoading: boolean = true) {
       this.isMapStatisticsError = false;

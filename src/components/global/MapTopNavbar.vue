@@ -19,7 +19,7 @@ const selectedType = ref<string>("");
 const myValue = ref('')
 const myOptions = ref(['op1', 'op2', 'op3'])
 
-const emit = defineEmits(["searchingUsers"])
+const emit = defineEmits(["searchingUsers", "changeTypeHandler"])
 const handleStatsFilter = (key: MapStatisticsFilterKeys, value: string) => {
   mapStore.updateMapStatisticsFilter(key, value);
   mapStore.getMapStatistics();

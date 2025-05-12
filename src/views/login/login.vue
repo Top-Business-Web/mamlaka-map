@@ -50,7 +50,7 @@ function sendFCMToken() {
             getToken(messaging, { vapidKey: 'BL8_tjGeW4Dk1Y22P7EPOYaUFtShcbA6nq25V2yyi7x7A0XdCgalYeCAm9YYPvr6clsDLEbdFZcusVBMOkNaeho' }).then(async (currentToken) => {
                 if (currentToken) {
                     await http.post("v1/map/storeFcm", {
-                        fcm_token: sessionStorage.getItem('fcm_token')
+                        fcm_token: currentToken
                     }).then(
                         sessionStorage.setItem('fcm_token', currentToken),
                         location.replace('/')
