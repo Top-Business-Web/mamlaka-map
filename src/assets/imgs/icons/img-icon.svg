@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <defs>
+    <style>
+      .cls-1 {
+        isolation: isolate;
+      }
+
+      .cls-1, .cls-2 {
+        fill: #005fad;
+      }
+
+      .cls-1, .cls-3 {
+        opacity: .3;
+      }
+
+      .cls-4, .cls-5 {
+        fill: #fff;
+      }
+
+      .cls-6 {
+        fill: #303030;
+      }
+
+      .cls-5 {
+        font-family: Poppins-Bold, Poppins;
+        font-size: 6.65px;
+        font-weight: 700;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g class="cls-3">
+      <path class="cls-1" d="M25.25,10.57c-.72,0-1.42-.29-1.93-.81-.51-.52-.8-1.21-.8-1.94v-3.82h-12.2c-.94,0-1.85.38-2.52,1.05-.67.67-1.04,1.59-1.04,2.54v21.63c0,.95.38,1.86,1.05,2.53.67.67,1.57,1.05,2.52,1.05h14.64c.94,0,1.85-.38,2.52-1.05.67-.67,1.04-1.58,1.04-2.53V10.57h-3.28Z"/>
+    </g>
+    <path class="cls-2" d="M28.53,10.57h-3.28c-.72,0-1.42-.29-1.93-.81-.51-.52-.8-1.21-.8-1.94v-3.82l6.01,6.57Z"/>
+    <path class="cls-2" d="M31.11,26.75H14.56c-1.17,0-2.13.96-2.13,2.14v4.97c0,1.18.95,2.14,2.13,2.14h16.55c1.17,0,2.13-.96,2.13-2.14v-4.97c0-1.18-.95-2.14-2.13-2.14Z"/>
+    <path class="cls-4" d="M17.23,32.45v.97h-1v-.97h1Z"/>
+    <path class="cls-2" d="M14,12.9h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M15.82,14.73h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M17.65,12.9h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M19.47,14.73h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M21.29,12.9h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M23.11,14.73h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M14,16.56h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M15.82,18.39h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M17.65,16.56h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M19.47,18.39h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M21.29,16.56h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M23.11,18.39h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M14,20.24h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M15.82,22.07h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M17.65,20.24h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M19.47,22.07h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M21.29,20.24h-1.82v1.83h1.82v-1.83Z"/>
+    <path class="cls-2" d="M23.11,22.07h-1.82v1.83h1.82v-1.83Z"/>
+    <text class="cls-5" transform="translate(17.65 33.42)"><tspan x="0" y="0">IMG</tspan></text>
+  </g>
+</svg>

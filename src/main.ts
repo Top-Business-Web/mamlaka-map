@@ -12,6 +12,8 @@ import Vue3Toasity, { type ToastContainerOptions } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import VueApexCharts from 'vue3-apexcharts';
 import { VueDraggableNext } from 'vue-draggable-next';
+import PrimeVue from 'primevue/config';
+import Aura from '@primeuix/themes/aura';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -27,6 +29,11 @@ app.use(Vue3Toasity, {
 } as ToastContainerOptions);
 app.use(vuetify);
 app.use(VueApexCharts);
+app.use(PrimeVue, {
+  theme: {
+    preset: Aura
+  }
+});
 app.component('draggable', VueDraggableNext);
 
 // app.use(i18n)

@@ -7,9 +7,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AlertsModal: typeof import('./src/components/maps/modals/alertsModal.vue')['default']
+    AlertsPanel: typeof import('./src/components/global/panels/AlertsPanel.vue')['default']
     AreaChart: typeof import('./src/components/charts/AreaChart.vue')['default']
     AreaDetailsModal: typeof import('./src/components/maps/modals/areaDetailsModal.vue')['default']
     BarChart: typeof import('./src/components/eChart/BarChart.vue')['default']
+    ComplaintDetailsModal: typeof import('./src/components/maps/modals/complaintDetailsModal.vue')['default']
+    ComplaintsModal: typeof import('./src/components/maps/modals/complaintsModal.vue')['default']
     ComplaintsPanel: typeof import('./src/components/global/panels/ComplaintsPanel.vue')['default']
     DailyReportsPanel: typeof import('./src/components/global/panels/DailyReportsPanel.vue')['default']
     DonutChart: typeof import('./src/components/charts/DonutChart.vue')['default']
@@ -19,6 +23,7 @@ declare module 'vue' {
     InteractiveMapMapbox: typeof import('./src/components/maps/InteractiveMapMapbox.vue')['default']
     LineChart: typeof import('./src/components/eChart/LineChart.vue')['default']
     LocationsPanel: typeof import('./src/components/global/panels/LocationsPanel.vue')['default']
+    LoginModal: typeof import('./src/components/maps/modals/loginModal.vue')['default']
     MainAxesPanel: typeof import('./src/components/global/panels/MainAxesPanel.vue')['default']
     MapFooter: typeof import('./src/components/global/MapFooter.vue')['default']
     MapLoader: typeof import('./src/components/global/MapLoader.vue')['default']
@@ -32,6 +37,7 @@ declare module 'vue' {
     ReportDetailsModal: typeof import('./src/components/maps/modals/reportDetailsModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    RushHourModal: typeof import('./src/components/maps/modals/rushHourModal.vue')['default']
     StatisticsFilter: typeof import('./src/components/global/StatisticsFilter.vue')['default']
     SupervisorDetailsModal: typeof import('./src/components/maps/modals/supervisorDetailsModal.vue')['default']
     SupervisorsPanel: typeof import('./src/components/global/panels/SupervisorsPanel.vue')['default']

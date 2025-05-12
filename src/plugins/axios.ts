@@ -22,7 +22,7 @@ http.interceptors.request.use((config) => {
   //   config.headers.Authorization = `Bearer ${authStore.verificationToken}`;
   // }
 
-  config.headers.Authorization = httpToken;
+  config.headers.Authorization = sessionStorage.getItem('token');
   // config.headers.token = httpMobilityToken;
 
   return config;

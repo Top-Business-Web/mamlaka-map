@@ -154,7 +154,7 @@ onMounted(getUserDetails)
                         <div class="reports_box">
                             <div class="box_header">
                                 <h2 class="text-h6 m-0 font-weight-bold">التقارير اليومية</h2>
-                                <div class="input_wrapper">
+                                <div class="input_wrapper search_wrapper">
                                     <img :src="searchIcon" alt="">
                                     <input type="text" v-model="searchInput" placeholder="البحث">
                                 </div>
@@ -325,7 +325,7 @@ onMounted(getUserDetails)
 }
 
 .stats_box .stats_wrapper .stat p {
-    color: #857854;
+    color: #C4AB79;
     font-size: 28px;
     font-weight: 500;
 }
@@ -345,7 +345,7 @@ onMounted(getUserDetails)
 
 .reports_box .box_header span {
     font-weight: bold;
-    color: #857854;
+    color: #C4AB79;
 }
 
 .reports_box .box_header .input_wrapper {

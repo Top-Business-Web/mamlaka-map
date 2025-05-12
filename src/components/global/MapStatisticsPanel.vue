@@ -759,7 +759,7 @@ import minimizeIcon from "@/assets/imgs/minimize.png";
 
   .status-normal {
     background-color: #fff9eb;
-    color: #857854;
+    color: #C4AB79;
     font-size: 14px;
     font-weight: 400;
     border-radius: 32px;

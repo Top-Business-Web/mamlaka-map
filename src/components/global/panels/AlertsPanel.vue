@@ -4,108 +4,93 @@ import { useMapStore } from '@/stores/MapStore';
 import Chart, { elements } from "chart.js/auto";
 import { onMounted } from 'vue';
 import http from '@/plugins/axios';
-import ComplaintsModal from '@/components/maps/modals/complaintsModal.vue'
-import ComplaintDetailsModal from '@/components/maps/modals/complaintDetailsModal.vue'
+import AlertsModal from '@/components/maps/modals/alertsModal.vue'
+
+import arrowUpRight from "@/assets/imgs/arrow-up-right.png";
+import arrowDownRight from "@/assets/imgs/arrow-down-right.png";
+import arrowRight from "@/assets/imgs/arrow-right.png";
 import emptyBox from "@/assets/imgs/empty-box.svg";
 
 const mapStore = useMapStore();
 const searchQuery = ref(mapStore.mapStatisticsFilters);
 const fetchedReports = ref({});
-const selectedReport = ref("");
+const selectedAlert = ref("");
 const fetchedDetails = ref({});
-const isLoading = ref(false)
-const isTypesLoading = ref(false)
-
-async function getReports() {
-    try {
-        isTypesLoading.value = true
-        const params = Object.fromEntries(
-            Object.entries(searchQuery.value).filter(([_, v]) => v)
-        );
-        const res = await http.get(`v1/map/getFilterObjects`, { params });
-        fetchedReports.value = res.data.data.notice
-        isTypesLoading.value = false
-    } catch (error) {
-        console.log("fetch failed", error);
-    }
-}
-watch(searchQuery, getReports, { deep: true });
-
-
 const detailsSearchQuery = reactive({
-    notice_type_id: selectedReport.value.id,
-    period: searchQuery.value.period
+    period: searchQuery.value.period,
+    is_seen: null,
 });
+const isLoading = ref(false)
 
 async function getDetails() {
     isLoading.value = true
-    detailsSearchQuery.notice_type_id = selectedReport.value.id
+    detailsSearchQuery.is_seen = selectedAlert.value == "all" ? null : selectedAlert.value;
+
     try {
         const params = Object.fromEntries(
             Object.entries(detailsSearchQuery).filter(([_, v]) => v)
         );
-        const res = await http.get(`v1/map/getDetailsForParent4`, { params });
+        const res = await http.get(`v1/map/getDetailsForParent6`, { params });
         fetchedDetails.value = res.data.data
-
         generateCharts();
         isLoading.value = false
     } catch (error) {
         console.log("fetch failed", error);
     }
 }
-watch(selectedReport, getDetails, { deep: true });
+watch(selectedAlert, getDetails, { deep: true });
 
 function generateCharts() {
-    const complaintsStatusData = {
+    const alertsStatusData = {
         datasets: [
             {
-                label: 'بلاغات مفتوحة',
-                data: [fetchedDetails.value.openNoticesCount / fetchedDetails.value.notice * 100],
+                label: 'التنبيهات المقروءة',
+                data: [fetchedDetails.value.seenAlertsCount / fetchedDetails.value.alertsCount * 100],
                 borderWidth: 0,
                 radius: "80%",
                 cutout: 0,
-                circumference: 360 * (fetchedDetails.value.openNoticesCount / fetchedDetails.value.notice * 100) / 100,
+                circumference: 360 * (fetchedDetails.value.seenAlertsCount / fetchedDetails.value.alertsCount * 100) / 100,
                 backgroundColor: '#35685F',
             },
             {
-                label: 'بلاغات مقفولة',
-                data: [fetchedDetails.value.closedNoticesCount / fetchedDetails.value.notice * 100],
+                label: 'التنبيهات الغير مقروءة',
+                data: [fetchedDetails.value.unseenAlertsCount / fetchedDetails.value.alertsCount * 100],
                 borderWidth: 0,
                 radius: "80%",
                 backgroundColor: '#C05E5E',
-                circumference: 360 * (fetchedDetails.value.closedNoticesCount / fetchedDetails.value.notice * 100) / 100,
-                rotation: -360 * (fetchedDetails.value.closedNoticesCount / fetchedDetails.value.notice * 100) / 100,
+                circumference: 360 * (fetchedDetails.value.unseenAlertsCount / fetchedDetails.value.alertsCount * 100) / 100,
+                rotation: -360 * (fetchedDetails.value.unseenAlertsCount / fetchedDetails.value.alertsCount * 100) / 100,
             }
         ],
     }
-    const complaintsPeriorityData = {
+    const alertsPeriorityData = {
         datasets: [
             {
                 label: 'عالية الأهمية',
-                data: [fetchedDetails.value.highNoticesCount / fetchedDetails.value.notice * 100],
+                data: [fetchedDetails.value.highAlertsCount / fetchedDetails.value.alertsCount * 100],
                 borderWidth: 0,
                 radius: "80%",
                 cutout: 0,
-                circumference: 360 * (fetchedDetails.value.highNoticesCount / fetchedDetails.value.notice * 100) / 100,
+                circumference: 360 * (fetchedDetails.value.highAlertsCount / fetchedDetails.value.alertsCount * 100) / 100,
                 backgroundColor: '#C05E5E',
             },
             {
                 label: 'متوسطة الأهمية',
-                data: [fetchedDetails.value.midNoticesCount / fetchedDetails.value.notice * 100],
+                data: [fetchedDetails.value.midAlertsCount / fetchedDetails.value.alertsCount * 100],
                 borderWidth: 0,
                 radius: "80%",
-                circumference: 360 * (fetchedDetails.value.midNoticesCount / fetchedDetails.value.notice * 100) / 100,
-                rotation: -360 * ((fetchedDetails.value.midNoticesCount / fetchedDetails.value.notice * 100) + (fetchedDetails.value.lowNoticesCount / fetchedDetails.value.notice * 100)) / 100,
+                circumference: 360 * (fetchedDetails.value.midAlertsCount / fetchedDetails.value.alertsCount * 100) / 100,
+                rotation: -360 * ((fetchedDetails.value.midAlertsCount / fetchedDetails.value.alertsCount * 100) + (fetchedDetails.value.lowAlertsCount / fetchedDetails.value.alertsCount * 100)) / 100,
                 backgroundColor: '#C4AB79',
             },
             {
                 label: 'منخفضة الأهمية',
-                data: [fetchedDetails.value.lowNoticesCount / fetchedDetails.value.notice * 100],
+                data: [fetchedDetails.value.lowAlertsCount / fetchedDetails.value.alertsCount * 100],
                 borderWidth: 0,
                 cutout: "64%",
                 radius: "80%",
-                circumference: 360 * (fetchedDetails.value.lowNoticesCount / fetchedDetails.value.notice * 100) / 100,
-                rotation: -360 * (fetchedDetails.value.lowNoticesCount / fetchedDetails.value.notice * 100) / 100,
+                circumference: 360 * (fetchedDetails.value.lowAlertsCount / fetchedDetails.value.alertsCount * 100) / 100,
+                rotation: -360 * (fetchedDetails.value.lowAlertsCount / fetchedDetails.value.alertsCount * 100) / 100,
                 backgroundColor: '#35685F',
                 weight: 0.8
             }
@@ -133,32 +118,25 @@ function generateCharts() {
     }
 
 
-    if (complaintsStatusChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
-        Chart.getChart(complaintsStatusChart).destroy();
-    }
-    new Chart(complaintsStatusChart, generateConfig(complaintsStatusData));
+    // if (alertsStatusChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+    //     Chart.getChart(alertsStatusChart).destroy();
+    // }
+    // new Chart(alertsStatusChart, generateConfig(alertsStatusData));
 
-    if (complaintsPeriorityChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
-        Chart.getChart(complaintsPeriorityChart).destroy();
+    if (alertsPeriorityChart.toDataURL() !== document.getElementById('blank').toDataURL()) {
+        Chart.getChart(alertsPeriorityChart).destroy();
     }
-    new Chart(complaintsPeriorityChart, generateConfig(complaintsPeriorityData));
+    new Chart(alertsPeriorityChart, generateConfig(alertsPeriorityData));
 }
 
 const isModalShow = ref(false);
-const complaintsPeriority = ref("");
-function toggleComplaintsModal(periority) {
-    complaintsPeriority.value = periority
+const isAlertDetails = ref(false)
+const alertsPeriority = ref("");
+
+function toggleAlertsModal(periority) {
+    alertsPeriority.value = periority
     isModalShow.value = true;
 }
-
-const isComplaintDetails = ref(false);
-const selectedComplaintsId = ref("");
-const showDetails = (selectedComplaint) => {
-    selectedComplaintsId.value = selectedComplaint;
-    isComplaintDetails.value = true
-};
-
-onMounted(getReports)
 
 </script>
 <template>
@@ -167,18 +145,16 @@ onMounted(getReports)
             <v-col class="py-0" cols="12">
                 <div class="select_wrapper">
                     <img src="@/assets/imgs/icons/arrow-down.svg" width="10px" alt="">
-                    <select class="dark_bg" v-model="selectedReport">
-                        <option value="" disabled selected>نوع البلاغ </option>
-                        <option v-if="isTypesLoading" disabled>حاري التحميل</option>
-                        <option v-if="!isTypesLoading && fetchedReports.length > 0" value="all">الكل</option>
-                        <option v-for="(report, index) in fetchedReports" :value="report" :selected="index == 0">
-                            {{ report.title }}
-                        </option>
+                    <select class="dark_bg" v-model="selectedAlert">
+                        <option value="" disabled selected>حالة التنبيه</option>
+                        <option value="all">الكل</option>
+                        <option value="0">غير مقروءة</option>
+                        <option value="1">مقروءة</option>
                     </select>
                 </div>
             </v-col>
         </v-row>
-        <div v-if="selectedReport">
+        <div v-if="selectedAlert">
             <v-row class="stats_wrapper my-3"
                 :class="{ 'stats_wrapper_fullscreen': mapStore.isMapStatisticsFullscreen }">
                 <v-col cols="6" class="py-0">
@@ -187,7 +163,7 @@ onMounted(getReports)
                             <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
                                 max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
                             <h3 v-else class="stat_value">
-                                {{ fetchedDetails.notice }}
+                                {{ fetchedDetails.alertsCount }}
                                 <!-- {{
                                         convertNumberWithSeperator(
                                             parseValueToActialNumber(21, 0),
@@ -195,10 +171,10 @@ onMounted(getReports)
                                         )
                                     }} -->
                             </h3>
-                            <label>اجمالي عدد البلاغات</label>
+                            <label>اجمالي عدد التنبيهات</label>
                         </div>
                         <button :class="mapStore.isMapStatisticsFullscreen ? 'light' : ''"
-                            @click="toggleComplaintsModal()"><v-icon icon="mdi-chevron-left"></v-icon> </button>
+                            @click="toggleAlertsModal()"><v-icon icon="mdi-chevron-left"></v-icon> </button>
                     </div>
                 </v-col>
                 <v-col cols="6" class="py-0">
@@ -207,7 +183,7 @@ onMounted(getReports)
                             <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
                                 max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
                             <h3 v-else class="stat_value" style="color: #C05E5E;">
-                                {{ fetchedDetails.highNoticesCount }}
+                                {{ fetchedDetails.highAlertsCount }}
                                 <!-- {{
                                         convertNumberWithSeperator(
                                             parseValueToActialNumber(, 0),
@@ -215,10 +191,10 @@ onMounted(getReports)
                                         )
                                     }} -->
                             </h3>
-                            <label>البلاغات ذات الأهمية العالية</label>
+                            <label>التنبيهات ذات الأهمية العالية</label>
                         </div>
                         <button :class="mapStore.isMapStatisticsFullscreen ? 'light' : ''"
-                            @click="toggleComplaintsModal('high')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
+                            @click="toggleAlertsModal('high')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
                     </div>
                 </v-col>
                 <v-col cols="6" class="py-0">
@@ -227,7 +203,7 @@ onMounted(getReports)
                             <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
                                 max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
                             <h3 v-else class="stat_value">
-                                {{ fetchedDetails.midNoticesCount }}
+                                {{ fetchedDetails.midAlertsCount }}
                                 <!-- {{
                                         convertNumberWithSeperator(
                                             parseValueToActialNumber(1512, 0),
@@ -235,10 +211,10 @@ onMounted(getReports)
                                         )
                                     }} -->
                             </h3>
-                            <label>البلاغات ذات الأهمية المتوسطة</label>
+                            <label>التنبيهات ذات الأهمية المتوسطة</label>
                         </div>
                         <button :class="mapStore.isMapStatisticsFullscreen ? 'light' : ''"
-                            @click="toggleComplaintsModal('mid')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
+                            @click="toggleAlertsModal('mid')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
                     </div>
                 </v-col>
                 <v-col cols="6" class="py-0">
@@ -247,7 +223,7 @@ onMounted(getReports)
                             <v-skeleton-loader v-if="isLoading" type="button" height="1.5rem" width="10rem"
                                 max-width="100%" max-height="100%" style="margin: 11px 0;"></v-skeleton-loader>
                             <h3 v-else class="stat_value" style="color: #35685F;">
-                                {{ fetchedDetails.lowNoticesCount }}
+                                {{ fetchedDetails.lowAlertsCount }}
                                 <!-- {{
                                         convertNumberWithSeperator(
                                             parseValueToActialNumber(1512, 0),
@@ -255,10 +231,10 @@ onMounted(getReports)
                                         )
                                     }} -->
                             </h3>
-                            <label>البلاغات ذات الأهمية المنخفضة</label>
+                            <label>التنبيهات ذات الأهمية المنخفضة</label>
                         </div>
                         <button :class="mapStore.isMapStatisticsFullscreen ? 'light' : ''"
-                            @click="toggleComplaintsModal('low')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
+                            @click="toggleAlertsModal('low')"><v-icon icon="mdi-chevron-left"></v-icon> </button>
                     </div>
                 </v-col>
             </v-row>
@@ -268,13 +244,13 @@ onMounted(getReports)
                 <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100 h-100" style="background-color: #303030; padding: 15px;">
                         <div class="w-100">
-                            <p style="font-size: 0.9rem">نسبة البلاغات (عالية، متوسطة، منخفضة الأهمية)</p>
+                            <p style="font-size: 0.9rem">نسبة التنبيهات (عالية، متوسطة، منخفضة الأهمية)</p>
                         </div>
                         <hr>
                         <div class="chart_wrapper position-relative"
                             :class="`${mapStore.isMapStatisticsFullscreen ? 'w-50' : ''}`">
                             <h3 class="position-absolute">
-                                {{ fetchedDetails.notice }}
+                                {{ fetchedDetails.alertsCount }}
                                 <!-- {{
                                     convertNumberWithSeperator(
                                         parseValueToActialNumber(14456, 0),
@@ -282,56 +258,51 @@ onMounted(getReports)
                                     )
                                 }} -->
                             </h3>
-                            <canvas id="complaintsPeriorityChart" aria-label="Hello ARIA World" role="img"></canvas>
+                            <canvas id="alertsPeriorityChart" aria-label="Hello ARIA World" role="img"></canvas>
                         </div>
 
                         <div class="pie_legend_wrapper">
                             <div class="legend">
-                                <span>عالية الأهمية: <b style="--c: #C05E5E">{{ fetchedDetails.highNoticesCount
+                                <span>عالية الأهمية: <b style="--c: #C05E5E">{{ fetchedDetails.highAlertsCount
                                         }}</b></span>
                             </div>
                             <div class="legend">
-                                <span>متوسطة الأهمية: <b style="--c: #C4AB79">{{ fetchedDetails.midNoticesCount
+                                <span>متوسطة الأهمية: <b style="--c: #C4AB79">{{ fetchedDetails.midAlertsCount
                                         }}</b></span>
                             </div>
                             <div class="legend">
-                                <span>منخفضة الأهمية: <b style="--c: #35685F">{{ fetchedDetails.lowNoticesCount
+                                <span>منخفضة الأهمية: <b style="--c: #35685F">{{ fetchedDetails.lowAlertsCount
                                         }}</b></span>
                             </div>
                         </div>
                     </v-card>
                 </v-col>
-                <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
+                <!-- <v-col :cols="`${mapStore.isMapStatisticsFullscreen ? 6 : 12}`">
                     <v-card class="w-100 h-100" style="background-color: #303030; padding: 15px;">
                         <div class="w-100">
-                            <p style="font-size: 0.9rem">عدد البلاغات (مقفولة، مفتوحة)</p>
+                            <p style="font-size: 0.9rem">عدد التنبيهات (غير مقروءة، مقروءة)</p>
                         </div>
                         <hr>
                         <div class="chart_wrapper position-relative"
                             :class="`${mapStore.isMapStatisticsFullscreen ? 'w-50' : ''}`">
                             <h3 class="position-absolute">
-                                {{ fetchedDetails.notice }}
-                                <!-- {{
-                                    convertNumberWithSeperator(
-                                        parseValueToActialNumber(14456, 0),
-                                        "٬"
-                                    )
-                                }} -->
+                                {{ fetchedDetails.alertsCount }}
                             </h3>
-                            <canvas id="complaintsStatusChart" aria-label="Hello ARIA World" role="img"></canvas>
+                            <canvas id="alertsStatusChart" aria-label="Hello ARIA World" role="img"></canvas>
                         </div>
+
                         <div class="pie_legend_wrapper">
                             <div class="legend">
-                                <span>بلاغات مفتوحة: <b style="--c: #35685F">{{ fetchedDetails.openNoticesCount
+                                <span>تنبيهات مقروءة: <b style="--c: #35685F">{{ fetchedDetails.seenAlertsCount
                                         }}</b></span>
                             </div>
                             <div class="legend">
-                                <span>بلاغات مقفولة: <b style="--c: #C05E5E">{{ fetchedDetails.closedNoticesCount
+                                <span>تنبيهات غير مقروءة: <b style="--c: #C05E5E">{{ fetchedDetails.seenAlertsCount
                                         }}</b></span>
                             </div>
                         </div>
                     </v-card>
-                </v-col>
+                </v-col> -->
             </v-row>
             <v-row class="my-0">
                 <v-col v-if="isLoading" :cols="`${mapStore.isMapStatisticsFullscreen ? 3 : 12}`"
@@ -400,11 +371,8 @@ onMounted(getReports)
                 </v-col>
             </v-row>
             <div v-if="isModalShow">
-                <ComplaintsModal v-model="isModalShow" :periority="complaintsPeriority"
-                    :complaintTypeId="selectedReport.id" @showDetails="showDetails" />
-            </div>
-            <div v-if="isComplaintDetails">
-                <ComplaintDetailsModal v-model="isComplaintDetails" :complaintId="selectedComplaintsId" />
+                <AlertsModal v-model="isModalShow" :status="selectedAlert" :periority="alertsPeriority"
+                    @showDetails="isAlertDetails = true" />
             </div>
         </div>
         <div v-else style="
@@ -420,9 +388,11 @@ onMounted(getReports)
         ">
             <img :src=emptyBox width="150" alt="Empty box">
             <h1>لا توجد معلومات</h1>
-            <p style="color: #ffffff90">برجاء اختيار نوع البلاغ.</p>
+            <p style="color: #ffffff90">برجاء اختيار حالة التنبيهات.</p>
         </div>
     </div>
+
+
 </template>
 
 <style scoped>

@@ -124,7 +124,7 @@ onMounted(() => {
 
 </script>
 <template>
-    <div style="padding: 15px;">
+    <div class="panel_content">
         <v-row>
             <v-col cols="12">
                 <select class="form-select w-100" aria-label="Default select example"
@@ -149,7 +149,7 @@ onMounted(() => {
                             : ''
                     ]">
                     <div class="w-100 h-100 d-flex flex-column">
-                        <h3 class="font-weight-bold" style="color: #857854;">
+                        <h3 class="font-weight-bold" style="color: #C4AB79;">
                             {{
                                 convertNumberWithSeperator(
                                     parseValueToActialNumber(80, 0),
@@ -171,7 +171,7 @@ onMounted(() => {
                 <v-card class="w-100" :class="[mapStore.isMapStatisticsFullscreen ? 'pa-10' : 'pa-0']"
                     style="background-color: transparent">
                     <div class="w-100 h-100 d-flex flex-column">
-                        <h3 class="font-weight-bold" style="color: #857854">
+                        <h3 class="font-weight-bold" style="color: #C4AB79">
                             {{
                                 convertNumberWithSeperator(
                                     parseValueToActialNumber(20, 0),

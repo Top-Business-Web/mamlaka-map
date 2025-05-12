@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { useDebounceFn } from "@vueuse/core";
+import { objectEntries, useDebounceFn } from "@vueuse/core";
 import { MapConfigs } from "@/config";
 import { GoogleMap, MarkerCluster, CustomMarker } from "vue3-google-map";
 import {
@@ -10,18 +10,22 @@ import {
   type LocationType
 } from "@/stores/MapStore";
 import MapPanel from "../global/MapPanel.vue";
-import stationMarker from "@/assets/imgs/markers-icons/station.svg";
+import stationMarker from "@/assets/imgs/markers-icons/bus.svg";
 import carStationMarker from "@/assets/imgs/markers-icons/car-station.svg";
 import busMarker from "@/assets/imgs/markers-icons/bus-station.svg";
 import highwayMarker from "@/assets/imgs/markers-icons/highway.svg";
 import trainMarker from "@/assets/imgs/markers-icons/train.svg";
+import noticeMarker from "@/assets/imgs/markers-icons/flag.svg";
 import SupervisorDetailsModal from "./modals/supervisorDetailsModal.vue";
 import UserDetailsModal from "./modals/userDetailsModal.vue";
 import AreaDetailsModal from "./modals/AreaDetailsModal.vue";
 import ReportDetailsModal from "./modals/reportDetailsModal.vue"
+import ComplaintsModal from './modals/complaintsModal.vue'
+
 import MapFooter from "../global/MapFooter.vue";
 import MapTopNavbar from "../global/MapTopNavbar.vue";
 import http from "@/plugins/axios";
+import ComplaintDetailsModal from "./modals/complaintDetailsModal.vue";
 
 
 interface MapReference {
@@ -31,7 +35,7 @@ interface MapReference {
 
 const mapStore = useMapStore();
 const mapRef = ref<MapReference | null>(null);
-const mapZoom = ref(12);
+const mapZoom = ref(13);
 const areas = ref([]);
 
 async function getAreas(type = "") {
@@ -40,7 +44,7 @@ async function getAreas(type = "") {
   filterAreaTypes(type)
 }
 
-function filterAreaTypes(type = "") {
+function filterAreaTypes(type: string = "") {
   if (type == "0") {
     areas.value = areas.value.filter(location => (location.type == "موقف"));
   }
@@ -66,6 +70,7 @@ watch(
       mapStore.setMapInstance(mapRef.value?.map);
       setTimeout(() => {
         mapStore.getMapUsers();
+        mapStore.getMapNotices();
         getAreas();
       }, 0);
     }
@@ -86,6 +91,7 @@ const isUserDetails = ref<boolean>(false);
 const isSupervisorDetails = ref<boolean>(false);
 const isAreaDetails = ref<boolean>(false);
 const isReportDetails = ref<boolean>(false);
+const isNoticeDetails = ref<boolean>(false);
 const clickedMarkerId = ref<object | null>(null);
 const clickedUserId = ref<object | null>(null);
 
@@ -100,6 +106,10 @@ const displaySupervisorDetails = (markerId) => {
 const displayAreaDetails = (markerId) => {
   clickedMarkerId.value = markerId;
   isAreaDetails.value = true;
+};
+const displayNoticeDetails = (markerId) => {
+  clickedMarkerId.value = markerId;
+  isNoticeDetails.value = true;
 };
 const displayReportDetails = (markerId, userId) => {
   clickedMarkerId.value = markerId;
@@ -126,17 +136,33 @@ function showMarkers(targetInput) {
   }
 }
 
+const searchText = ref('');
+const filteredResults = ref([]);
+
+function getsearch(text) {
+  searchText.value = text;
+  const data = ref([
+    { name: "apple", category: "fruit" },
+    { name: "banana", category: "fruit" },
+    { name: "carrot", category: "vegetable" },
+    { name: "date", category: "fruit" }
+  ]);
+  filteredResults.value = data.value.filter(item => item['name'] && item['name'].toString().toLowerCase().includes(searchText.value.toLowerCase())
+  );
+  console.log(filteredResults.value);
+}
+
 </script>
 
 <template>
 
   <div class="interactive-map__wrapper">
-    <MapTopNavbar @changeTypeHandler="getAreas" />
+    <MapPanel />
+    <MapTopNavbar @changeTypeHandler="getAreas" @searching-users="getsearch(searchText)" />
     <transition name="scale" mode="out-in">
       <div v-if="mapStore.isMapStatisticsFullscreen" class=""></div>
     </transition>
     <!-- <MapStatisticsPanel /> -->
-    <MapPanel />
     <transition name="scale" mode="out-in">
       <MapLoader v-if="mapStore.isMapDataLoading" style="z-index: 99" />
     </transition>
@@ -148,6 +174,11 @@ function showMarkers(targetInput) {
       <template #default="{ ready, api, map, mapTilesLoaded }">
         <MapLoader v-if="!ready" style="z-index: 98; background-color: #000" />
         <!-- <MarkerCluster> -->
+        <CustomMarker v-for="(notice, index) in mapStore.notices" :key="index"
+          :options="{ position: { lat: notice.lat, lng: notice.long }, anchorPoint: 'BOTTOM_CENTER' }"
+          @click="displayNoticeDetails(notice.notice_id)">
+          <img :src="noticeMarker" width="40" alt="">
+        </CustomMarker>
         <CustomMarker v-if="isAreas" v-for="(area, index) in areas" :key="index"
           :options="{ position: { lat: parseFloat(area.location.north), lng: parseFloat(area.location.east) }, anchorPoint: 'BOTTOM_CENTER' }"
           @click="displayAreaDetails(area.id)">
@@ -155,12 +186,13 @@ function showMarkers(targetInput) {
           <img v-if="area.type == 'باص'" :src="busMarker" alt="">
           <img v-if="area.type == 'سكة حديدية'" :src="trainMarker" alt="">
           <img v-if="area.type == 'طريق'" :src="highwayMarker" alt="">
-          <img v-if="area.type == 'محطة'" :src="stationMarker" alt="">
+          <img v-if="area.type == 'محطة'" :src="stationMarker" alt="" width="40">
         </CustomMarker>
         <CustomMarker v-if="isSupervisors" v-for="(supervisor, index) in mapStore.supervisors" :key="index"
           :options="{ position: { lat: supervisor.lat, lng: supervisor.long }, anchorPoint: 'BOTTOM_CENTER' }"
           @click="displaySupervisorDetails(supervisor.user_id)">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"
+            style="border-radius: 50%; animation: pulseSupervisor 1.5s infinite;">
             <circle cx="20" cy="20" r="15" fill="#35685f" />
             <circle cx="20" cy="20" r="17.5" stroke="#35685f" stroke-opacity="0.3" stroke-width="5" />
             <g clip-path="url(#clip0_1_35095)">
@@ -179,11 +211,12 @@ function showMarkers(targetInput) {
           </svg>
         </CustomMarker>
         <CustomMarker v-if="isUsers" v-for="(user, index) in mapStore.users" :key="index"
-          :options="{ position: { lat: user.lat, lng: user.long }, anchorPoint: 'BOTTOM_CENTER' }"
+          :options="{ position: { lat: user.lat, lng: user.long }, anchorPoint: 'BOTTOM_CENTER' }" class="marker_pulse"
           @click="displayUserDetails(user.user_id)">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="20" cy="20" r="15" fill="#857854" />
-            <circle cx="20" cy="20" r="17.5" stroke="#857854" stroke-opacity="0.3" stroke-width="5" />
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"
+            style="border-radius: 50%; animation: pulse 1.5s infinite;">
+            <circle cx="20" cy="20" r="15" fill="#C4AB79" />
+            <circle cx="20" cy="20" r="17.5" stroke="#C4AB79" stroke-opacity="0.3" stroke-width="5" />
             <g clip-path="url(#clip0_1_35095)">
               <path
                 d="M19.5 13C17.6099 13 16.0723 14.5377 16.0723 16.4277C16.0723 18.3178 17.6099 19.8555 19.5 19.8555C21.3901 19.8555 22.9277 18.3178 22.9277 16.4277C22.9277 14.5377 21.3901 13 19.5 13Z"
@@ -217,6 +250,9 @@ function showMarkers(targetInput) {
     </div>
     <div v-if="isReportDetails">
       <ReportDetailsModal v-model="isReportDetails" :markerId="clickedMarkerId" :userId="clickedUserId" />
+    </div>
+    <div v-if="isNoticeDetails">
+      <ComplaintDetailsModal v-model="isNoticeDetails" :complaintId="clickedMarkerId" />
     </div>
   </div>
 </template>
@@ -260,64 +296,23 @@ body {
   }
 }
 
-@keyframes pulse-observer {
+@keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(180, 145, 100, 0.4);
-  }
-
-  25% {
-    box-shadow: 0 0 0 10px rgba(180, 145, 100, 0.4);
-  }
-
-  50% {
-    box-shadow: 0 0 0 15px rgba(180, 145, 100, 0);
-  }
-
-  75% {
-    box-shadow: 0 0 0 10px rgba(180, 145, 100, 0);
+    box-shadow: 0 0 0 0px rgba(196, 171, 121, 0.2);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(180, 145, 100, 0);
+    box-shadow: 0 0 0 20px rgba(196, 171, 121, 0);
   }
 }
 
-@keyframes pulse-operator {
+@keyframes pulseSupervisor {
   0% {
-    box-shadow: 0 0 0 0 rgba(95, 166, 166, 0.4);
-  }
-
-  25% {
-    box-shadow: 0 0 0 10px rgba(95, 166, 166, 0.4);
-  }
-
-  50% {
-    box-shadow: 0 0 0 15px rgba(95, 166, 166, 0);
-  }
-
-  75% {
-    box-shadow: 0 0 0 10px rgba(95, 166, 166, 0);
+    box-shadow: 0 0 0 0px rgba(53, 104, 95, 0.2);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(95, 166, 166, 0);
+    box-shadow: 0 0 0 20px rgba(53, 104, 95, 0);
   }
 }
-
-// @keyframes pulse-operator {
-//   0% {
-//     box-shadow: 0 0 0 0 rgba(167, 136, 255, 0.4);
-//   }
-//   25% {
-//     box-shadow: 0 0 0 10px rgba(167, 136, 255, 0.4);
-//   }
-//   50% {
-//     box-shadow: 0 0 0 15px rgba(167, 136, 255, 0);
-//   }
-//   75% {
-//     box-shadow: 0 0 0 10px rgba(167, 136, 255, 0);
-//   }
-//   100% {
-//     box-shadow: 0 0 0 0 rgba(167, 136, 255, 0);
-//   }
-// }</style>
+</style>

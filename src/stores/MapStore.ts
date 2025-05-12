@@ -119,6 +119,8 @@ interface MapStoreState {
   locations: MapLocation[];
   supervisors: MapLocation[];
   users: MapLocation[];
+  usersRole: string;
+  notices: MapLocation[];
   displayOperators: boolean;
   displayObservers: boolean;
   displayEntities: boolean;
@@ -146,6 +148,8 @@ export const useMapStore = defineStore("MapStore", {
     locations: [],
     supervisors: [],
     users: [],
+    usersRole: "all",
+    notices: [],
     displayOperators: true,
     displayObservers: true,
     displayEntities: true,
@@ -212,32 +216,87 @@ export const useMapStore = defineStore("MapStore", {
 
       return queryUserTypeParams;
     },
-    async getMapUsers(refreshData: boolean = false) {
+
+    async getMapNotices() {
+      const noticeData: MapLocation[] = [];
+      try {
+        // this.getMapEntites();
+        const { minLat, maxLat, minLng, maxLng } = this.visibleCoordinates;
+        const q = firestoreQuery(
+          collection(firestoreDB, "high_notices"),
+          and(
+            where("lat", ">=", minLat),
+            where("lat", "<=", maxLat),
+            where("long", ">=", minLng),
+            where("long", "<=", maxLng),
+            where("status", "==", 0),
+          ),
+          limit(500)
+        );
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          noticeData.push(doc.data());
+        });
+
+        this.notices = noticeData;
+      }
+
+      catch (err) {
+        console.error("Error fetching data from Firestore:", err);
+      } finally {
+        this.isMapDataLoading = false;
+        isLoading.value = false
+      }
+    },
+
+    async getMapUsers() {
       const usersData: MapLocation[] = [];
       try {
-        if (this.displayEntities && !refreshData) {
+        if (this.displayEntities) {
           // this.getMapEntites();
-
           const { minLat, maxLat, minLng, maxLng } = this.visibleCoordinates;
-          const q = firestoreQuery(
-            collection(firestoreDB, "users"),
-            and(
-              // where("user_type", "in", this.getUserTypeParams()),
-              where("lat", ">=", minLat),
-              where("lat", "<=", maxLat),
-              where("long", ">=", minLng),
-              where("long", "<=", maxLng)
-            ),
-            orderBy("lat"),
-            limit(500)
-          );
-          const querySnapshot = await getDocs(q);
-          querySnapshot.forEach((doc) => {
-            usersData.push(doc.data());
-          });
-
+          const role = this.usersRole
+          if (role == "all") {
+            const q = firestoreQuery(
+              collection(firestoreDB, "users"),
+              and(
+                // where("user_type", "in", this.getUserTypeParams()),
+                where("lat", ">=", minLat),
+                where("lat", "<=", maxLat),
+                where("long", ">=", minLng),
+                where("long", "<=", maxLng),
+                where("is_active_map", "==", true),
+              ),
+              orderBy("lat"),
+              limit(500)
+            );
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+              usersData.push(doc.data());
+            });
+          } else {
+            const q = firestoreQuery(
+              collection(firestoreDB, "users"),
+              and(
+                // where("user_type", "in", this.getUserTypeParams()),
+                where("lat", ">=", minLat),
+                where("lat", "<=", maxLat),
+                where("long", ">=", minLng),
+                where("long", "<=", maxLng),
+                where("is_active_map", "==", true),
+                where("role", "==", role)
+              ),
+              orderBy("lat"),
+              limit(500)
+            );
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+              usersData.push(doc.data());
+            });
+          }
           this.supervisors = usersData.filter(supervisor => (supervisor.role == "مشرف"));
-          this.users = usersData.filter(user => (user.role !== "مشرف"));
+          this.users = usersData.filter(user => (user.role != "مشرف"));
+
         } else {
           this.supervisors = [];
           this.users = [];
@@ -252,6 +311,7 @@ export const useMapStore = defineStore("MapStore", {
     async updateMapLocations() {
       // this.unsubscribeRealtime();
       this.getMapUsers();
+      this.getMapNotices();
     },
     async getMapStatistics(needLoading: boolean = true) {
       this.isMapStatisticsError = false;
